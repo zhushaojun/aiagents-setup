@@ -130,7 +130,7 @@ network_access = true
 | `env_key = "NEWAPI_KEY"` | **密钥来源** | 只写变量名，不要加 `$` |
 | `requires_openai_auth = false` | 不要求登录 OpenAI 账号 | 不要删，否则会一直要求你登录 |
 
-> **实测**：`env_key` 这种写法已经跑通（用临时配置目录 + 环境变量 → 得到正常回答），**不需要** `codex login`，也不要把 Key 硬写进配置文件。
+> 用 `env_key = "NEWAPI_KEY"` 这种写法时，**不需要** `codex login`，也不要把 Key 硬写进配置文件。
 
 ## 4.2 让它说中文：`%USERPROFILE%\.codex\AGENTS.md`
 
@@ -246,7 +246,7 @@ args = ["-y", "@upstash/context7-mcp"]
 | 一直提示登录 OpenAI | `requires_openai_auth = false` 漏了，或 `model_provider` 写错 |
 | `model_not_found` / `No available channel for model` | 模型名不在清单里：先在 [pricing 页](https://newapi.ttxs.site/pricing) 确认它在不在，再对照 [统一接入](统一接入.md) 第 4 节 |
 | 想让它在别的盘干活 | 先 `cd` 到那个目录再运行 `codex`；`workspace-write` 只允许改当前目录 |
-| VS Code 扩展里报错 | 扩展与命令行共用配置；先在命令行跑通 `codex exec "只回复两个字：可用"` |
+| VS Code 扩展里报错 | 扩展与命令行共用配置；先在命令行确认 `codex exec "只回复两个字：可用"` 能正常回答 |
 | 中文乱码（Windows） | 用 **Windows Terminal + PowerShell 7**，不要用老的 cmd 窗口 |
 | 回答太慢 | `model_reasoning_effort` 降到 `low`，或换 `gpt-6-luna` |
 | 上下文不够用 | 换上下文更大的模型，或用 `/compact` 压缩会话 |

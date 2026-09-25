@@ -15,7 +15,7 @@
 | ★ **辅助** | **Claude Code** | Anthropic 官方，推理细致；注意图片相关功能在第三方模型下不稳 | [Claude Code](Claude%20Code.md) |
 | ★ **辅助** | **OpenCode** | 开源通用框架，什么模型都能接；能力上限不如前两者，但已经能真正干活 | [OpenCode](OpenCode.md) |
 
-**建议路径**：先把 **Codex** 跑通（够用 80% 的场景），再加 **pi**（国产模型、长上下文、插件生态），最后按兴趣看 Claude Code 与 OpenCode。
+**建议路径**：先把 **Codex** 用起来（够用 80% 的场景），再加 **pi**（国产模型、长上下文、插件生态），最后按兴趣看 Claude Code 与 OpenCode。
 
 ---
 
@@ -73,25 +73,25 @@
 
 # 5 版本校验表
 
-本文档所有配置都在下表版本上**实测跑通**。工具更新后如果行为变了，请以最新官方文档为准，并顺手回来更新这张表。
+本文档记录的是下表版本上的配置写法。工具更新很快，如果你那边行为不一样，请以官方文档为准，并顺手回来更新这张表。
 
-| 工具 | 本文档核对的版本 | 校验日期 | 配置文件位置 | 启动命令 |
+| 工具 | 本文档对应的版本 | 记录日期 | 配置文件位置 | 启动命令 |
 | --- | --- | --- | --- | --- |
-| Codex | 0.156.1（npm 最新 0.157.0） | 2026-09-25 | `%USERPROFILE%\.codex\config.toml` | `codex` |
-| pi | 0.87.1 | 2026-09-25 | `%USERPROFILE%\.pi\agent\models.json`、`settings.json` | `pi` |
-| Claude Code | 2.1.273（npm 最新 2.1.282） | 2026-09-25 | `%USERPROFILE%\.claude\settings.json` | `claude` |
-| OpenCode | `@opencode/cli` 2.0.15（最新 2.0.16） | 2026-09-25 | `%USERPROFILE%\.config\opencode\opencode.json` | `opencode` |
+| Codex | 0.156.x | 2026-09-25 | `%USERPROFILE%\.codex\config.toml` | `codex` |
+| pi | 0.87.x | 2026-09-25 | `%USERPROFILE%\.pi\agent\models.json`、`settings.json` | `pi` |
+| Claude Code | 2.1.x | 2026-09-25 | `%USERPROFILE%\.claude\settings.json` | `claude` |
+| OpenCode | `@opencode/cli` 2.0.x | 2026-09-25 | `%USERPROFILE%\.config\opencode\opencode.json` | `opencode` |
 
-**"实测跑通"的意思是**：本文档里的每一份配置都真跑过一次，不是抄来的——
+装好之后，用这几条命令自己确认一下（能正常回答就说明配置生效了）：
 
-| 验证项 | 结果 |
+| 工具 | 自检命令 |
 | --- | --- |
-| Codex 用 `env_key = "NEWAPI_KEY"` 读密钥 | ✅ 返回"可用" |
-| pi 用 `"apiKey": "$NEWAPI_KEY"` 插值 | ✅ 三个模型（glm-5.3-flash / deepseek-v4.1-flash / gpt-6-sol）全部返回"可用" |
-| OpenCode 用 `"apiKey": "{env:NEWAPI_KEY}"` 插值 | ✅ 正例返回"可用"；**反证**：改成不存在的变量名会返回 `Invalid token` |
-| Claude Code 用环境变量 `ANTHROPIC_AUTH_TOKEN` + 模型档位映射 | ✅ `claude -p` 正常返回；`/model` 显示映射后的模型名 |
-| 可用模型清单 | ✅ 用我们的 Key 直接查中转 `/v1/models` 得到 |
-| 模型价格 | 本文档不给单价（会变），**实时价看 <https://newapi.ttxs.site/pricing>** |
+| Codex | `codex exec "只回复两个字：可用"` |
+| pi | `pi -p "只回复两个字：可用"` |
+| Claude Code | `claude -p "只回复两个字：可用"` |
+| OpenCode | `opencode run --standalone "只回复两个字：可用"` |
+
+> 模型单价本文档不写（会变），**实时价看 <https://newapi.ttxs.site/pricing>**。
 
 ---
 

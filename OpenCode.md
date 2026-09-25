@@ -116,7 +116,7 @@ New-Item -ItemType Directory -Force "$env:USERPROFILE\.config\opencode" | Out-Nu
 
 # 5 验证
 
-用非交互模式直接验证密钥链路（**这条命令我们实测过**）：
+用非交互模式直接验证密钥链路：
 
 ```PowerShell
 opencode run --standalone --model newapi/gpt-6-sol "只回复两个字：可用"
