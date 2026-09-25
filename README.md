@@ -66,7 +66,7 @@
 | `NEWAPI_KEY` | Codex、pi、OpenCode | `sk-你的Key`（找朱老师要） |
 | `ANTHROPIC_AUTH_TOKEN` | Claude Code | 同上，**值一样** |
 
-> 为什么必须用下划线 `NEWAPI_KEY`？因为 `NEWAPI-KEY` 在 PowerShell 里 `$env:NEWAPI-KEY` 会语法报错、在 Linux/Git Bash 里根本设不进去（实测，见 [统一接入](统一接入.md) 1.1）。
+> 这两个名字是全套文档的约定，四个工具都按它们读取密钥。
 > 为什么 Claude Code 要单独一个变量名？因为它的配置文件不支持 `${变量}` 展开，只认官方约定的 `ANTHROPIC_AUTH_TOKEN`。
 
 ---
