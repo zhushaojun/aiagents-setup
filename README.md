@@ -1,6 +1,6 @@
 # AI Coding 智能体安装配置手册
 
-面向初学者的 **命令行 AI 编程智能体** 安装与配置教程。跟着做，一小时内能让四个工具在你自己的电脑上跑起来。
+面向初学者的 **命令行 AI 编程智能体** 安装与配置教程。跟着做，一小时内能让四个命令行工具（外加一个进阶的编排工作台 Orca）在你自己的电脑上跑起来。
 
 **本文档的特点**：所有配置都**复制即用**——配置文件里不出现密钥（密钥放在系统环境变量里），所以你可以直接抄别人的配置，也可以放心把自己的配置发给别人。
 
@@ -14,8 +14,9 @@
 | ★★ **次主力** | **pi** | 开源轻量、可扩展，接国产模型 + 长上下文最合适 | [pi](pi.md) |
 | ★ **辅助** | **Claude Code** | Anthropic 官方，推理细致；注意图片相关功能在第三方模型下不稳 | [Claude Code](Claude%20Code.md) |
 | ★ **辅助** | **OpenCode** | 开源通用框架，什么模型都能接；能力上限不如前两者，但已经能真正干活 | [OpenCode](OpenCode.md) |
+| ★★ **进阶（编排层）** | **Orca** | 开源"智能体工作台"（ADE）：一个任务一个 git worktree，多个 CLI 智能体并行赛马，diff 与提交集中处理。**它不接模型、不存密钥**，只是启动上面四个 | [Orca](Orca.md) |
 
-**建议路径**：先把 **Codex** 用起来（够用 80% 的场景），再加 **pi**（国产模型、长上下文、插件生态），最后按兴趣看 Claude Code 与 OpenCode。
+**建议路径**：先把 **Codex** 用起来（够用 80% 的场景），再加 **pi**（国产模型、长上下文、插件生态），最后按兴趣看 Claude Code 与 OpenCode。等这四个都能单独跑顺、并且开始嫌"一个任务只能串行做"时，再上 **Orca**——它不替代上面四个，而是把它们放进同一个窗口里并行调度。
 
 工具跑顺之后，建议再装一套通用的**技能包**（把资深工程师的做事流程固化成文件，四个工具都能用）：[Matt Skills](Matt%20Skills.md)。
 
@@ -52,6 +53,7 @@
 | [pi.md](pi.md) | 次主力：安装（含 Git Bash 依赖）、`models.json` 接 NewAPI、默认模型与插件包 | 必看 |
 | [Claude Code.md](Claude%20Code.md) | 辅助：客户端配置、模型档位映射、**"为什么它现在处理图片有问题"整节** | 按需 |
 | [OpenCode.md](OpenCode.md) | 辅助：**v2 配置格式**（与网上老教程不兼容）、验证与升级 | 按需 |
+| [Orca.md](Orca.md) | 进阶：**智能体工作台（ADE）**——worktree 并行、多智能体赛马、共享依赖与 `.env`、Orca CLI | 前四个用顺了再看 |
 | [cc-switch.md](cc-switch.md) | 供应商统一管理/本地路由工具，进阶用 | 用熟了再看 |
 | [附-完整配置.md](附-完整配置.md) | 我们机器上的进阶配置（脱敏）：hooks、插件、权限、桌面段等 | 想深度定制时看 |
 | [Matt Skills.md](Matt%20Skills.md) | 进阶：第三方技能包（25 个工程流程技能），装完主力工具后再看 | 想固化"做事流程"时看 |
@@ -84,6 +86,7 @@
 | pi | 0.87.x | 2026-09-25 | `%USERPROFILE%\.pi\agent\models.json`、`settings.json` | `pi` |
 | Claude Code | 2.1.x | 2026-09-25 | `%USERPROFILE%\.claude\settings.json` | `claude` |
 | OpenCode | `@opencode/cli` 2.0.x | 2026-09-25 | `%USERPROFILE%\.config\opencode\opencode.json` | `opencode` |
+| Orca | 1.4.x | 2026-09-25 | `%APPDATA%\orca`（应用数据） | `orca`（桌面应用自带 CLI，需在设置里注册） |
 
 装好之后，用这几条命令自己确认一下（能正常回答就说明配置生效了）：
 
@@ -93,6 +96,7 @@
 | pi | `pi -p "只回复两个字：可用"` |
 | Claude Code | `claude -p "只回复两个字：可用"` |
 | OpenCode | `opencode run --standalone "只回复两个字：可用"` |
+| Orca | `orca status --json`（看到 `"state": "ready"` 即 CLI 通了；再在界面里让智能体回一句验证整链） |
 
 > 模型单价本文档不写（会变），**实时价看 <https://newapi.ttxs.site/pricing>**。
 
@@ -110,6 +114,8 @@
 | 非交互验证 | `codex exec "只回复两个字：可用"` | `pi -p "只回复两个字：可用"` | `claude -p "只回复两个字：可用"` | `opencode run --standalone "只回复两个字：可用"` |
 | 升级 | `npm i -g @openai/codex` | `pi update` | `npm i -g @anthropic-ai/claude-code@latest` | `opencode upgrade` |
 
+> **Orca 不在这张表里**：它不接模型、不存密钥，只负责启动上面这四个 CLI（所以密钥与地址的写法照抄它们各自的配置）。见 [Orca](Orca.md) 第 4 节。
+
 ---
 
 # 7 常见问题（先看这里）
@@ -120,6 +126,8 @@
 4. **中文乱码** → 用 Windows Terminal + PowerShell 7，不要用老的 cmd 窗口。
 5. **Claude Code 处理图片异常** → 这是客户端在第三方模型上的已知问题，不是你的配置错。见 [Claude Code](Claude%20Code.md) 第 8 节。
 6. **OpenCode 配置不生效** → 你装成了 v1（`opencode-ai`）。v2 的包是 `@opencode/cli`，配置格式也不同。见 [OpenCode](OpenCode.md) 第 3 节。
+7. **Orca 里智能体起不来** → 先在**普通终端**里手动跑那个 CLI：手动都不行就是 CLI 自己的问题（按第 1～6 条查），手动能跑就检查 `Settings → Agents` 有没有识别到它。见 [Orca](Orca.md) 第 8 节。
+8. **Orca 新建 worktree 后没有 `node_modules` / `.env`** → 这是正常的（worktree 是干净检出）。按 [Orca](Orca.md) 7.1 配共享目录与 `.worktreeinclude`。
 
 ---
 
@@ -138,5 +146,6 @@
 - pi：<https://pi.dev/> ｜ 源码 <https://github.com/earendil-works/pi>
 - Claude Code：<https://code.claude.com/docs/zh-CN/>
 - OpenCode：<https://opencode.ai/docs/zh-cn/>
+- Orca：<https://www.onorca.dev/> ｜ 源码 <https://github.com/stablyai/orca>
 - Matt Skills（技能包）：<https://www.aihero.dev/skills> ｜ 源码 <https://github.com/mattpocock/skills>
 - cc-switch：<https://ccswitch.io/zh/>
