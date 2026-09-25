@@ -312,3 +312,4 @@ npm uninstall -g @anthropic-ai/claude-code        # 卸载（~/.claude 不会删
 3. 环境变量：<https://code.claude.com/docs/zh-CN/env-vars>
 4. VS Code 扩展：<https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code>
 5. 统一接入与模型清单：见本仓库 [统一接入](统一接入.md)
+6. **实时查看可用模型与价格**：<https://newapi.ttxs.site/pricing>

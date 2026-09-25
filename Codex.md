@@ -244,7 +244,7 @@ args = ["-y", "@upstash/context7-mcp"]
 | --- | --- |
 | `401 Invalid token` | `NEWAPI_KEY` 没生效。新开终端，`$env:NEWAPI_KEY.Length` 应为 51 |
 | 一直提示登录 OpenAI | `requires_openai_auth = false` 漏了，或 `model_provider` 写错 |
-| `model_not_found` | 模型名不在清单里，见 [统一接入](统一接入.md) 第 4 节 |
+| `model_not_found` / `No available channel for model` | 模型名不在清单里：先在 [pricing 页](https://newapi.ttxs.site/pricing) 确认它在不在，再对照 [统一接入](统一接入.md) 第 4 节 |
 | 想让它在别的盘干活 | 先 `cd` 到那个目录再运行 `codex`；`workspace-write` 只允许改当前目录 |
 | VS Code 扩展里报错 | 扩展与命令行共用配置；先在命令行跑通 `codex exec "只回复两个字：可用"` |
 | 中文乱码（Windows） | 用 **Windows Terminal + PowerShell 7**，不要用老的 cmd 窗口 |
@@ -271,3 +271,4 @@ VS Code 扩展和桌面应用各自在应用内升级。配置、会话、`AGENT
 3. 桌面应用（微软商店）：<https://apps.microsoft.com/detail/9plm9xgg6vks>
 4. 配置项完整参考：<https://developers.openai.com/codex/config>
 5. 统一接入与模型清单：见本仓库 [统一接入](统一接入.md)
+6. **实时查看可用模型与价格**：<https://newapi.ttxs.site/pricing>

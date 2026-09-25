@@ -45,7 +45,7 @@
 | 文件 | 内容 | 什么时候看 |
 | --- | --- | --- |
 | [前置工具.md](前置工具.md) | Node.js、Git for Windows、Windows Terminal + PowerShell 7、VS Code、npm 镜像源、一键自检 | **最先看**，只做一次 |
-| [统一接入.md](统一接入.md) | 唯一要填密钥的地方：环境变量怎么设、地址与协议、**当前可用模型清单**、四家写法对照、报错对照 | 装任何工具前先看 |
+| [统一接入.md](统一接入.md) | 唯一要填密钥的地方：环境变量怎么设、地址与协议、**可用模型清单与实时价格页链接**、四家写法对照、报错对照 | 装任何工具前先看 |
 | [Codex.md](Codex.md) | 主力工具：终端 / VS Code 扩展 / 桌面应用 / 远程服务器，完整配置与权限取舍 | 必看 |
 | [pi.md](pi.md) | 次主力：安装（含 Git Bash 依赖）、`models.json` 接 NewAPI、默认模型与插件包 | 必看 |
 | [Claude Code.md](Claude%20Code.md) | 辅助：客户端配置、模型档位映射、**"为什么它现在处理图片有问题"整节** | 按需 |
@@ -91,6 +91,7 @@
 | OpenCode 用 `"apiKey": "{env:NEWAPI_KEY}"` 插值 | ✅ 正例返回"可用"；**反证**：改成不存在的变量名会返回 `Invalid token` |
 | Claude Code 用环境变量 `ANTHROPIC_AUTH_TOKEN` + 模型档位映射 | ✅ `claude -p` 正常返回；`/model` 显示映射后的模型名 |
 | 可用模型清单 | ✅ 用我们的 Key 直接查中转 `/v1/models` 得到 |
+| 模型价格 | 本文档不给单价（会变），**实时价看 <https://newapi.ttxs.site/pricing>** |
 
 ---
 
@@ -111,7 +112,7 @@
 # 7 常见问题（先看这里）
 
 1. **报 `401` / `Invalid token`** → 环境变量没生效。**新开一个终端**，用 `$env:NEWAPI_KEY.Length` 确认输出 `51`。见 [统一接入](统一接入.md) 第 2 节。
-2. **报 `503 model_not_found`** → 模型名不在中转清单里。清单见 [统一接入](统一接入.md) 第 4 节。注意别把 Claude Code 的 `[1M]` 后缀抄到别的工具里。
+2. **报 `503 model_not_found`** → 模型名不在中转清单里。先去 [pricing 页](https://newapi.ttxs.site/pricing) 看这个模型还在不在，再对照 [统一接入](统一接入.md) 第 4 节。注意别把 Claude Code 的 `[1M]` 后缀抄到别的工具里。
 3. **工具能聊天但不能跑命令（pi / OpenCode）** → 没装 Git for Windows。见 [前置工具](前置工具.md) 第 2 节。
 4. **中文乱码** → 用 Windows Terminal + PowerShell 7，不要用老的 cmd 窗口。
 5. **Claude Code 处理图片异常** → 这是客户端在第三方模型上的已知问题，不是你的配置错。见 [Claude Code](Claude%20Code.md) 第 8 节。

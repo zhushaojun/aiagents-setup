@@ -172,7 +172,7 @@ opencode
 | 模型不在列表里 | `providers`（复数）写成了 `provider`，或模型 `id` 不在中转清单里（见 [统一接入](统一接入.md) 第 4 节） |
 | 模型执行命令报找不到 bash | 装 Git for Windows；或用 `OPENCODE_GIT_BASH_PATH` 指向 `bash.exe` |
 | 后台服务起不来 | 加 `--standalone` 用私有服务跑：`opencode run --standalone "..."` |
-| `model_not_found` | 模型名写错；注意别把 Claude Code 的 `[1M]` 后缀抄进来 |
+| `model_not_found` | 模型名写错，或该模型当期已下架（看 [pricing 页](https://newapi.ttxs.site/pricing)）；注意别把 Claude Code 的 `[1M]` 后缀抄进来 |
 
 ---
 
@@ -195,3 +195,4 @@ opencode uninstall                        # 官方卸载命令（会清理相关
 2. 下载页（终端 / 桌面 / IDE 扩展）：<https://opencode.ai/zh/download>
 3. 官网：<https://opencode.ai/zh>
 4. 统一接入与模型清单：见本仓库 [统一接入](统一接入.md)
+5. **实时查看可用模型与价格**：<https://newapi.ttxs.site/pricing>

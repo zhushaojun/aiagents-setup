@@ -238,7 +238,7 @@ $env:PI_CODING_AGENT_DIR = "D:\pi-configs\work"
 | 报"找不到 bash" / bash 相关报错 | **没装 Git for Windows**。装完后重启终端；仍不行就用 `shellPath` 指定 `bash.exe` 路径 |
 | `--list-models` 里没有 newapi 的模型 | `$NEWAPI_KEY` 没生效（环境变量没设或没新开终端）；确认 `$env:NEWAPI_KEY.Length` 是 51 |
 | 报 `401` / `Invalid token` | 同上，或 Key 填错 |
-| 报 `model_not_found` | `models.json` 里的 `id` 不在中转清单里，见 [统一接入](统一接入.md) 第 4 节 |
+| 报 `model_not_found` | `models.json` 里的 `id` 不在中转清单里：先在 [pricing 页](https://newapi.ttxs.site/pricing) 确认它在不在，再对照 [统一接入](统一接入.md) 第 4 节 |
 | 模型能选但回答很慢 | 降 `defaultThinkingLevel`（`high`→`medium`/`low`），或换 `gpt-6-luna` 这类更快的模型 |
 | 中文输出乱码 | 用 Windows Terminal + PowerShell 7；`chcp 65001` 也可临时救急 |
 | 项目里 `AGENTS.md` 不生效 | 确认文件名是全大写 `AGENTS.md`，且在当前工作目录或它的上层目录 |
@@ -266,3 +266,4 @@ npm uninstall -g @earendil-works/pi-coding-agent                  # 卸载
 3. 中文文档镜像：<https://pi-agent.org/docs>
 4. 快速开始（英文原版）：<https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/quickstart.md>
 5. 统一接入与模型清单：见本仓库 [统一接入](统一接入.md)
+6. **实时查看可用模型与价格**：<https://newapi.ttxs.site/pricing>
