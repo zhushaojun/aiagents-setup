@@ -17,6 +17,8 @@
 
 **建议路径**：先把 **Codex** 用起来（够用 80% 的场景），再加 **pi**（国产模型、长上下文、插件生态），最后按兴趣看 Claude Code 与 OpenCode。
 
+工具跑顺之后，建议再装一套通用的**技能包**（把资深工程师的做事流程固化成文件，四个工具都能用）：[Matt Skills](Matt%20Skills.md)。
+
 ---
 
 # 2 五分钟最快路径
@@ -52,6 +54,7 @@
 | [OpenCode.md](OpenCode.md) | 辅助：**v2 配置格式**（与网上老教程不兼容）、验证与升级 | 按需 |
 | [cc-switch.md](cc-switch.md) | 供应商统一管理/本地路由工具，进阶用 | 用熟了再看 |
 | [附-完整配置.md](附-完整配置.md) | 我们机器上的进阶配置（脱敏）：hooks、插件、权限、桌面段等 | 想深度定制时看 |
+| [Matt Skills.md](Matt%20Skills.md) | 进阶：第三方技能包（25 个工程流程技能），装完主力工具后再看 | 想固化"做事流程"时看 |
 | [AI Coding.md](AI%20Coding.md) | 总览与选型：为什么重点关注命令行工具，四个工具的关系 | 想了解背景时看 |
 | `图片和附件/` | 教程用到的截图 | — |
 
@@ -135,4 +138,5 @@
 - pi：<https://pi.dev/> ｜ 源码 <https://github.com/earendil-works/pi>
 - Claude Code：<https://code.claude.com/docs/zh-CN/>
 - OpenCode：<https://opencode.ai/docs/zh-cn/>
+- Matt Skills（技能包）：<https://www.aihero.dev/skills> ｜ 源码 <https://github.com/mattpocock/skills>
 - cc-switch：<https://ccswitch.io/zh/>

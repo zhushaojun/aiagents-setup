@@ -226,7 +226,7 @@ status_line = ["model-with-reasoning", "current-dir", "git-branch", "context-use
 
 ## 7.3 接入 MCP / 技能 / 插件
 
-Codex 支持 MCP 服务器、`skills`、`plugins`：
+Codex 支持 MCP 服务器、`skills`、`plugins`。技能用 `/skills` 挑选或 `$技能名` 显式调用（**不支持 `/技能名` 这种斜杠写法**）；现成的第三方技能包与装法见 [Matt Skills](Matt%20Skills.md)。
 
 ```toml
 [mcp_servers.context7]

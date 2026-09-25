@@ -71,6 +71,7 @@ OpenCode 是一个受 Claude Code 启发而创建的开源 AI 编程智能体，
 | [Claude Code.md](Claude%20Code.md) | 辅助工具完整教程（含图片问题说明）                                               |
 | [OpenCode.md](OpenCode.md)         | 辅助工具完整教程（v2 格式）                                                 |
 | [cc-switch.md](cc-switch.md)       | 进阶：供应商统一管理与本地路由                                                 |
+| [Matt Skills.md](Matt%20Skills.md) | 进阶：第三方技能包（把工程流程固化成技能）                                           |
 | [附-完整配置.md](附-完整配置.md)             | 进阶：我们机器上的完整配置要点                                                 |
 | `图片和附件/`                           | 教程用到的截图                                                         |
 

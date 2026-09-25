@@ -216,7 +216,7 @@ pi install npm:context-mode         # 省上下文
 
 ## 7.3 技能 / 扩展 / 子智能体
 
-- **技能（skills）**：把一个专门任务的说明+附带文件打包，通过 `/skill:名字` 调用；适合"每次都按同一套流程做"的活。
+- **技能（skills）**：把一个专门任务的说明+附带文件打包，通过 `/skill:名字` 调用；适合"每次都按同一套流程做"的活。现成的第三方技能包见 [Matt Skills](Matt%20Skills.md)。
 - **扩展（extensions）**：TypeScript 写的插件，能加工具、加命令、改界面，是"自己能写代码改 pi"的那一层。
 - **子智能体（subagents）**：把一个任务拆给多个模型并行处理（`pi-subagents` 包提供）。
 - **MCP**：接入外部工具服务（如 context7 查文档）。
