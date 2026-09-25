@@ -1,0 +1,8 @@
+# 本地/会话产物
+.pi/
+node_modules/
+*.log
+
+# 真实密钥永远不要提交（示例中一律用 NEWAPI_KEY 占位）
+**/auth.json
+**/.credentials.json
