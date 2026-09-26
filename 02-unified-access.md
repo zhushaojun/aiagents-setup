@@ -1,8 +1,8 @@
 # 统一接入
 
-使用本教程默认的 **NewAPI 方案**时，本篇是**唯一需要填写密钥的地方**。后面 Claude Code / Codex / pi / OpenCode 四篇的默认配置可用于首次创建，已有文件先备份合并；另接其他供应商（如 OpenCode Console）时，需按对应文档单独配置密钥。
+使用本教程默认的 **NewAPI 方案**时，Codex / OpenCode / Claude Code 在本篇设置密钥，**pi 另按 [pi 第 4.1 节](04-pi.md#41-接入-newapiuserprofilepiagentmodelsjson)将密钥写入 `auth.json`**。后面 Claude Code / Codex / pi / OpenCode 四篇的默认配置可用于首次创建，已有文件先备份合并；另接其他供应商（如 OpenCode Console）时，需按对应文档单独配置密钥。
 
-一句话原理：把密钥放进**用户级环境变量**，各工具自己去读。这样配置文件里只出现变量名，不出现密钥，便于共享示例；自己的配置仍要检查其他凭据和本机路径。
+密钥来源：Codex / OpenCode / Claude Code 读取**用户级环境变量**；pi 使用 **`auth.json` 中的真实 API Key**。当前使用环境中，pi 原教程的环境变量方案未生效，因此按现用的文件凭据方案配置。
 
 ---
 
@@ -12,27 +12,29 @@
 | --- | --- | --- |
 | 中转站地址 | `https://newapi.ttxs.site` | 我们统一的模型入口（NewAPI） |
 | 密钥 | `sk-你的Key` | 使用你自己的有效密钥，禁止分享；服务入口：[NewAPI](https://newapi.ttxs.site) |
-| 环境变量名（通用） | `NEWAPI_KEY` | Codex / pi / OpenCode 读这个 |
+| 环境变量名（通用） | `NEWAPI_KEY` | Codex / OpenCode 读这个；pi 使用 `auth.json` |
 | 环境变量名（Claude Code 专用） | `ANTHROPIC_AUTH_TOKEN` | 本教程选用的 Bearer 鉴权变量 |
 
 > 本教程为 Claude Code 选用 `ANTHROPIC_AUTH_TOKEN`，由客户端生成 Bearer 请求头。它也支持 `ANTHROPIC_API_KEY`（`X-Api-Key` 请求头）等官方鉴权方式；选用哪种取决于服务端。本教程不依赖 `settings.json` 中的 `${变量}` 展开，避免把真实密钥写入配置。参见 [官方环境变量说明](https://code.claude.com/docs/en/env-vars)。
 
 ## 1.1 变量名的约定
 
-这两个名字是全套文档的约定，四个工具都按这两个名字去读，**名字不要改**（改了各工具的配置文件里的引用也要跟着改）。
+这两个名字是全套文档的约定，Codex / OpenCode / Claude Code 按这两个名字去读；pi 不使用这两个变量，**名字不要改**（改了各工具的配置文件里的引用也要跟着改）。
 
 各工具怎么引用它们：
 
 | 工具 | 在配置里怎么写 |
 | --- | --- |
 | Codex | `env_key = "NEWAPI_KEY"` |
-| pi | `"apiKey": "$NEWAPI_KEY"` |
+| pi | `auth.json`：`"newapi": { "type": "api_key", "key": "sk-你的Key" }` |
 | OpenCode | `"apiKey": "{env:NEWAPI_KEY}"` |
 | Claude Code | 不写——它自动读 `ANTHROPIC_AUTH_TOKEN` |
 
 ---
 
 # 2 设置环境变量
+
+本节用于 Codex / OpenCode / Claude Code；只使用 pi 时，直接按 [pi 第 4.1 节](04-pi.md#41-接入-newapiuserprofilepiagentmodelsjson)填写 `auth.json`。
 
 ## 2.1 Windows（推荐：永久写入用户变量，只需做一次）
 
@@ -160,10 +162,10 @@ qwen3.8-max                 space-bunny-free
 | --- | --- | --- |
 | Claude Code | `%USERPROFILE%\.claude\settings.json` | 不写 Key，直接读环境变量 `ANTHROPIC_AUTH_TOKEN` |
 | Codex | `%USERPROFILE%\.codex\config.toml` | `env_key = "NEWAPI_KEY"` |
-| pi | `%USERPROFILE%\.pi\agent\models.json` | `"apiKey": "$NEWAPI_KEY"` |
+| pi | `%USERPROFILE%\.pi\agent\auth.json` | `"newapi": { "type": "api_key", "key": "sk-你的Key" }` |
 | OpenCode | `%USERPROFILE%\.config\opencode\opencode.json` | `"apiKey": "{env:NEWAPI_KEY}"` |
 
-四家的写法各不相同，**别抄错**：Claude Code 什么都不写（直接读环境变量）；Codex 只写变量名（不加 `$`）；pi 用 `$变量名`；OpenCode 用 `{env:变量名}`。
+四家的写法各不相同，**别抄错**：Claude Code 什么都不写（直接读环境变量）；Codex 只写变量名（不加 `$`）；pi 将真实 Key 写入 `auth.json` 的 `newapi.key`；OpenCode 用 `{env:变量名}`。
 
 ---
 
@@ -176,7 +178,7 @@ qwen3.8-max                 space-bunny-free
 | 现象 | 可能原因 | 检查顺序 | 下一步 |
 | --- | --- | --- | --- |
 | Codex：`Missing environment variable: NEWAPI_KEY` | 当前进程未读到变量，或 `env_key` 写错 | 核对变量名 → 非空检查 → 重启父应用 | 按第 2 节重新加载环境，不必先更换密钥 |
-| pi：`No API key found for newapi.` | 配置未加载、变量未解析或凭据缺失 | 核对目录和 JSON → 变量 → `auth.json` 是否有旧条目 | 按附录 3.2 仅检查条目存在性；不用 `/login` 覆盖教程方案 |
+| pi：`No API key found for newapi.` | 配置未加载或文件凭据缺失 | 核对目录和 JSON → `auth.json` 的 `newapi.type` 与 `newapi.key` | 按附录 3.2 检查格式和非空状态，按 pi 第 4.1 节补齐凭据 |
 | Claude Code：要求登录 | 当前鉴权未生效、配置冲突或入口认证要求 | 确认 `ANTHROPIC_AUTH_TOKEN` → 地址 → CLI 与扩展分别验证 | 查当前版本鉴权文档，不把所有登录提示都当成密钥错误 |
 | `401` / `Invalid token` / `Authentication failed` | 凭据错误、失效、被旧凭据覆盖，或引用未解析 | 核对变量与引用语法 → 凭据优先级 → 服务端响应 | 请服务维护者核对密钥状态；额度问题按响应及后台确认 |
 | pi 的模型列表没有 `newapi` | 配置目录不对、格式错误、过滤规则或凭据不可用 | 核对配置路径 → `providers` → `enabledModels` → 凭据 | `--list-models` 是本地检查，不证明服务端接受密钥 |
@@ -200,8 +202,8 @@ qwen3.8-max                 space-bunny-free
 # 7 安全
 
 - Key 等于你的额度，**不要**贴进聊天群、截图、GitHub、飞书公开文档。
-- 本文的模型配置示例仅引用变量名；你自己的文件还可能含其他服务凭据、私有路径、插件配置和历史密钥，分享前必须检查。环境变量也不等于加密存储，能读取进程环境的程序仍可能取得它。
-- 万一 Key 泄露：撤销泄露的密钥并换新，按 2.1 更新两个变量并重启相关程序。服务入口：[NewAPI](https://newapi.ttxs.site)。
+- pi 的 `auth.json` 保存明文密钥，不能分享；其他工具的示例引用环境变量。你自己的文件还可能含其他服务凭据、私有路径、插件配置和历史密钥，分享前必须检查。环境变量也不等于加密存储，能读取进程环境的程序仍可能取得它。
+- 万一 Key 泄露：撤销泄露的密钥并换新，按 2.1 更新两个变量，同时更新 pi 的 `auth.json` 中的 `newapi.key`，再重启相关程序。服务入口：[NewAPI](https://newapi.ttxs.site)。
 
 ---
 
@@ -254,20 +256,18 @@ fi
     "other": {
       "baseUrl": "https://example.invalid/v1",
       "api": "openai-responses",
-      "apiKey": "$OTHER_KEY",
       "models": []
     },
     "newapi": {
       "baseUrl": "https://old.example.invalid/v1",
       "api": "openai-responses",
-      "apiKey": "$OLD_NEWAPI_KEY",
       "models": []
     }
   }
 }
 ```
 
-合并后（仅更新 `newapi` 的地址和密钥引用，保留 `other` 及已有模型）：
+合并后（仅更新 `newapi` 的地址，保留 `other` 及已有模型；密钥单独写入 `auth.json`）：
 
 ```json
 {
@@ -275,18 +275,18 @@ fi
     "other": {
       "baseUrl": "https://example.invalid/v1",
       "api": "openai-responses",
-      "apiKey": "$OTHER_KEY",
       "models": []
     },
     "newapi": {
       "baseUrl": "https://newapi.ttxs.site/v1",
       "api": "openai-responses",
-      "apiKey": "$NEWAPI_KEY",
       "models": []
     }
   }
 }
 ```
+
+本例省略其他供应商的认证配置，合并时保留其原有字段。若 `providers.newapi` 仍有旧的 `apiKey` 环境变量引用，移除该字段，并按 pi 第 4.1 节配置 `auth.json`。
 
 原来没有 `newapi` 时，在现有 `providers` 对象内添加一次；已经有时直接修改该对象中的同名字段，不再粘贴第二个 `providers` 或 `newapi`。不要把 `models.json` 的合并结果写进 `settings.json`：默认供应商和模型仍按 pi 第 4.2 节设置，本例不改变默认项。
 

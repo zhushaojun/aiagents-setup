@@ -243,22 +243,21 @@ args = ["-y", "@upstash/context7-mcp"]
 
 我们文件里有三个供应商：`newapi`（教程用这个）、`deepseek`、`bailian`。后两个走各自官方的 Key，与本教程无关。[pi 第 4.1 节](04-pi.md#41-接入-newapiuserprofilepiagentmodelsjson)的首次配置已包含 `thinkingLevelMap`，用于声明可选思考档位及参数映射。新增模型时应核对这些映射；`compat` 兼容开关（如 `thinkingFormat`、`maxTokensField`）则按实际协议需要调整。官方文档：<https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md>
 
-`newapi` 块仅引用环境变量，不在这个配置块中保存真实密钥（和教程一致）：
+`models.json` 的 `newapi` 块只配置地址、协议和模型；真实 API Key 按 [pi 第 4.1 节](04-pi.md#41-接入-newapiuserprofilepiagentmodelsjson)写入同目录 `auth.json`（和教程一致）：
 
 JSON 片段（合并到对应对象；不能单独保存为完整 JSON）：
 
 ```text
 "newapi": {
   "baseUrl": "https://newapi.ttxs.site/v1",
-  "apiKey": "$NEWAPI_KEY",
   "api": "openai-responses",
   "models": [ … ]
 }
 ```
 
-pi 会优先使用运行时凭据及 `auth.json` 中已存的凭据，再考虑 `models.json` 的 `apiKey` 等来源；具体规则见 [pi 模型配置文档](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md)。旧条目可能覆盖环境变量方案。
+本教程统一使用 `auth.json` 的顶层 `newapi` 条目：`type` 为 `api_key`，`key` 为真实 API Key。当前使用环境中原教程的环境变量方案未生效，不再将其作为接入步骤。
 
-仅检查 `newapi` 条目是否存在，不打印密钥或整个文件：
+检查 `newapi` 条目、认证类型和密钥非空状态，不打印密钥或整个文件：
 
 ```PowerShell
 $authPath = Join-Path $env:USERPROFILE '.pi/agent/auth.json'
@@ -266,6 +265,9 @@ if (Test-Path -LiteralPath $authPath -PathType Leaf) {
   try {
     $authData = Get-Content -LiteralPath $authPath -Raw -ErrorAction Stop | ConvertFrom-Json -AsHashtable -ErrorAction Stop
     Write-Output ('存在 newapi 条目：' + $authData.ContainsKey('newapi'))
+    $entry = $authData['newapi']
+    Write-Output ('认证类型正确：' + ($null -ne $entry -and $entry['type'] -eq 'api_key'))
+    Write-Output ('密钥非空：' + ($null -ne $entry -and -not [string]::IsNullOrWhiteSpace($entry['key'])))
   } catch {
     Write-Output '凭据文件无法解析；请在本机编辑器检查，不要贴出完整文件。'
   }
@@ -274,7 +276,7 @@ if (Test-Path -LiteralPath $authPath -PathType Leaf) {
 }
 ```
 
-若确认旧条目需要移除，先按统一接入第 9 节备份这个文件，再在本机编辑器中仅删除 `newapi` 条目，保留其他供应商。备份也含凭据，不上传。不要用低深度 JSON 重序列化覆盖整个凭据文件。
+预期三项均为 `True`；非空不代表密钥有效，还需按 pi 第 5.2 节发起短文本请求。若条目缺失或密钥过期，先按统一接入第 9 节备份，再在本机编辑器中补齐或更新 `newapi` 条目，保留其他供应商。不要为了切换到环境变量而删除该条目。备份也含凭据，不上传。不要用低深度 JSON 重序列化覆盖整个凭据文件。
 
 `pi --list-models` 可检查本地模型注册和凭据解析，但不能验证密钥被服务端接受，也不应要求固定模型数量。错误诊断统一见 [统一接入第 6 节](02-unified-access.md#6-常见报错对照)。
 

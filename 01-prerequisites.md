@@ -14,7 +14,7 @@
 | **Git for Windows** | pi / OpenCode 用它执行命令；Claude Code 的 hooks 也依赖它 | [第 2 节](#2-git-for-windows) |
 | **Windows Terminal + PowerShell 7** | 中文不乱码、按键正常、界面清爽 | [第 3 节](#3-windows-terminal--powershell-7) |
 | **VS Code（可选）** | Claude Code / Codex 有 VS Code 扩展 | [第 4 节](#4-vs-code) |
-| **环境变量 `NEWAPI_KEY` 等** | 所有工具的密钥来源 | 见 [统一接入](02-unified-access.md) |
+| **环境变量 `NEWAPI_KEY` 等** | Codex / OpenCode / Claude Code 的密钥来源；pi 使用 `auth.json` | 见 [统一接入](02-unified-access.md) |
 
 装完直接跳到 [第 5 节](#5-一键自检) 跑一次自检。
 
