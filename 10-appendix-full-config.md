@@ -302,9 +302,11 @@ if (Test-Path -LiteralPath $authPath -PathType Leaf) {
 
 ## 4.3 思考档位映射：`variants`
 
+首次配置的默认思考强度见 [OpenCode 第 4 节](05-opencode.md#4-配置首次创建已有文件先备份合并)：在模型级设置 `"settings": { "reasoningEffort": "high" }`。本节的 `variants` 用于额外提供可选档位，选中后会覆盖默认参数；仅添加 `variants` 不会自动选中 `high`。
+
 以下为历史模型条目片段；参数透传、档位、图片输入及上下文/输出上限均需按实际中转协议复测。正文仍采用文本输入声明，不因附录声明 `image` 就认为该链路支持图片。
 
-OpenCode 的 `low / medium / high / max` 档位（命令行写作 `模型#档位`，见 [OpenCode](05-opencode.md) 第 6 节）**不是内置语义**，而是每个模型在 `opencode.json` 里自己声明的：在模型条目下加 `variants` 数组，把档位翻译成该厂商真正认的参数。
+OpenCode 的档位（命令行写作 `模型#档位`，见 [OpenCode](05-opencode.md) 第 6 节）可以来自模型目录，也可以在模型条目下用 `variants` 数组自行声明或覆盖，把档位翻译成该厂商真正认的参数。不能假定所有模型都有 `low / medium / high / max`。
 
 JSON 片段（合并到对应对象；不能单独保存为完整 JSON）：
 
@@ -330,7 +332,7 @@ JSON 片段（合并到对应对象；不能单独保存为完整 JSON）：
 | `low / medium / high / xhigh` | `gpt-6-sol`、`gpt-6-luna`、`gpt-6-astra` | 最高档叫 `xhigh`，**不是** `max` |
 | `low / medium / high` | `glm-5.3`、`glm-5.3-flash`、`qwen3.8-plus`、`mimo-v2.6-flash`、`mimo-v2.6-pro` | 没有更高档 |
 
-> 这和 pi 的 `thinkingLevelMap` 是同一件事的两种写法（见 3.2）：**客户端的档位是抽象的，必须映射到厂商真实参数才生效**。没声明 `variants` 的模型就没有档位可选。
+> 这和 pi 的 `thinkingLevelMap` 都用于档位映射（见 3.2）：**客户端的档位是抽象的，必须映射到厂商真实参数才生效**。如果模型目录和本地配置都没有提供 `variants`，就没有命名档位可选；仍可通过模型级 `settings` 设置默认参数。
 > ⚠️ 剩下两个没声明 `variants` 的模型 `kimi-k2.7-code`、`minimax-m3`，名字也在 4.1 的历史不可用名单里（[统一接入](02-unified-access.md) 第 4 节的清单里同样没有它们）。旧条目仍可能出现在模型选择器里，但本地可选不代表服务端可用；先核对实时列表再清理。表中的 `qwen3.8-plus` 也不在本教程快照里，不要照表新增。
 
 ---

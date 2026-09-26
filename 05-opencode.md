@@ -86,16 +86,19 @@ New-Item -ItemType Directory -Force (Split-Path -Parent $configPath) -ErrorActio
       "models": {
         "glm-5.3-flash": {
           "name": "GLM-5.3 Flash",
+          "settings": { "reasoningEffort": "high" },
           "limit": { "context": 500000, "output": 128000 },
           "capabilities": { "tools": true, "input": ["text"], "output": ["text"] }
         },
         "deepseek-v4.1-flash": {
           "name": "DeepSeek V4.1 Flash",
+          "settings": { "reasoningEffort": "high" },
           "limit": { "context": 500000, "output": 384000 },
           "capabilities": { "tools": true, "input": ["text"], "output": ["text"] }
         },
         "gpt-6-sol": {
           "name": "GPT-6 Sol",
+          "settings": { "reasoningEffort": "high" },
           "limit": { "context": 258000, "output": 32768 },
           "capabilities": { "tools": true, "input": ["text", "image"], "output": ["text"] }
         }
@@ -128,6 +131,12 @@ New-Item -ItemType Directory -Force (Split-Path -Parent $configPath) -ErrorActio
 >
 > **不写这一行的实际后果**：OpenCode 会自己挑一个“可用”的模型，实测会落到内置免费模型 `space-bunny-free`，此时实际使用的是另一个供应商，不能据此比较客户端能力。用 `opencode run --standalone` 跑一次，状态行里模型名不带 `newapi/` 就是没接上。
 
+**首次配置也要明确设置思考强度**：上面三个模型都在各自的 `settings` 中设置了 `"reasoningEffort": "high"`，不选额外档位时就使用这个默认值，与 pi 的初始档位一致。觉得响应太慢时，可在对应模型下改为 `medium` 或 `low`；相同档位名称不保证不同模型具有相同的思考预算。
+
+不要把它放进连接用的 `providers.newapi.settings` 中统一套给所有模型，也不要把顶层 `model` 改成 `newapi/deepseek-v4.1-flash#high`：当前 v2 的顶层默认模型不保留 `#variant`。模型级 `settings` 用于默认参数，`variants` 用于按需覆盖；仅声明可选档位不等于设置默认强度。依据见 [官方模型配置](https://opencode.ai/v2/docs/models)与[默认模型说明](https://opencode.ai/v2/docs/config#model)。
+
+`reasoningEffort` 最终是否被接受、如何执行，取决于驱动、中转和模型；本次核实了客户端配置写法，未实测这些模型的参数透传。若服务端报参数不支持，应核对该模型的协议与档位映射，见[附录第 4.3 节](10-appendix-full-config.md#43-思考档位映射variants)。`cli.json` 的 `session.thinking` 只控制思考内容的显示，不是思考强度。
+
 ## 4.1 可选：接入 OpenCode Console 的限时免费模型
 
 上面的配置默认使用 **NewAPI**；`/models` 中仍可能显示内置免费模型，它们并不走 NewAPI 中转。若想使用 OpenCode Console 的限时免费模型，按 [OpenCode 官方流程](https://opencode.ai/v2/docs/console/models) 登录 Console，完成其要求的账单与额度设置并取得 API key，然后在 OpenCode 交互界面执行 `/connect`，选择 **OpenCode pay-as-you-go**（Console）并填入该 key。再执行 `/models`，从列表中选择标有 **Free** 的模型。原有 NewAPI 配置不用删除。
@@ -155,7 +164,7 @@ Test-Path -LiteralPath (Join-Path $env:USERPROFILE '.config/opencode/opencode.js
 opencode run --standalone --model newapi/deepseek-v4.1-flash "只回复两个字：可用"
 ```
 
-预期收到正常回答。它只验证所选模型的基本请求链路；确认实际供应商和模型符合命令与配置，失败按 [统一接入第 6 节](02-unified-access.md#6-常见报错对照)排查。
+本命令没有指定 `#variant`，使用第 4 节模型级 `settings.reasoningEffort: high`。预期收到正常回答。它只验证所选模型的基本请求链路，不证明服务端实际采用了 `high`；若需确认参数透传，须核对中转请求记录。确认实际供应商和模型符合命令与配置，失败按 [统一接入第 6 节](02-unified-access.md#6-常见报错对照)排查。
 
 ## 5.3 文件读取与只读命令
 
@@ -198,7 +207,7 @@ opencode --model newapi/deepseek-v4.1-flash
 
 # 7 进阶
 
-- **思考档位（`variants`）**：界面与 `模型#档位` 里的 `low / medium / high / max` 并不是内置语义，而是每个模型在 `opencode.json` 里声明的 `variants`，作用是把档位翻译成厂商真正认的参数（如 `reasoningEffort`）。第 4 节的精简配置没有声明它；想按模型精细控制思考强度，照[附录](10-appendix-full-config.md) 4.3 补。
+- **思考档位（`variants`）**：第 4 节已经通过模型级 `settings.reasoningEffort` 设置默认 `high`。需要用 `模型#档位` 临时切换时，再配置 `variants`，见[附录](10-appendix-full-config.md) 4.3。档位可来自模型目录或自行声明，不能假定每个模型都有 `low / medium / high / max`；变体参数会覆盖模型默认参数，未定义的档位会导致模型解析错误。
 - **插件**：`opencode plugin` 管理插件；配置里也可以直接列插件包名。
 - **多智能体编排**：社区有 `oh-my-openagent` 这类插件，把不同任务分给不同模型。**本篇不展开、也不推荐初学者上**——它需要先熟悉基础用法，而且插件里的模型名要自己跟中转清单对齐，很容易写出失效配置。
 - **Web / 服务模式**：`opencode serve` 起一个本地服务，`opencode serve` + 浏览器可当轻量 Web 版用；`opencode acp` 供 IDE 接入 Agent Client Protocol。
