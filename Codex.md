@@ -1,6 +1,6 @@
 # Codex
 
-**这是我们当前的主力工具。** 由 OpenAI 出品，命令行、VS Code 扩展、桌面应用三种形态齐全，接 GPT 系列模型时工具调用最稳，是"日常干活首选"。
+**这是我们当前的主力工具。** 由 OpenAI 出品，命令行、VS Code 扩展、ChatGPT 桌面应用（Codex 的桌面形态现已并入 ChatGPT）三种形态齐全，接 GPT 系列模型时工具调用最稳，是"日常干活首选"。**它的命令行客户端还是开源的**（可审计、可自改，见第 10 节）。
 
 <!-- 截图：Codex 在 VS Code 里的对话框（扩展已登录可用状态） -->
 
@@ -8,10 +8,10 @@
 
 # 1 它是什么、适合谁
 
-- **定位**：OpenAI 官方的命令行编程智能体，与 Claude Code 齐名；三种使用形态（终端 / VS Code 扩展 / 桌面应用）共用同一套配置。
+- **定位**：OpenAI 官方的命令行编程智能体，与 Claude Code 齐名，两种属于同一能力梯队（**并不存在"Codex 能力超过 Claude Code"这回事**）；三种使用形态（终端 / VS Code 扩展 / ChatGPT 桌面应用）共用同一套配置。
 - **适合**：绝大多数日常任务——读代码、改 bug、写脚本、跑命令、查文档。
-- **优势**：与 GPT 系列模型同源，工具调用（读文件、跑命令、改代码）成功率高；配置文件简单；不登录 OpenAI 账号也能用我们自己的中转。
-- **不适合**：需要超长上下文一次性吞下整个大仓库时，可换 pi 或 Claude Code 的长上下文模型。
+- **优势**：与 GPT 系列模型同源，工具调用（读文件、跑命令、改代码）成功率高；**命令行客户端开源**；配置文件简单，CLI 不登录 OpenAI 账号也能使用我们的中转。
+- **不适合**：需要超长上下文一次性吞下整个大仓库时，可换 pi 或 Claude Code 的长上下文模型；Claude Code 的选型与兼容性注意事项见 [Claude Code](Claude%20Code.md) 第 8 节。
 
 ---
 
@@ -47,13 +47,13 @@ codex --version
 
 装完后左侧会出现 Codex 图标，点开即可对话。**扩展和命令行共用 `~/.codex/config.toml`**，所以命令行配置好之后，扩展里直接就能用。
 
-## 3.3 桌面应用
+## 3.3 桌面应用（现已改名 ChatGPT）
 
-从微软商店安装：<https://apps.microsoft.com/detail/9plm9xgg6vks>
+从微软商店安装 **ChatGPT** 桌面应用：<https://apps.microsoft.com/detail/9plm9xgg6vks>
 
-<!-- 截图：Codex 桌面应用主界面 -->
+<!-- 截图：ChatGPT 桌面应用主界面 -->
 
-桌面应用适合"不想开终端"的场景，配置同样读 `~/.codex/config.toml`。我们的电脑里它还会提供"computer use"（让模型操作浏览器/桌面）能力，属于进阶玩法。
+**注意**：Codex 原来的桌面版现在位于 **ChatGPT 桌面应用**中，不要去找一个叫"Codex 桌面版"的独立安装包。首次启动按应用提示认证：可登录 ChatGPT 账号，也可通过 API key 使用 Codex，但[部分功能可能不可用](https://learn.chatgpt.com/docs/quickstart)。本教程的 `NEWAPI_KEY` 用于中转模型请求，不能代替桌面应用的首次认证。进入应用后选择 **Codex**，它会读取同一份 `~/.codex/config.toml`；我们的电脑里它还提供"computer use"（让模型操作浏览器/桌面）能力。
 
 ## 3.4 远程 Linux 服务器
 
@@ -260,15 +260,16 @@ npm install -g @openai/codex     # 升级到最新版
 npm uninstall -g @openai/codex   # 卸载（配置目录 ~/.codex 不会被删）
 ```
 
-VS Code 扩展和桌面应用各自在应用内升级。配置、会话、`AGENTS.md` 都保存在 `%USERPROFILE%\.codex`，卸载重装不会丢。
+VS Code 扩展和 ChatGPT 桌面应用各自在应用内升级。配置、会话、`AGENTS.md` 都保存在 `%USERPROFILE%\.codex`，卸载重装不会丢。
 
 ---
 
 # 10 参考资料
 
 1. Codex 官方文档：<https://developers.openai.com/codex>
-2. VS Code 扩展（扩展 ID `openai.chatgpt`）：<https://marketplace.visualstudio.com/items?itemName=openai.chatgpt>
-3. 桌面应用（微软商店）：<https://apps.microsoft.com/detail/9plm9xgg6vks>
-4. 配置项完整参考：<https://developers.openai.com/codex/config>
-5. 统一接入与模型清单：见本仓库 [统一接入](统一接入.md)
-6. **实时查看可用模型与价格**：<https://newapi.ttxs.site/pricing>
+2. 源码（命令行客户端开源）：<https://github.com/openai/codex>
+3. VS Code 扩展（扩展 ID `openai.chatgpt`）：<https://marketplace.visualstudio.com/items?itemName=openai.chatgpt>
+4. 桌面应用（微软商店，装 ChatGPT，Codex 的桌面形态已并入其中）：<https://apps.microsoft.com/detail/9plm9xgg6vks>
+5. 配置项完整参考：<https://developers.openai.com/codex/config>
+6. 统一接入与模型清单：见本仓库 [统一接入](统一接入.md)
+7. **实时查看可用模型与价格**：<https://newapi.ttxs.site/pricing>

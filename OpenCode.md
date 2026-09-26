@@ -112,6 +112,12 @@ New-Item -ItemType Directory -Force "$env:USERPROFILE\.config\opencode" | Out-Nu
 
 `models` 里的 `limit.context` / `limit.output` 是给模型声明的上下文与输出上限，**写小了会让它无法处理长文件**，照抄上面的值即可（数值来自中转的模型信息）。
 
+## 4.1 可选：接入 OpenCode Console 的限时免费模型
+
+上面的配置只接入 **NewAPI**，不会自动出现 OpenCode Console 的免费模型。若想使用这条独立渠道，按 [OpenCode 官方流程](https://opencode.ai/v2/docs/console/models) 登录 Console，完成其要求的账单与额度设置并取得 API key，然后在 OpenCode 交互界面执行 `/connect`，选择 **OpenCode pay-as-you-go**（Console）并填入该 key。再执行 `/models`，从列表中选择标有 **Free** 的模型。原有 NewAPI 配置不用删除。
+
+免费模型是**限时提供**的，名单和使用条件会变化；选择前查看官方页面的 [Free models 列表](https://opencode.ai/v2/docs/console/models#free-models) 与当前价格。Console 的 key 与本教程的 `NEWAPI_KEY` 不是同一个密钥。
+
 ---
 
 # 5 验证
