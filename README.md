@@ -51,7 +51,7 @@
 
 | 文件 | 内容 | 什么时候看 |
 | --- | --- | --- |
-| [00-ai-coding.md](00-ai-coding.md) | 总览与选型：命令行主线、桌面入口与四个工具的顺位 | **可选**，想先了解背景时看；想直接动手就从 01 开始 |
+| [00-overview.md](00-overview.md) | 总览与选型：命令行主线、桌面入口与四个工具的顺位 | **可选**，想先了解背景时看；想直接动手就从 01 开始 |
 | [01-prerequisites.md](01-prerequisites.md) | Node.js、Git for Windows、Windows Terminal + PowerShell 7、VS Code、npm 镜像源、一键自检 | **最先看**，只做一次 |
 | [02-unified-access.md](02-unified-access.md) | 默认 NewAPI 方案填写密钥的地方：环境变量怎么设、地址与协议、**可用模型清单与实时价格页链接**、四家写法对照、报错对照 | 装任何工具前先看 |
 | [03-codex.md](03-codex.md) | 主力工具：终端 / VS Code 扩展 / ChatGPT 桌面应用 / 远程服务器，完整配置与权限取舍 | 必看 |
