@@ -73,10 +73,3 @@ OpenCode 是一个受 Claude Code 启发而创建的开源 AI 编程智能体，
 | 07–09 | [07-orca.md](07-orca.md)｜[08-cc-switch.md](08-cc-switch.md)｜[09-matt-skills.md](09-matt-skills.md) | 进阶：编排层、多供应商、技能包 |
 | 10 | [10-appendix-full-config.md](10-appendix-full-config.md) | 附录：我们机器上的完整配置要点 |
 
-
-## 4.1 外部参考（飞书 wiki）
-
-- [Claude Code](https://zjhu-ailab.feishu.cn/wiki/Mud8whZ6Ki7RiGkB5l1cuTJCnid)
-- [Codex](https://zjhu-ailab.feishu.cn/wiki/FfbpwngEIikAy2kKAxJcbiTBn8j)
-- [OpenCode](https://zjhu-ailab.feishu.cn/wiki/TXkSwnaO4iAtj8kpAQWcAfnbngc)
-
