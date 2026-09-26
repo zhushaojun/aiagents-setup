@@ -241,7 +241,7 @@ args = ["-y", "@upstash/context7-mcp"]
 
 ## 3.2 pi 的 `models.json`
 
-我们文件里有三个供应商：`newapi`（教程用这个）、`deepseek`、`bailian`。后两个走各自官方的 Key，与本教程无关。进阶项包括 `compat` 兼容开关（如 `thinkingFormat`、`maxTokensField`）与 `thinkingLevelMap`（把 pi 的思考档位映射到厂商实际支持的档位）——**这些只在模型行为异常时才需要调**，官方文档：<https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md>
+我们文件里有三个供应商：`newapi`（教程用这个）、`deepseek`、`bailian`。后两个走各自官方的 Key，与本教程无关。[pi 第 4.1 节](04-pi.md#41-接入-newapiuserprofilepiagentmodelsjson)的首次配置已包含 `thinkingLevelMap`，用于声明可选思考档位及参数映射。新增模型时应核对这些映射；`compat` 兼容开关（如 `thinkingFormat`、`maxTokensField`）则按实际协议需要调整。官方文档：<https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md>
 
 `newapi` 块仅引用环境变量，不在这个配置块中保存真实密钥（和教程一致）：
 
@@ -302,7 +302,7 @@ if (Test-Path -LiteralPath $authPath -PathType Leaf) {
 
 ## 4.3 思考档位映射：`variants`
 
-首次配置的默认思考强度见 [OpenCode 第 4 节](05-opencode.md#4-配置首次创建已有文件先备份合并)：在模型级设置 `"settings": { "reasoningEffort": "high" }`。本节的 `variants` 用于额外提供可选档位，选中后会覆盖默认参数；仅添加 `variants` 不会自动选中 `high`。
+首次配置的完整可选档位见 [OpenCode 第 4 节](05-opencode.md#4-配置首次创建已有文件先备份合并)：五个模型均已包含 `variants`，可直接用 `模型#档位` 选择。本节补充历史配置与映射说明；仅添加 `variants` 不会自动选中 `high`。
 
 以下为历史模型条目片段；参数透传、档位、图片输入及上下文/输出上限均需按实际中转协议复测。正文仍采用文本输入声明，不因附录声明 `image` 就认为该链路支持图片。
 

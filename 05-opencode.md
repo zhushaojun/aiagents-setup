@@ -86,19 +86,55 @@ New-Item -ItemType Directory -Force (Split-Path -Parent $configPath) -ErrorActio
       "models": {
         "glm-5.3-flash": {
           "name": "GLM-5.3 Flash",
-          "settings": { "reasoningEffort": "high" },
+          "variants": [
+            { "id": "low", "settings": { "reasoningEffort": "low" } },
+            { "id": "medium", "settings": { "reasoningEffort": "medium" } },
+            { "id": "high", "settings": { "reasoningEffort": "high" } }
+          ],
           "limit": { "context": 500000, "output": 128000 },
           "capabilities": { "tools": true, "input": ["text"], "output": ["text"] }
         },
         "deepseek-v4.1-flash": {
           "name": "DeepSeek V4.1 Flash",
-          "settings": { "reasoningEffort": "high" },
+          "variants": [
+            { "id": "low", "settings": { "thinking": { "type": "disabled" } } },
+            { "id": "medium", "settings": { "thinking": { "type": "enabled" } } },
+            { "id": "high", "settings": { "reasoningEffort": "high" } },
+            { "id": "max", "settings": { "reasoningEffort": "max" } }
+          ],
           "limit": { "context": 500000, "output": 384000 },
           "capabilities": { "tools": true, "input": ["text"], "output": ["text"] }
         },
+        "gpt-6-luna": {
+          "name": "GPT-6 Luna",
+          "variants": [
+            { "id": "low", "settings": { "reasoningEffort": "low" } },
+            { "id": "medium", "settings": { "reasoningEffort": "medium" } },
+            { "id": "high", "settings": { "reasoningEffort": "high" } },
+            { "id": "xhigh", "settings": { "reasoningEffort": "xhigh" } }
+          ],
+          "limit": { "context": 258000, "output": 32768 },
+          "capabilities": { "tools": true, "input": ["text", "image"], "output": ["text"] }
+        },
         "gpt-6-sol": {
           "name": "GPT-6 Sol",
-          "settings": { "reasoningEffort": "high" },
+          "variants": [
+            { "id": "low", "settings": { "reasoningEffort": "low" } },
+            { "id": "medium", "settings": { "reasoningEffort": "medium" } },
+            { "id": "high", "settings": { "reasoningEffort": "high" } },
+            { "id": "xhigh", "settings": { "reasoningEffort": "xhigh" } }
+          ],
+          "limit": { "context": 258000, "output": 32768 },
+          "capabilities": { "tools": true, "input": ["text", "image"], "output": ["text"] }
+        },
+        "gpt-6-astra": {
+          "name": "GPT-6 Astra",
+          "variants": [
+            { "id": "low", "settings": { "reasoningEffort": "low" } },
+            { "id": "medium", "settings": { "reasoningEffort": "medium" } },
+            { "id": "high", "settings": { "reasoningEffort": "high" } },
+            { "id": "xhigh", "settings": { "reasoningEffort": "xhigh" } }
+          ],
           "limit": { "context": 258000, "output": 32768 },
           "capabilities": { "tools": true, "input": ["text", "image"], "output": ["text"] }
         }
@@ -131,9 +167,19 @@ New-Item -ItemType Directory -Force (Split-Path -Parent $configPath) -ErrorActio
 >
 > **不写这一行的实际后果**：OpenCode 会自己挑一个“可用”的模型，实测会落到内置免费模型 `space-bunny-free`，此时实际使用的是另一个供应商，不能据此比较客户端能力。用 `opencode run --standalone` 跑一次，状态行里模型名不带 `newapi/` 就是没接上。
 
-**首次配置也要明确设置思考强度**：上面三个模型都在各自的 `settings` 中设置了 `"reasoningEffort": "high"`，不选额外档位时就使用这个默认值，与 pi 的初始档位一致。觉得响应太慢时，可在对应模型下改为 `medium` 或 `low`；相同档位名称不保证不同模型具有相同的思考预算。
+**首次配置就包含可选的思考档位**：上面五个模型均已声明 `variants`，复制完整配置后即可选择，无需再到进阶章节补配置。
 
-不要把它放进连接用的 `providers.newapi.settings` 中统一套给所有模型，也不要把顶层 `model` 改成 `newapi/deepseek-v4.1-flash#high`：当前 v2 的顶层默认模型不保留 `#variant`。模型级 `settings` 用于默认参数，`variants` 用于按需覆盖；仅声明可选档位不等于设置默认强度。依据见 [官方模型配置](https://opencode.ai/v2/docs/models)与[默认模型说明](https://opencode.ai/v2/docs/config#model)。
+| 模型 | 本配置提供的档位 |
+| --- | --- |
+| `glm-5.3-flash` | `low` / `medium` / `high` |
+| `deepseek-v4.1-flash` | `low` / `medium` / `high` / `max` |
+| `gpt-6-luna` | `low` / `medium` / `high` / `xhigh` |
+| `gpt-6-sol` | `low` / `medium` / `high` / `xhigh` |
+| `gpt-6-astra` | `low` / `medium` / `high` / `xhigh` |
+
+例如用 `opencode --model "newapi/deepseek-v4.1-flash#high"` 启动，换档时把 `high` 换成该模型已声明的档位。DeepSeek 示例沿用附录的映射：`low` 关闭思考，`medium` 开启思考，`high` / `max` 传递强度参数；不同模型同名档位的含义和预算不一定相同。
+
+`variants` 应放在各自模型条目下。当前 v2 的顶层默认 `model` 不保留 `#variant`，请在启动参数中选择档位；未选择时不自动套用某个变体。若另外需要默认强度，可在对应模型的 `settings` 中设置，并注意变体只覆盖同名参数。依据见 [官方模型配置](https://opencode.ai/v2/docs/models)与[默认模型说明](https://opencode.ai/v2/docs/config#model)。
 
 `reasoningEffort` 最终是否被接受、如何执行，取决于驱动、中转和模型；本次核实了客户端配置写法，未实测这些模型的参数透传。若服务端报参数不支持，应核对该模型的协议与档位映射，见[附录第 4.3 节](10-appendix-full-config.md#43-思考档位映射variants)。`cli.json` 的 `session.thinking` 只控制思考内容的显示，不是思考强度。
 
@@ -161,10 +207,10 @@ Test-Path -LiteralPath (Join-Path $env:USERPROFILE '.config/opencode/opencode.js
 复用 README 创建的练习仓库和样例文件；尚未准备时，按 [前置工具第 6.1 节](01-prerequisites.md#61-创建独立练习目录)创建，保持终端位于该目录，无需提交文件。
 
 ```PowerShell
-opencode run --standalone --model newapi/deepseek-v4.1-flash "只回复两个字：可用"
+opencode run --standalone --model "newapi/deepseek-v4.1-flash#high" "只回复两个字：可用"
 ```
 
-本命令没有指定 `#variant`，使用第 4 节模型级 `settings.reasoningEffort: high`。预期收到正常回答。它只验证所选模型的基本请求链路，不证明服务端实际采用了 `high`；若需确认参数透传，须核对中转请求记录。确认实际供应商和模型符合命令与配置，失败按 [统一接入第 6 节](02-unified-access.md#6-常见报错对照)排查。
+本命令显式选择第 4 节已配置的 `high` 档位。预期没有未知档位或模型解析错误，并收到正常回答；可把 `#high` 换成表中其他档位逐个检查。短文本成功不证明服务端实际采用了对应强度；若需确认参数透传，须核对中转请求记录。确认实际供应商、模型和档位符合命令与配置，失败按 [统一接入第 6 节](02-unified-access.md#6-常见报错对照)排查。
 
 ## 5.3 文件读取与只读命令
 
@@ -196,7 +242,7 @@ opencode --model newapi/deepseek-v4.1-flash
 | --- | --- |
 | 进入交互界面 | 在项目目录运行 `opencode` |
 | 一次性执行一条指令 | `opencode run "把 xxx 改成 yyy"` |
-| 指定模型 | `opencode run --model newapi/deepseek-v4.1-flash "..."`（`provider/model`，可用 `#` 加档位） |
+| 指定模型与思考档位 | `opencode run --model "newapi/deepseek-v4.1-flash#high" "..."`（首次配置已包含档位，清单见第 4 节） |
 | 继续上次会话 | `opencode run -c "..."` 或界面里继续 |
 | 让它读某个文件 | `opencode run --file 路径 "解释这个文件"` |
 | 自动批准权限 | 加 `--auto`（放心再开） |
@@ -207,7 +253,7 @@ opencode --model newapi/deepseek-v4.1-flash
 
 # 7 进阶
 
-- **思考档位（`variants`）**：第 4 节已经通过模型级 `settings.reasoningEffort` 设置默认 `high`。需要用 `模型#档位` 临时切换时，再配置 `variants`，见[附录](10-appendix-full-config.md) 4.3。档位可来自模型目录或自行声明，不能假定每个模型都有 `low / medium / high / max`；变体参数会覆盖模型默认参数，未定义的档位会导致模型解析错误。
+- **扩展思考档位（`variants`）**：第 4 节的首次配置已包含五个模型的可选档位。新增模型或调整参数映射时参考[附录](10-appendix-full-config.md) 4.3；未定义的档位会导致模型解析错误。
 - **插件**：`opencode plugin` 管理插件；配置里也可以直接列插件包名。
 - **多智能体编排**：社区有 `oh-my-openagent` 这类插件，把不同任务分给不同模型。**本篇不展开、也不推荐初学者上**——它需要先熟悉基础用法，而且插件里的模型名要自己跟中转清单对齐，很容易写出失效配置。
 - **Web / 服务模式**：`opencode serve` 起一个本地服务，`opencode serve` + 浏览器可当轻量 Web 版用；`opencode acp` 供 IDE 接入 Agent Client Protocol。
