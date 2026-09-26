@@ -71,8 +71,10 @@ cat > ~/.claude/settings.json << 'EOF'
   "env": {
     "ANTHROPIC_BASE_URL": "https://newapi.ttxs.site",
     "ANTHROPIC_MODEL": "deepseek-v4.1-flash[1M]",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5.3-flash[1M]",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL_NAME": "glm-5.3-flash",
+    "ANTHROPIC_DEFAULT_FABLE_MODEL": "glm-5.3-flash",
+    "ANTHROPIC_DEFAULT_FABLE_MODEL_NAME": "glm-5.3-flash",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5-5[1M]",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL_NAME": "claude-opus-5-5",
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "deepseek-v4.1-flash[1M]",
     "ANTHROPIC_DEFAULT_SONNET_MODEL_NAME": "Deepseek V4.1 Flash",
     "ANTHROPIC_DEFAULT_HAIKU_MODEL": "gpt-6-luna",
@@ -117,10 +119,10 @@ New-Item -ItemType Directory -Force "$env:USERPROFILE\.claude" | Out-Null
   "env": {
     "ANTHROPIC_BASE_URL": "https://newapi.ttxs.site",
     "ANTHROPIC_MODEL": "deepseek-v4.1-flash[1M]",
-    "ANTHROPIC_DEFAULT_FABLE_MODEL": "qwen3.8-max[1M]",
-    "ANTHROPIC_DEFAULT_FABLE_MODEL_NAME": "qwen3.8-max",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5.3-flash[1M]",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL_NAME": "glm-5.3-flash",
+    "ANTHROPIC_DEFAULT_FABLE_MODEL": "glm-5.3-flash",
+    "ANTHROPIC_DEFAULT_FABLE_MODEL_NAME": "glm-5.3-flash",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5-5[1M]",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL_NAME": "claude-opus-5-5",
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "deepseek-v4.1-flash[1M]",
     "ANTHROPIC_DEFAULT_SONNET_MODEL_NAME": "Deepseek V4.1 Flash",
     "ANTHROPIC_DEFAULT_HAIKU_MODEL": "gpt-6-luna",
@@ -191,9 +193,9 @@ cd D:\codes\some-project
 claude
 ```
 
-输入 `/model`，应该能看到 sonnet / opus / haiku（以及 fable）档位，并且**模型名显示为 `Deepseek V4.1 Flash`、`glm-5.3-flash`、`gpt-6-luna` 这类我们映射的名字**——说明配置生效。
+输入 `/model`，应该能看到 sonnet / opus / fable / haiku 档位，并且**模型名显示为 `Deepseek V4.1 Flash`、`glm-5.3-flash`、`claude-opus-5-5`、`gpt-6-luna` 这类我们映射的名字**——说明配置生效。
 
-![Claude Code 里 `/model` 的选择列表：Default 为 claude-opus-4-8[1M]，另有 kimi-k2.6、deepseek-v4-pro、deepseek-v4-flash（当前选中）三档自定义模型](images/claude-code-model-list.png)
+![Claude Code 里 `/model` 的选择列表：顶部显示当前为 deepseek-v4.1-flash[1M] with high effort；列表里 Default 是 claude-opus-5-5[1m]，另有 claude-opus-5-5、glm-5.3-flash、Deepseek V4.1 Flash、gpt-6-luna 四档映射模型，当前选中 deepseek-v4.1-flash[1M]](images/claude-code-model-list.png)
 
 ---
 

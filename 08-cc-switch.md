@@ -69,7 +69,8 @@ CC Switch 的工作原理就是替你写 `~/.claude/settings.json`、`~/.codex/c
 
 ```json
 "ANTHROPIC_MODEL": "deepseek-v4.1-flash[1M]",
-"ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5.3-flash[1M]",
+"ANTHROPIC_DEFAULT_FABLE_MODEL": "glm-5.3-flash",
+"ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5-5[1M]",
 "ANTHROPIC_DEFAULT_SONNET_MODEL": "deepseek-v4.1-flash[1M]",
 "ANTHROPIC_DEFAULT_HAIKU_MODEL": "gpt-6-luna"
 ```

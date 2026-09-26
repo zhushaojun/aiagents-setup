@@ -125,12 +125,16 @@ network_access = true
 | `model` | 用哪个模型 | `gpt-6-luna`、`gpt-5.6-sol`；清单见 [统一接入](02-unified-access.md) 第 4 节 |
 | `model_provider = "newapi"` | 用下面定义的 `[model_providers.newapi]` | 不要删 |
 | `model_reasoning_effort` | 思考强度 | `low`（快）/ `medium`（默认）/ `high`、`xhigh`、`max`（慢而强） |
-| `approval_policy = "on-request"` | 模型需要额外权限时问你 | `never`=从不问、`untrusted`=更严格 |
+| `approval_policy = "on-request"` | 模型需要额外权限时问你 | `never`=从不问（**非交互式跑用这个**） |
 | `sandbox_mode = "workspace-write"` | 只能改当前工作目录 | 见第 7 节"进阶：权限" |
 | `env_key = "NEWAPI_KEY"` | **密钥来源** | 只写变量名，不要加 `$` |
 | `requires_openai_auth = false` | 不要求登录 OpenAI 账号 | 不要删，否则会一直要求你登录 |
 
 > 用 `env_key = "NEWAPI_KEY"` 这种写法时，**不需要** `codex login`，也不要把 Key 硬写进配置文件。
+
+> ⚠️ **千万别写 `approval_policy = "untrusted"`**：官方从 **0.149.0** 起移除了这个值，而且是硬失败——配置里留着它 Codex **直接拒绝启动**：
+> `Error loading configuration: approval_policy = "untrusted" is no longer supported; remove this setting`
+> `on-failure` 也一并废弃了。**记住这两句：交互式用 `on-request`，非交互式（脚本、CI）用 `never`。**
 
 ## 4.2 让它说中文：`%USERPROFILE%\.codex\AGENTS.md`
 
