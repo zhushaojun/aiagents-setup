@@ -2,7 +2,7 @@
 
 四个工具（Codex / pi / Claude Code / OpenCode）都跑在同一套基础环境上。**这份文档只要做一次**，做完之后再去看具体的工具文档。
 
-<!-- TODO 截图：Windows Terminal 里 PowerShell 7 的欢迎界面 -->
+![Windows Terminal 里打开的 PowerShell 标签页：窗口内显示 PowerShell 7.6.6 和 PS 提示符](images/powershell7-terminal.png)
 
 ---
 

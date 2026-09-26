@@ -2,7 +2,7 @@
 
 **辅助工具。** 开源、通用的终端 AI 编程智能体：几乎什么模型都能接，终端 / IDE / 桌面端都有入口。它已经发展成为一个能真正干活的独立产品（v2），**虽然能力上限不如 Codex 和 pi（它不是由自家最强模型驱动的），但完全可用，值得动手试一试。**
 
-<!-- TODO 截图：OpenCode v2 的终端界面（TUI） -->
+![OpenCode v2 的终端界面：中央是 opencode 字样与 Ask anything... 输入框，状态行显示 Build · deepseek-v4.1-flash newapi，右下角版本 2.0.17](images/opencode-tui.png)
 
 ---
 
@@ -135,7 +135,7 @@ opencode
 
 界面里可以用 `/models` 切换模型（应能看到 `newapi/glm-5.3-flash` 等）。
 
-<!-- TODO 截图：OpenCode 里模型选择列表（能看到 newapi 下的模型） -->
+![OpenCode 的 Select model 列表：搜索框输入 newapi，列出 deepseek-v4.1-flash、glm-5.3-flash、gpt-6-sol、kimi-k2.7-code、mimo-v2.6-flash 等模型，右列供应商均为 newapi](images/opencode-model-list.png)
 
 ---
 

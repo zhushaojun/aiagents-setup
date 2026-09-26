@@ -2,7 +2,7 @@
 
 **辅助工具。** Anthropic 官方的命令行编程智能体，推理细致、生态成熟，是命令行 AI 编程的事实标准；但成本高、对第三方模型的兼容性会随版本变化（尤其图片相关功能，见第 8 节）。
 
-<!-- TODO 截图：Claude Code 在 VS Code 里的扩展界面（已可用状态） -->
+![VS Code 里的 Claude Code 扩展面板：提示 Auto mode is enabled，底部输入框显示模型 Deepseek V4.1 Flash High 与 Auto 开关](images/claude-code-vscode-chat.png)
 
 ---
 

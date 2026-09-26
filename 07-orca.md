@@ -2,7 +2,7 @@
 
 **进阶工具（编排层）。** 开源的 AI 智能体开发环境（ADE, Agentic Development Environment）：在同一个窗口里，给每个任务开一个独立的 git worktree，每个 worktree 里跑一个 CLI 智能体（Codex / pi / Claude Code / OpenCode 都行），进度、diff、提交都集中在一处看。
 
-<!-- TODO 截图：Orca 主界面（左侧 worktree 卡片 + 中间多窗格终端 + 右侧 diff） -->
+![Orca 主界面：左侧是项目与 worktree 列表，中间是 Terminal 1 与 aiagents-setup 两个终端窗格，右侧是文件树](images/orca-main.png)
 
 ---
 
@@ -201,8 +201,6 @@ Orca 会用**正确的工作目录（cwd = 该 worktree）**启动那个 CLI。
 
 看到"可用"就说明：**worktree 隔离 + 你的 CLI 配置 + 中转密钥**这条链路全通了。
 
-<!-- TODO 截图：Orca 里新建 worktree 后，终端中 Codex/pi 正常回答 -->
-
 ## 5.5 试一次"三个智能体赛马"（官方推荐的第一课）
 
 1. 重复 5.2～5.3 两次，做出三个 worktree：`fix-login-race`、`fix-login-race-2`、`fix-login-race-3`；
@@ -235,8 +233,6 @@ Orca 会用**正确的工作目录（cwd = 该 worktree）**启动那个 CLI。
 1. **worktree 是干净检出**：依赖、缓存、本地密钥文件（`.env` 之类）都不在，**除非你配置共享**——见 7.1，这是新手最容易卡住的地方。
 2. **每个 worktree 有自己的分支、自己的磁盘目录、自己的终端**；删 worktree 会连分支一起删。
 3. **状态栏能看到用量**：如果你的智能体是官方订阅（Claude / Codex），Orca 会读本地用量状态，把"离限流还有多远"显示出来；点它能看到各供应商的用量面板。走中转的用量请看中转后台。
-
-<!-- TODO 截图：Orca 状态栏用量面板 / worktree 卡片上的状态 -->
 
 ---
 

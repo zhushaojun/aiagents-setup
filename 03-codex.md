@@ -2,7 +2,7 @@
 
 **这是我们当前的主力工具。** 由 OpenAI 出品，命令行、VS Code 扩展、桌面应用三种形态齐全，接 GPT 系列模型时工具调用最稳，是"日常干活首选"。
 
-<!-- TODO 截图：Codex 在 VS Code 里的对话框（扩展已登录可用状态） -->
+![VS Code 里的 Codex 聊天面板：右侧列出历史 Chats 与 Do anything 输入框，底部显示当前模型 6 Sol High 和 Work locally](images/codex-vscode-chat.png)
 
 ---
 
@@ -51,7 +51,7 @@ codex --version
 
 从微软商店安装：<https://apps.microsoft.com/detail/9plm9xgg6vks>
 
-<!-- TODO 截图：Codex 桌面应用主界面 -->
+![Codex 桌面应用主界面：左侧是 New chat / Scheduled / Plugins / Codex++ 和 Projects 列表，中间提示 What should we build in dl-course?，底部显示模型 6 Sol High](images/codex-desktop-app.png)
 
 桌面应用适合"不想开终端"的场景，配置同样读 `~/.codex/config.toml`。我们的电脑里它还会提供"computer use"（让模型操作浏览器/桌面）能力，属于进阶玩法。
 
@@ -209,7 +209,7 @@ sandbox = "elevated"
 
 也就是**不限制目录、基本不问**。写得快，但代价是：模型可以改任何文件、跑任何命令，一次误操作可能删掉不该删的东西。
 
-<!-- TODO 截图：Codex 请求权限确认的弹窗（展示 on-request 的效果） -->
+![Codex 的权限确认弹窗：标题栏显示 Action Required，正文给出 Environment: local、Reason（目标路径在工作区外）和它要执行的命令，底部是 1. Yes, proceed (y) 与 2. No, and tell Codex what to do differently (esc)](images/codex-permission-prompt.png)
 
 **建议**：先用默认值跑一两周，熟悉它的行为模式；确实被权限拦住影响效率时，再按上面放开，并且**只在重要的仓库上开**（重要仓库记得用 git，别裸奔）。
 
