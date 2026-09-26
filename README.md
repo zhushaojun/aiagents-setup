@@ -124,7 +124,7 @@
 
 # 7 常见问题（先看这里）
 
-1. **报 `401` / `Invalid token`** → 环境变量没生效。**新开一个终端**，用 `$env:NEWAPI_KEY.Length` 确认输出 `51`。见 [统一接入](02-unified-access.md) 第 2 节。
+1. **密钥类报错** → 四家签名完全不同：Claude Code 报 `Not logged in`、Codex 报 `Missing environment variable`（约 1 秒）、pi 报 `No API key found for newapi.`、OpenCode 报 `Invalid token`。**新开一个终端**，用 `$env:NEWAPI_KEY.Length` 确认输出 `51`。对照表见 [统一接入](02-unified-access.md) 第 6.1 节，重设步骤见第 2 节。
 2. **报 `503 model_not_found`** → 模型名不在中转清单里。先去 [pricing 页](https://newapi.ttxs.site/pricing) 看这个模型还在不在，再对照 [统一接入](02-unified-access.md) 第 4 节。注意别把 Claude Code 的 `[1M]` 后缀抄到别的工具里。
 3. **工具能聊天但不能跑命令（pi / OpenCode）** → 没装 Git for Windows。见 [前置工具](01-prerequisites.md) 第 2 节。
 4. **中文乱码** → 用 Windows Terminal + PowerShell 7，不要用老的 cmd 窗口。

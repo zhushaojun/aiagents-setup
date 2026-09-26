@@ -159,15 +159,31 @@ qwen3.8-max                 space-bunny-free
 | pi | `%USERPROFILE%\.pi\agent\models.json` | `"apiKey": "$NEWAPI_KEY"` |
 | OpenCode | `%USERPROFILE%\.config\opencode\opencode.json` | `"apiKey": "{env:NEWAPI_KEY}"` |
 
-三种写法的语法各不相同，**别抄错**：Codex 只写变量名（不加 `$`）；pi 用 `$变量名`；OpenCode 用 `{env:变量名}`。
+四家的写法各不相同，**别抄错**：Claude Code 什么都不写（直接读环境变量）；Codex 只写变量名（不加 `$`）；pi 用 `$变量名`；OpenCode 用 `{env:变量名}`。
 
 ---
 
 # 6 常见报错对照
 
+## 6.1 密钥没生效：四家报错长得完全不一样
+
+四家都不会说“你的环境变量没设”这种人话，签名各不相同（**下表均为实测**）。看到其中任意一条，先按 2.1 重设变量、**新开一个终端**，再用 `$env:NEWAPI_KEY.Length` 确认输出 `51`。
+
+| 工具 | 报错原文 | 出现时机 | 别踩的坑 |
+| --- | --- | --- | --- |
+| Claude Code | `Not logged in · Please run /login` | 立即 | 别真去 `/login`——那是 Anthropic 官方登录流程，和中转无关 |
+| Codex | `ERROR: Missing environment variable: NEWAPI_KEY.` | **约 1 秒** | 反复 `ERROR: Reconnecting... 1/5` 是另一回事：变量读到了，**令牌本身不对** |
+| pi | `No API key found for newapi.` | 约 4 秒 | 它会提示你 `/login`，**照做就把明文密钥写进 `auth.json`**，而 `auth.json` 优先级高于 `models.json` 的 `apiKey`，之后改环境变量都不再生效。清理命令见[附录](10-appendix-full-config.md) 3.2 |
+| OpenCode | `Error: Invalid token` | 立即 | 也可能是把 `{env:NEWAPI_KEY}` 误写成了 `$NEWAPI_KEY`（那是 pi 的语法） |
+
+> **关键是分清“变量没读到”和“令牌是错的”**：前者秒级失败、且明说缺什么；后者会反复重试或直接 401。两者修法完全不同。
+> pi 还有个好用探针：`pi --list-models`。**有密钥时列出 newapi 的模型，没密钥时一个都不列**，并对 `settings.json` 的 `enabledModels` 逐条报 `Warning: No models match pattern "newapi/..."`。
+
+## 6.2 其他常见报错
+
 | 现象 | 原因 | 解决 |
 | --- | --- | --- |
-| `401 Invalid token` / `Authentication failed` | Key 错、Key 没生效（没新开终端）、或变量插值没解析 | 按 2.1 重设，新开终端，用 `$env:NEWAPI_KEY.Length` 确认 |
+| `401 Invalid token` / `Authentication failed` | Key 错了、过期了，或额度用完（**不是**没生效，那种情况见 6.1） | 找朱老师核对 Key；`$env:NEWAPI_KEY.Length` 应为 `51`，注意有没有多余空格或引号 |
 | `503 model_not_found` / `No available channel for model` | 模型名写错，或该模型当期不在清单里 | 先在 [pricing 页](https://newapi.ttxs.site/pricing) 确认模型还在不在，再按第 4 节核对名字 |
 | 请求发出去但一直转圈 | 地址填错（多 `/v1`、少 `/v1`、多了斜杠） | 按第 3 节表格核对 |
 | Claude Code 里 `[claude-code:unrecognized_model]` 警告 | Claude Code 不认识第三方模型，**属于正常现象** | 忽略，能正常回答就行 |
