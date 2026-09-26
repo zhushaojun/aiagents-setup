@@ -11,7 +11,7 @@
 | 项目 | 值 | 说明 |
 | --- | --- | --- |
 | 中转站地址 | `https://newapi.ttxs.site` | 我们统一的模型入口（NewAPI） |
-| 密钥 | `sk-你的Key` | **找朱老师要**，禁止分享给任何人 |
+| 密钥 | `sk-你的Key` | 使用你自己的有效密钥，禁止分享；服务入口：[NewAPI](https://newapi.ttxs.site) |
 | 环境变量名（通用） | `NEWAPI_KEY` | Codex / pi / OpenCode 读这个 |
 | 环境变量名（Claude Code 专用） | `ANTHROPIC_AUTH_TOKEN` | 本教程选用的 Bearer 鉴权变量 |
 
@@ -187,7 +187,7 @@ qwen3.8-max                 space-bunny-free
 
 | 现象 | 可能原因 | 检查顺序 | 下一步 |
 | --- | --- | --- | --- |
-| `Reconnecting`、超时、一直等待 | 网络、代理、中转异常、协议不兼容或服务端拒绝请求 | 看完整错误与状态码 → 地址/协议 → 服务状态 | 保存脱敏日志联系维护者；不能仅凭重连判定密钥错误 |
+| `Reconnecting`、超时、一直等待 | 网络、代理、中转异常、协议不兼容或服务端拒绝请求 | 看完整错误与状态码 → 地址/协议 → 服务状态 | 保存脱敏日志；服务入口：[NewAPI](https://newapi.ttxs.site)。不能仅凭重连判定密钥错误 |
 | `model_not_found` | 模型名错误、下架或当前凭据无权限 | 对照第 4 节实时列表 → 检查实际请求模型 | 更正模型名或询问维护者 |
 | `No available channel for model` | 模型存在但当前渠道不可用、分组权限或服务端故障 | 模型列表 → 凭据权限 → 后台渠道状态 | 由服务维护者确认，不能只靠改模型拼写 |
 | 客户端选择器找不到模型 | 客户端未注册、配置未加载或被过滤 | 配置目录 → 模型条目 → 客户端过滤规则 | 修正客户端配置；与服务端缺模型分开处理 |
@@ -201,7 +201,7 @@ qwen3.8-max                 space-bunny-free
 
 - Key 等于你的额度，**不要**贴进聊天群、截图、GitHub、飞书公开文档。
 - 本文的模型配置示例仅引用变量名；你自己的文件还可能含其他服务凭据、私有路径、插件配置和历史密钥，分享前必须检查。环境变量也不等于加密存储，能读取进程环境的程序仍可能取得它。
-- 万一 Key 泄露：找朱老师撤销泄露的密钥并换新，按 2.1 更新两个变量并重启相关程序。
+- 万一 Key 泄露：撤销泄露的密钥并换新，按 2.1 更新两个变量并重启相关程序。服务入口：[NewAPI](https://newapi.ttxs.site)。
 
 ---
 
@@ -243,3 +243,136 @@ fi
 备份可能含密钥，按原文件同样保管，不提交、不分享。先核对备份确实成功，再编辑；如需回退，关闭使用该配置的程序，确认回退会放弃本次修改后恢复备份。
 
 验证按三层进行：本地环境和配置 → 指定模型的短文本请求 → 练习目录的读文件与只读命令。短文本成功不代表图片、长上下文或全部工具已经兼容。
+
+**JSON 合并示例：pi 的 `models.json`。** 下例只演示供应商合并，`models: []` 表示未展示模型条目，不是可直接运行的完整接入方案。实际编辑时保留已有模型列表；首次添加 NewAPI 时使用 [pi 第 4.1 节](04-pi.md#41-接入-newapiuserprofilepiagentmodelsjson)的完整模型条目。`other` 是演示用供应商，已有文件中保留自己的真实条目，不要新增这个示例供应商。
+
+合并前（已有其他供应商，以及需要更新的同名 NewAPI）：
+
+```json
+{
+  "providers": {
+    "other": {
+      "baseUrl": "https://example.invalid/v1",
+      "api": "openai-responses",
+      "apiKey": "$OTHER_KEY",
+      "models": []
+    },
+    "newapi": {
+      "baseUrl": "https://old.example.invalid/v1",
+      "api": "openai-responses",
+      "apiKey": "$OLD_NEWAPI_KEY",
+      "models": []
+    }
+  }
+}
+```
+
+合并后（仅更新 `newapi` 的地址和密钥引用，保留 `other` 及已有模型）：
+
+```json
+{
+  "providers": {
+    "other": {
+      "baseUrl": "https://example.invalid/v1",
+      "api": "openai-responses",
+      "apiKey": "$OTHER_KEY",
+      "models": []
+    },
+    "newapi": {
+      "baseUrl": "https://newapi.ttxs.site/v1",
+      "api": "openai-responses",
+      "apiKey": "$NEWAPI_KEY",
+      "models": []
+    }
+  }
+}
+```
+
+原来没有 `newapi` 时，在现有 `providers` 对象内添加一次；已经有时直接修改该对象中的同名字段，不再粘贴第二个 `providers` 或 `newapi`。不要把 `models.json` 的合并结果写进 `settings.json`：默认供应商和模型仍按 pi 第 4.2 节设置，本例不改变默认项。
+
+**TOML 合并示例：Codex 的 `config.toml`。** 下例演示切换默认模型并更新同名供应商；其他权限、插件等配置继续保留。`other` 同样仅供演示。
+
+合并前：
+
+```toml
+model = "existing-model"
+model_provider = "other"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[model_providers.other]
+name = "Other"
+base_url = "https://example.invalid/v1"
+wire_api = "responses"
+env_key = "OTHER_KEY"
+
+[model_providers.newapi]
+name = "NewAPI"
+base_url = "https://old.example.invalid/v1"
+wire_api = "responses"
+env_key = "OLD_NEWAPI_KEY"
+```
+
+合并后：
+
+```toml
+model = "gpt-6-sol"
+model_provider = "newapi"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[model_providers.other]
+name = "Other"
+base_url = "https://example.invalid/v1"
+wire_api = "responses"
+env_key = "OTHER_KEY"
+
+[model_providers.newapi]
+name = "NewAPI"
+base_url = "https://newapi.ttxs.site/v1"
+wire_api = "responses"
+env_key = "NEWAPI_KEY"
+requires_openai_auth = false
+```
+
+顶层 `model`、`model_provider` 在第一个表之前修改，不要追加到 `[model_providers.newapi]` 里面。没有该供应商表时才新增；已有时原地更新，避免重复表或同名键。其他默认项按 [Codex 第 4.1 节](03-codex.md#41-主配置userprofilecodexconfigtoml)核对合并。
+
+**恢复指定备份。** 先关闭使用配置的客户端，确认目标文件和要恢复的备份路径。下面会先保存当前文件，再恢复指定备份；不自动选择最新备份。将示例备份文件名替换为第 9 节备份命令实际输出的路径。
+
+PowerShell 7：
+
+```PowerShell
+$configPath = Join-Path $env:USERPROFILE '.codex/config.toml'
+$restorePath = Join-Path $env:USERPROFILE '.codex/config.toml.REPLACE-WITH-BACKUP.bak'
+if (-not (Test-Path -LiteralPath $configPath -PathType Leaf)) { throw '当前配置不存在，请先核对目标路径。' }
+if (-not (Test-Path -LiteralPath $restorePath -PathType Leaf)) { throw '指定备份不存在，请填写实际备份路径。' }
+if ((Resolve-Path -LiteralPath $configPath).Path -eq (Resolve-Path -LiteralPath $restorePath).Path) { throw '备份不能是当前配置本身。' }
+$beforeRestorePath = $configPath + '.before-restore-' + [guid]::NewGuid().ToString('N') + '.bak'
+Copy-Item -LiteralPath $configPath -Destination $beforeRestorePath -ErrorAction Stop
+Copy-Item -LiteralPath $restorePath -Destination $configPath -Force -ErrorAction Stop
+Write-Output "已恢复指定备份；恢复前的配置保存在 $beforeRestorePath"
+```
+
+Linux Bash：
+
+```Bash
+(
+set -e
+config_path="$HOME/.codex/config.toml"
+restore_path="$HOME/.codex/config.toml.REPLACE-WITH-BACKUP.bak"
+if [ ! -f "$config_path" ] || [ ! -f "$restore_path" ]; then
+  printf '当前配置或指定备份不存在，请核对路径。\n' >&2
+  exit 1
+fi
+if [ "$config_path" -ef "$restore_path" ]; then
+  printf '备份不能是当前配置本身。\n' >&2
+  exit 1
+fi
+before_restore_path="$(mktemp "${config_path}.before-restore.XXXXXX.bak")"
+cp -p -- "$config_path" "$before_restore_path"
+cp -p -- "$restore_path" "$config_path"
+printf '已恢复指定备份；恢复前的配置保存在 %s\n' "$before_restore_path"
+)
+```
+
+恢复后先检查配置语法及本地加载，再重启客户端，按对应教程第 5 节重做验证。恢复配置不等于恢复用户级环境变量；如果旧配置引用不同变量，也要核对其是否可用。两份备份均按原文件同样保管，不提交、不分享。

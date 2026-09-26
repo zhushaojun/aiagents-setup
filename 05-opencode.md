@@ -156,7 +156,7 @@ New-Item -ItemType Directory -Force (Split-Path -Parent $configPath) -ErrorActio
 
 `limit.context` / `limit.output` 是客户端声明的上下文与输出上限，不会改变服务端能力。这里保留旧配置值；本次未取得可复核的中转能力元数据，长请求仍待验证。写大可能请求失败，写小也可能影响上下文预算；请按 [统一接入第 4 节](02-unified-access.md#4-当前可用的模型清单)向维护者确认后调整。
 
-顶层的 `"model": "newapi/deepseek-v4.1-flash"` 是**默认模型**，格式为 `供应商/model_id`。**这一行别省**——不写的话 OpenCode 按下面的顺序自己挑，你每次启动看到的模型都可能不一样：
+顶层的 `"model": "newapi/deepseek-v4.1-flash"` 是**默认模型**，格式为 `供应商/model_id`。建议显式指定，便于确认请求去向；未指定时，OpenCode 按下面的顺序选择，实际模型以当前界面为准：
 
 1. 命令行 `--model` / `-m`
 2. 配置里的 `model` 字段 ← 就是我们写的这一行
@@ -165,7 +165,7 @@ New-Item -ItemType Directory -Force (Split-Path -Parent $configPath) -ErrorActio
 
 > 换默认模型改这一行（例如 `"model": "newapi/gpt-6-sol"`）；只想临时换就用 `/models` 命令，或 `opencode run --model ...`。
 >
-> **不写这一行的实际后果**：OpenCode 会自己挑一个“可用”的模型，实测会落到内置免费模型 `space-bunny-free`，此时实际使用的是另一个供应商，不能据此比较客户端能力。用 `opencode run --standalone` 跑一次，状态行里模型名不带 `newapi/` 就是没接上。
+> **历史本机观察**：未指定默认模型时曾选择内置免费模型 `space-bunny-free`，这不是所有版本或环境的固定结果。此时使用的是另一个供应商，不能据此比较客户端能力。用 `opencode run --standalone` 跑一次，核对状态行的供应商与模型；不带 `newapi/` 说明本次没有选用本教程的 NewAPI 模型，不等于 NewAPI 配置一定失效。
 
 **首次配置就包含可选的思考档位**：上面五个模型均已声明 `variants`，复制完整配置后即可选择，无需再到进阶章节补配置。
 

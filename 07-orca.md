@@ -199,7 +199,21 @@ Orca 会用**正确的工作目录（cwd = 该 worktree）**启动那个 CLI。
 只回复两个字：可用
 ```
 
-收到正常回答只说明本次请求成功。还要在界面确认实际模型与供应商，并在这个 worktree 内人工准备 `agent-check.txt`（方法见 [前置工具第 6.1 节](01-prerequisites.md#61-创建独立练习目录)的样例文件步骤），按对应客户端第 5.3 节验证读取文件和 `git status --short`。确认实际工作目录是新 worktree；回答“可用”本身不证明隔离或工具能力。
+收到正常回答只说明本次请求成功。还要在界面确认实际模型与供应商，并验证读取文件和只读命令。先在该 worktree 的 PowerShell 7 终端中运行：
+
+```PowerShell
+Get-Location # 确认这里是刚创建的 worktree
+$probeFile = 'orca-check-' + [guid]::NewGuid().ToString('N') + '.txt'
+$probeText = 'check-' + [guid]::NewGuid().ToString('N')
+Set-Content -LiteralPath $probeFile -Value $probeText -Encoding utf8 -ErrorAction Stop
+Write-Output "自行核对，不发给模型：$probeText"
+Write-Output "给模型的提示：读取当前目录的 $probeFile，原样报告其中的文本；实际执行 git status --short 并报告输出。不要创建、修改或删除任何文件。"
+git status --short
+```
+
+只把最后生成的“给模型的提示”交给智能体，不要粘贴核对文本或整段终端输出。成功标准：工具记录显示读取了实际文件名并执行了命令，文本与自己保存的随机文本一致，Git 输出包含 `?? orca-check-<实际随机后缀>.txt`。如果人工执行时也看不到该文件，先检查忽略规则，使用没有忽略该测试文件的练习仓库。
+
+这里使用全新文件，避免已提交的 `agent-check.txt` 在 worktree 中被识别为已跟踪文件。确认智能体的工作目录确实为新 worktree；回答“可用”本身不证明隔离或工具能力。
 
 ## 5.5 试一次"三个智能体赛马"（官方推荐的第一课）
 

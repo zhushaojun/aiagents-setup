@@ -140,9 +140,11 @@ network_access = true
 | `approval_policy = "on-request"` | 模型需要额外权限时问你 | `never`=从不问（**非交互式跑用这个**） |
 | `sandbox_mode = "workspace-write"` | 限制写入到工作区及获准路径，部分配置路径另受保护 | 见第 7 节"进阶：权限" |
 | `env_key = "NEWAPI_KEY"` | **密钥来源** | 只写变量名，不要加 `$` |
-| `requires_openai_auth = false` | 不要求登录 OpenAI 账号 | 不要删，否则会一直要求你登录 |
+| `requires_openai_auth = false` | 不使用 OpenAI 认证，默认值也是 `false` | 本例显式填写以表达自定义供应商的认证意图 |
 
 > 用 `env_key = "NEWAPI_KEY"` 这种写法时，**不需要** `codex login`，也不要把 Key 硬写进配置文件。
+
+`requires_openai_auth` 的默认值见 [官方配置参考](https://learn.chatgpt.com/docs/config-file/config-reference)。省略这个字段本身不会开启 OpenAI 认证；桌面入口的首次认证另见第 3.3 节。
 
 > ⚠️ **千万别写 `approval_policy = "untrusted"`**：官方从 **0.149.0** 起移除了这个值，而且是硬失败——配置里留着它 Codex **直接拒绝启动**：
 > `Error loading configuration: approval_policy = "untrusted" is no longer supported; remove this setting`
@@ -280,7 +282,7 @@ args = ["-y", "@upstash/context7-mcp"]
 | 现象 | 可能原因、检查顺序与下一步 |
 | --- | --- |
 | `401 Invalid token` | 可能是凭据错误、过期或配置冲突；先核对变量与引用，再按 [统一接入第 6 节](02-unified-access.md#6-常见报错对照)检查服务端响应 |
-| 一直提示登录 OpenAI | `requires_openai_auth = false` 漏了，或 `model_provider` 写错 |
+| 一直提示登录 OpenAI | 先确认实际 `model_provider` 为 `newapi`、加载的是预期用户级配置及 `env_key`，再核对所用入口的首次认证要求（桌面入口见第 3.3 节）；不能归因于漏写默认值为 `false` 的 `requires_openai_auth` |
 | `model_not_found` / `No available channel for model` | 先核对实际模型名与当前凭据的模型列表，再检查渠道和权限；两类错误不等价，见 [统一接入第 6 节](02-unified-access.md#6-常见报错对照) |
 | 想让它在别的盘干活 | 先 `cd` 到那个目录再运行 `codex`；具体可写范围见第 7.1 节 |
 | VS Code 扩展里报错 | 扩展与命令行共用配置；先在命令行确认 `codex exec "只回复两个字：可用"` 能正常回答 |

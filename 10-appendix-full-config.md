@@ -287,7 +287,7 @@ if (Test-Path -LiteralPath $authPath -PathType Leaf) {
 | 文件/目录 | 内容 | 建议 |
 | --- | --- | --- |
 | `opencode.json` | 主配置（v2 格式：`providers` / `package` / `settings`，顶层 `model` 是默认模型） | 抄教程精简版 |
-| ↳ 顶层 `model` 键 | 我们设的是 `newapi/deepseek-v4.1-flash` | **必须抄**：不设时 OpenCode 会自己挑，实测会落到内置免费模型 `space-bunny-free`（见 4.2） |
+| ↳ 顶层 `model` 键 | 我们设的是 `newapi/deepseek-v4.1-flash` | 建议显式指定默认模型；历史本机曾回退到 `space-bunny-free`，并非固定结果，实际选择以当前界面为准（见 4.2） |
 | `cli.json` | v2 的界面偏好（`session.thinking`、`diffs.wrap`、滚动条等） | 随意 |
 | `plugins/` | 本地插件（我们装了 `orca-opencode-status`） | 按需 |
 | `node_modules/`、`package-lock.json` | 插件依赖，OpenCode 自己维护 | 不要手动改 |

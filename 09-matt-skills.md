@@ -70,10 +70,12 @@ Matt Pocock（Total TypeScript 作者）把自己日常用的技能开源了：<
 npx skills@latest add mattpocock/skills
 ```
 
-它会问你两件事：
+交互安装时重点确认：
 
 1. **装哪些技能**——按空格勾选，**务必勾上 `/setup-matt-pocock-skills`**（第 4 节要用）。
 2. **装给哪些智能体**——它会自动探测你电脑上装了哪些工具（认配置文件目录），也可以手动选。
+
+安装时还要确认并记住最终选择的范围：项目级安装应在目标仓库内执行，全局安装可显式加 `-g`。第 6 节按对应范围验证，不要用全局列表判断项目级安装是否成功。
 
 ## 3.2 非交互式（复制即用）
 
@@ -110,10 +112,10 @@ npx skills@latest add mattpocock/skills --list
 
 | 位置 | 路径 | 说明 |
 | --- | --- | --- |
-| **正本（全局）** | `%USERPROFILE%\.agents\skills\` | 25 个技能目录 + `%USERPROFILE%\.agents\.skill-lock.json`（版本记录） |
+| **正本（全局）** | `%USERPROFILE%\.agents\skills\` | 实际选装的技能目录；版本记录在 `%USERPROFILE%\.agents\.skill-lock.json` |
 | **正本（项目）** | `<仓库>\.agents\skills\` | 项目级安装放这里，会跟代码一起提交 |
 | Claude Code | `%USERPROFILE%\.claude\skills\` | 全局；项目级是 `.claude\skills\` |
-| Codex | `%USERPROFILE%\.codex\skills\` | 全局；项目级也认 `.agents\skills\` |
+| Codex | `%USERPROFILE%\.agents\skills\`；也可能有 `.codex\skills\` 链接 | 全局检查共享正本及实际生成的链接；项目级读取 `.agents\skills\` |
 | pi | `%USERPROFILE%\.pi\agent\skills\` | 全局；项目级是 `.pi\skills\`，同时认 `.agents\skills\` |
 | OpenCode | `%USERPROFILE%\.config\opencode\skills\` | 全局；项目级认 `.agents\skills\` |
 
@@ -184,6 +186,8 @@ gh label create needs-triage --color BFD4F2 --description '待分类的问题'
 
 ## 5.2 全部 25 个技能
 
+本节为原教程的 25 个技能历史快照，当前目录及选装数量以实际安装结果为准，不用于验收数量。
+
 **主线（7）**
 
 | 技能 | 一句话 |
@@ -222,28 +226,44 @@ gh label create needs-triage --color BFD4F2 --description '待分类的问题'
 
 # 6 验证（第一次必须做）
 
+按安装时选择的范围执行其中一组命令。
+
+**项目级：先进入安装技能的目标仓库。**
+
 ```PowerShell
-# 1. 安装器认为装了哪些（看全局）
-npx skills list -g
-
-# 2. 正本目录里有没有 25 个技能
-Get-ChildItem "$env:USERPROFILE\.agents\skills" | Select-Object Name
-
-# 3. 各工具的链接是否建好
-Get-ChildItem "$env:USERPROFILE\.pi\agent\skills"     | Select-Object Name, LinkType, Target
-Get-ChildItem "$env:USERPROFILE\.claude\skills"       | Select-Object Name, LinkType, Target
-Get-ChildItem "$env:USERPROFILE\.codex\skills"        | Select-Object Name, LinkType, Target
+Get-Location
+npx skills list
+Get-ChildItem '.agents/skills' | Select-Object Name
 ```
 
-然后在工具里确认（**必须新开一个会话**）：
+**全局：检查用户目录。**
+
+```PowerShell
+npx skills list -g
+Get-ChildItem "$env:USERPROFILE\.agents\skills" | Select-Object Name
+```
+
+再按实际选装的客户端检查目录；无需检查未选择的工具。把下表中的路径代入 `Get-ChildItem '<路径>' | Select-Object Name, LinkType, Target`，其中 `%USERPROFILE%` 在 PowerShell 命令中换成 `$env:USERPROFILE` 并使用双引号。
+
+| 客户端 | 项目级（相对仓库根目录） | 全局 |
+| --- | --- | --- |
+| Codex | `.agents/skills` | `%USERPROFILE%\.agents\skills`；安装器若另建 `.codex\skills` 链接，也检查其目标 |
+| pi | `.pi/skills`，也可读取 `.agents/skills` | `%USERPROFILE%\.pi\agent\skills` |
+| Claude Code | `.claude/skills` | `%USERPROFILE%\.claude\skills` |
+| OpenCode | `.agents/skills`，安装器若另建 `.opencode/skills` 也检查其目标 | `%USERPROFILE%\.config\opencode\skills` |
+
+使用链接安装时核对 `Target` 指向相应范围的正本；使用 `--copy` 时没有链接属性是正常的。验收以选装技能存在、内容可读取并能在客户端调用为准，不要求总数等于 25，也不要删除其他来源的技能。
+
+然后在目标项目内新开客户端会话确认。下面以 `ask-matt` 为例；未选装它时换成自己已安装的技能：
 
 | 工具 | 验证动作 |
 | --- | --- |
 | Claude Code | 输入 `/ask-matt`，应该能拉起技能 |
 | pi | 输入 `/skill:ask-matt`；刚改过技能文件时先 `/reload` |
 | Codex | 输入 `/skills`，列表里应能看到这些技能 |
+| OpenCode | 输入“使用 ask-matt 技能”，确认读取了对应 `SKILL.md` |
 
-> 本机现状（2026-09-25 核对）：25 个技能已装在 `%USERPROFILE%\.agents\skills`，`%USERPROFILE%\.claude\skills` 与 `%USERPROFILE%\.pi\agent\skills` 下是指向它的 Junction。你自己装的时候路径一样，只是技能数量取决于勾选了哪些。
+> 历史本机快照（2026-09-25）：25 个技能装在 `%USERPROFILE%\.agents\skills`，Claude Code 与 pi 的全局技能目录下有指向它的 Junction。此记录不作为你的安装路径、范围或数量的验收标准。
 
 ---
 
