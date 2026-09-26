@@ -72,7 +72,7 @@ cat > ~/.claude/settings.json << 'EOF'
   "env": {
     "ANTHROPIC_BASE_URL": "https://newapi.ttxs.site",
     "ANTHROPIC_MODEL": "deepseek-v4.1-flash[1M]",
-    "ANTHROPIC_DEFAULT_FABLE_MODEL": "glm-5.3-flash",
+    "ANTHROPIC_DEFAULT_FABLE_MODEL": "glm-5.3-flash[1M]",
     "ANTHROPIC_DEFAULT_FABLE_MODEL_NAME": "glm-5.3-flash",
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5-5[1M]",
     "ANTHROPIC_DEFAULT_OPUS_MODEL_NAME": "claude-opus-5-5",
@@ -120,7 +120,7 @@ New-Item -ItemType Directory -Force "$env:USERPROFILE\.claude" | Out-Null
   "env": {
     "ANTHROPIC_BASE_URL": "https://newapi.ttxs.site",
     "ANTHROPIC_MODEL": "deepseek-v4.1-flash[1M]",
-    "ANTHROPIC_DEFAULT_FABLE_MODEL": "glm-5.3-flash",
+    "ANTHROPIC_DEFAULT_FABLE_MODEL": "glm-5.3-flash[1M]",
     "ANTHROPIC_DEFAULT_FABLE_MODEL_NAME": "glm-5.3-flash",
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5-5[1M]",
     "ANTHROPIC_DEFAULT_OPUS_MODEL_NAME": "claude-opus-5-5",

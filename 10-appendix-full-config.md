@@ -19,7 +19,7 @@
 | 配置项 | 我们的值 | 作用 | 建议 |
 | --- | --- | --- | --- |
 | `language` | `简体中文` | 界面与回复语言 | 抄 |
-| `model` | `sonnet` | 默认档位（对应我们映射的 `deepseek-v4.1-flash[1M]`） | 抄 |
+| `model` | `haiku` | 默认档位；`haiku` 这一档在我们映射里是 `gpt-6-luna`。注意截图里 `/model` 选中的是 `Custom model`（值就是 `ANTHROPIC_MODEL`），实际生效的是它 | 抄 |
 | `alwaysThinkingEnabled` | `true` | 总是思考 | 抄 |
 | `effortLevel` | `high` | 出力档位 | 抄 |
 | `autoUpdatesChannel` | `stable` | 跟稳定版 | 抄 |
@@ -36,7 +36,7 @@
 "env": {
   "ANTHROPIC_BASE_URL": "https://newapi.ttxs.site",
   "ANTHROPIC_MODEL": "deepseek-v4.1-flash[1M]",
-  "ANTHROPIC_DEFAULT_FABLE_MODEL": "glm-5.3-flash",
+  "ANTHROPIC_DEFAULT_FABLE_MODEL": "glm-5.3-flash[1M]",
   "ANTHROPIC_DEFAULT_FABLE_MODEL_NAME": "glm-5.3-flash",
   "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5-5[1M]",
   "ANTHROPIC_DEFAULT_OPUS_MODEL_NAME": "claude-opus-5-5",
