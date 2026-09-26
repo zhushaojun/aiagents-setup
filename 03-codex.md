@@ -1,6 +1,6 @@
 # Codex
 
-**这是我们当前的主力工具。** 由 OpenAI 出品，命令行、VS Code 扩展、ChatGPT 桌面应用（Codex 的桌面形态现已并入 ChatGPT）三种形态齐全，接 GPT 系列模型时工具调用最稳，是"日常干活首选"。**它的命令行客户端还是开源的**（可审计、可自改，见第 10 节）。
+**这是我们当前的主力工具。** 由 OpenAI 出品，命令行、VS Code 扩展、ChatGPT 桌面应用（Codex 的桌面形态现已并入 ChatGPT）三种形态齐全，在我们的日常任务与当前配置中优先使用。**它的命令行客户端还是开源的**（可审计、可自改，见第 10 节）。
 
 ![VS Code 里的 Codex 聊天面板：右侧列出历史 Chats 与 Do anything 输入框，底部显示当前模型 6 Sol High 和 Work locally](images/codex-vscode-chat.png)
 
@@ -8,10 +8,10 @@
 
 # 1 它是什么、适合谁
 
-- **定位**：OpenAI 官方的命令行编程智能体，与 Claude Code 齐名，两种属于同一能力梯队（**并不存在"Codex 能力超过 Claude Code"这回事**）；三种使用形态（终端 / VS Code 扩展 / ChatGPT 桌面应用）共用同一套配置。
+- **定位**：OpenAI 官方的命令行编程智能体，客户端表现应在相同模型与任务条件下比较；三种使用形态（终端 / VS Code 扩展 / ChatGPT 桌面应用）共用同一套配置。
 - **适合**：绝大多数日常任务——读代码、改 bug、写脚本、跑命令、查文档。
-- **优势**：与 GPT 系列模型同源，工具调用（读文件、跑命令、改代码）成功率高；**命令行客户端开源**；配置文件简单，CLI 不登录 OpenAI 账号也能使用我们的中转。
-- **不适合**：需要超长上下文一次性吞下整个大仓库时，可换 pi 或 Claude Code 的长上下文模型；Claude Code 的选型与兼容性注意事项见 [Claude Code](06-claude-code.md) 第 8 节。
+- **优势**：提供读文件、执行命令和修改代码等工具；**命令行客户端开源**；配置文件简单，CLI 不登录 OpenAI 账号也能使用我们的中转。
+- **长任务**：先检索相关文件并分解任务；是否换客户端或模型应结合实际上下文限制与压缩表现判断；Claude Code 的选型与兼容性注意事项见 [Claude Code](06-claude-code.md) 第 8 节。
 
 ---
 
@@ -19,12 +19,12 @@
 
 | 项目 | 要求 | 检查方法 |
 | --- | --- | --- |
-| Node.js | ≥ 22（我们要用 npm 安装） | `node -v` |
-| npm | 随 Node 自带（建议配置国内镜像） | `npm -v` |
-| 环境变量 | `NEWAPI_KEY` 已设置 | `$env:NEWAPI_KEY.Length` → 输出 `51` |
+| Node.js | ≥ 22.19.0（本教程统一基线） | `node -v` |
+| npm | 随 Node 自带，按网络情况选择镜像 | `npm -v` |
+| 环境变量 | `NEWAPI_KEY` 已设置 | `-not [string]::IsNullOrWhiteSpace($env:NEWAPI_KEY)` → `True` |
 | VS Code（可选） | 最新版 | `code --version` |
 
-> `NEWAPI_KEY` 怎么设置见 **[统一接入](02-unified-access.md)** 第 2 节。没设置好后面一定报 401。
+> `NEWAPI_KEY` 怎么设置见 **[统一接入](02-unified-access.md)** 第 2 节。缺变量与服务端拒绝凭据是不同问题，排查见该篇第 6 节。
 
 ---
 
@@ -37,7 +37,7 @@ npm install -g @openai/codex
 codex --version
 ```
 
-预期输出：`codex-cli 0.157.0`（版本号会随时间变化）。
+版本输出示例：`codex-cli 0.157.0`，不是已验证最新版声明；统一记录见 [README 第 4 节](README.md#4-版本基线与核验状态)。
 
 ## 3.2 VS Code 扩展
 
@@ -45,7 +45,7 @@ codex --version
 
 ![VS Code 扩展商店里的 Codex 扩展页面，发布者 OpenAI、标识符 openai.chatgpt](images/codex-vscode-extension.png)
 
-装完后左侧会出现 Codex 图标，点开即可对话。**扩展和命令行共用 `~/.codex/config.toml`**，所以命令行配置好之后，扩展里直接就能用。
+装完后左侧会出现 Codex 图标，点开即可对话。**扩展和命令行共用 `~/.codex/config.toml`**，仍需重启 VS Code 以刷新环境变量，并在扩展中检查认证、模型和权限。
 
 ## 3.3 桌面应用（现已改名 ChatGPT）
 
@@ -61,6 +61,13 @@ codex --version
 npm install -g @openai/codex
 mkdir -p ~/.codex
 
+(
+set -e
+set -o noclobber
+if [ -e ~/.codex/config.toml ] || [ -L ~/.codex/config.toml ]; then
+  printf '文件已存在，请按统一接入第 9 节备份并手动合并。\n' >&2
+  exit 1
+fi
 cat > ~/.codex/config.toml << 'EOF'
 model = "gpt-6-sol"
 model_provider = "newapi"
@@ -78,20 +85,25 @@ requires_openai_auth = false
 [sandbox_workspace_write]
 network_access = true
 EOF
+)
 ```
 
-再把 `export NEWAPI_KEY="sk-你的Key"` 写进 `~/.bashrc` 并 `source ~/.bashrc`，然后 `codex` 即可。
+凭据设置与已有 `~/.bashrc` 的处理见 [统一接入第 2.3 节](02-unified-access.md#23-远程-linux-服务器)，不要重复追加同名变量。
 
 ---
 
-# 4 配置（复制即用）
+# 4 配置（首次创建，已有文件先备份合并）
 
 ## 4.1 主配置：`%USERPROFILE%\.codex\config.toml`
 
-在 PowerShell 里直接执行下面这段，**会把配置写进正确位置**（已存在的会被覆盖，先看看有没有要保留的内容）：
+以下首次创建步骤遇到已有文件会停止。已有配置先按 [统一接入第 9 节](02-unified-access.md#9-已有配置的备份与合并)备份，再手动合并供应商、模型与权限字段；全局提示词也按此规则处理。
 
 ```PowerShell
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex" | Out-Null
+$configPath = "$env:USERPROFILE\.codex\config.toml"
+if (Test-Path -LiteralPath $configPath) {
+  throw '文件已存在：请按统一接入第 9 节备份后手动合并，不要整份覆盖。'
+}
+New-Item -ItemType Directory -Force (Split-Path -Parent $configPath) -ErrorAction Stop | Out-Null
 @'
 # ===== 模型 =====
 model = "gpt-6-sol"
@@ -112,10 +124,10 @@ wire_api = "responses"
 env_key = "NEWAPI_KEY"
 requires_openai_auth = false
 
-# 沙箱内允许联网（模型可以用 web_search、可以装依赖）
+# 沙箱内命令允许联网；web_search 由上面的独立选项控制
 [sandbox_workspace_write]
 network_access = true
-'@ | Set-Content -Encoding utf8 "$env:USERPROFILE\.codex\config.toml"
+'@ | Set-Content -LiteralPath $configPath -Encoding utf8 -ErrorAction Stop
 ```
 
 **关键项说明**：
@@ -126,7 +138,7 @@ network_access = true
 | `model_provider = "newapi"` | 用下面定义的 `[model_providers.newapi]` | 不要删 |
 | `model_reasoning_effort` | 思考强度 | `low`（快）/ `medium`（默认）/ `high`、`xhigh`、`max`（慢而强） |
 | `approval_policy = "on-request"` | 模型需要额外权限时问你 | `never`=从不问（**非交互式跑用这个**） |
-| `sandbox_mode = "workspace-write"` | 只能改当前工作目录 | 见第 7 节"进阶：权限" |
+| `sandbox_mode = "workspace-write"` | 限制写入到工作区及获准路径，部分配置路径另受保护 | 见第 7 节"进阶：权限" |
 | `env_key = "NEWAPI_KEY"` | **密钥来源** | 只写变量名，不要加 `$` |
 | `requires_openai_auth = false` | 不要求登录 OpenAI 账号 | 不要删，否则会一直要求你登录 |
 
@@ -139,12 +151,17 @@ network_access = true
 ## 4.2 让它说中文：`%USERPROFILE%\.codex\AGENTS.md`
 
 ```PowerShell
+$configPath = "$env:USERPROFILE\.codex\AGENTS.md"
+if (Test-Path -LiteralPath $configPath) {
+  throw '文件已存在：请按统一接入第 9 节备份后手动合并，不要整份覆盖。'
+}
+New-Item -ItemType Directory -Force (Split-Path -Parent $configPath) -ErrorAction Stop | Out-Null
 @'
 - 始终用中文回答
 - 修改代码前先说明要改哪些文件
 - 复杂任务先给出计划，得到确认后再动手
 - 当前系统是 Windows 11，命令行优先用 PowerShell
-'@ | Set-Content -Encoding utf8 "$env:USERPROFILE\.codex\AGENTS.md"
+'@ | Set-Content -LiteralPath $configPath -Encoding utf8 -ErrorAction Stop
 ```
 
 `AGENTS.md` 是"随身的提示词"，Codex 每次干活都会读。**项目根目录**下也可以放一个 `AGENTS.md`，只对那个项目生效（推荐写项目的技术栈、运行命令、代码规范）。
@@ -153,26 +170,42 @@ network_access = true
 
 # 5 验证（第一次使用必须做）
 
-```PowerShell
-cd D:\codes\some-project    # 换成任意一个你的项目目录
-codex
-```
-
-进去以后输入一句话：
-
-```
-用一句话介绍这个仓库是做什么的
-```
-
-预期表现：它会真的去列目录、读文件，然后给出中文总结；界面底部能看到 `gpt-6-sol`、当前目录、剩余上下文。
-
-再验证一次密钥链路（非交互模式，适合排错）：
+## 5.1 本地环境与配置
 
 ```PowerShell
-codex exec "只回复两个字：可用"
+codex --version
+Test-Path -LiteralPath (Join-Path $env:USERPROFILE '.codex/config.toml') -PathType Leaf
 ```
 
-预期输出末尾出现 `可用`。如果报 `401 Invalid token`，回到 [统一接入](02-unified-access.md) 检查 `NEWAPI_KEY`。
+版本应正常返回，文件检查应为 `True`。凭据非空检查见 [统一接入第 2 节](02-unified-access.md#2-设置环境变量)，版本基线见 [README 第 4 节](README.md#4-版本基线与核验状态)。
+
+## 5.2 请求链路
+
+若已按 README 创建练习仓库和样例文件，直接复用；否则先按 [前置工具第 6.1 节](01-prerequisites.md#61-创建独立练习目录)准备，保持终端位于该目录。Codex 的非交互调用默认要求 Git 仓库；无需提交文件。
+
+```PowerShell
+codex exec -c 'model_provider="newapi"' --model gpt-6-sol "只回复两个字：可用"
+```
+
+预期收到正常回答。它只验证所选模型的基本请求链路；确认实际供应商和模型符合命令与配置，失败按 [统一接入第 6 节](02-unified-access.md#6-常见报错对照)排查。
+
+## 5.3 文件读取与只读命令
+
+仍在上述练习目录启动交互模式：
+
+```PowerShell
+codex -c 'model_provider="newapi"' --model gpt-6-sol
+```
+
+输入以下提示（不要提前告诉模型文件里的随机文本）：
+
+```text
+读取当前目录的 agent-check.txt，原样报告其中的文本；实际执行 git status --short 并报告输出。不要创建、修改或删除任何文件。
+```
+
+成功标准：能在工具调用记录中看到读取文件及执行命令，读出的文本与自己准备的随机文本一致，Git 输出包含未跟踪的 `agent-check.txt`。需要权限时先核对命令和目标目录再确认。仅凭模型口头说“已执行”不算通过。
+
+这一步不验证图片、写文件、长上下文或最大输出。进入真实项目时，把示例路径 `D:\codes\some-project` 换成自己的路径；没有 D 盘可继续使用用户目录下的练习目录。
 
 ---
 
@@ -201,7 +234,7 @@ codex exec "只回复两个字：可用"
 
 ## 7.1 权限与沙箱：为什么默认不用最大权限
 
-教程默认 `sandbox_mode = "workspace-write"` + `approval_policy = "on-request"`：模型**只能改当前目录的文件**，越界时会问你。
+教程默认 `sandbox_mode = "workspace-write"` + `approval_policy = "on-request"`：前者限制文件及网络访问边界，后者决定何时请求额外权限。工作区之外还可能包含临时目录或显式授权路径，`.git`、`.codex` 等路径可能额外受保护。实际边界以当前运行环境为准。
 
 我们自己的机器上用的是更激进的配置：
 
@@ -211,11 +244,11 @@ sandbox_mode = "danger-full-access"
 sandbox = "elevated"
 ```
 
-也就是**不限制目录、基本不问**。写得快，但代价是：模型可以改任何文件、跑任何命令，一次误操作可能删掉不该删的东西。
+`danger-full-access` 关闭沙盒限制，但仍受操作系统权限与组织策略约束；是否审批由独立的审批设置决定。`[windows] sandbox = "elevated"` 选择 Windows 原生沙盒实现，本身不表示关闭沙盒，也不是自动批准所有命令。见 [官方配置说明](https://learn.chatgpt.com/docs/config-file/config-basic)。
 
 ![Codex 的权限确认弹窗：标题栏显示 Action Required，正文给出 Environment: local、Reason（目标路径在工作区外）和它要执行的命令，底部是 1. Yes, proceed (y) 与 2. No, and tell Codex what to do differently (esc)](images/codex-permission-prompt.png)
 
-**建议**：先用默认值跑一两周，熟悉它的行为模式；确实被权限拦住影响效率时，再按上面放开，并且**只在重要的仓库上开**（重要仓库记得用 git，别裸奔）。
+**建议**：保留教程默认权限；确需最大权限时，只在另有独立隔离与恢复条件的环境使用。Git 不能保护仓库外文件、未跟踪文件或凭据，不能作为关闭沙盒的理由。
 
 ## 7.2 常用可选配置
 
@@ -244,12 +277,12 @@ args = ["-y", "@upstash/context7-mcp"]
 
 # 8 常见问题
 
-| 现象 | 原因 / 解决 |
+| 现象 | 可能原因、检查顺序与下一步 |
 | --- | --- |
-| `401 Invalid token` | `NEWAPI_KEY` 没生效。新开终端，`$env:NEWAPI_KEY.Length` 应为 51 |
+| `401 Invalid token` | 可能是凭据错误、过期或配置冲突；先核对变量与引用，再按 [统一接入第 6 节](02-unified-access.md#6-常见报错对照)检查服务端响应 |
 | 一直提示登录 OpenAI | `requires_openai_auth = false` 漏了，或 `model_provider` 写错 |
-| `model_not_found` / `No available channel for model` | 模型名不在清单里：先在 [pricing 页](https://newapi.ttxs.site/pricing) 确认它在不在，再对照 [统一接入](02-unified-access.md) 第 4 节 |
-| 想让它在别的盘干活 | 先 `cd` 到那个目录再运行 `codex`；`workspace-write` 只允许改当前目录 |
+| `model_not_found` / `No available channel for model` | 先核对实际模型名与当前凭据的模型列表，再检查渠道和权限；两类错误不等价，见 [统一接入第 6 节](02-unified-access.md#6-常见报错对照) |
+| 想让它在别的盘干活 | 先 `cd` 到那个目录再运行 `codex`；具体可写范围见第 7.1 节 |
 | VS Code 扩展里报错 | 扩展与命令行共用配置；先在命令行确认 `codex exec "只回复两个字：可用"` 能正常回答 |
 | 中文乱码（Windows） | 用 **Windows Terminal + PowerShell 7**，不要用老的 cmd 窗口 |
 | 回答太慢 | `model_reasoning_effort` 降到 `low`，或换 `gpt-6-luna` |

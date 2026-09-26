@@ -35,7 +35,7 @@ description: 用红-绿-重构的循环写测试。当用户要"测试先行"地
 
 ## 1.2 Matt Skills 是什么
 
-Matt Pocock（Total TypeScript 作者）把自己日常用的技能开源了：<https://github.com/mattpocock/skills>（MIT 协议，25 个技能）。它不是"提示词合集"，而是**一条从想法到上线的完整工程流程**：先把需求问清楚 → 写成规格 → 拆成工单 → 测试先行地实现 → 按标准和规格双向评审。
+Matt Pocock（Total TypeScript 作者）把自己日常用的技能开源了：<https://github.com/mattpocock/skills>（MIT 协议；原教程快照为 25 个技能，当前数量以仓库为准）。它不是"提示词合集"，而是**一条从想法到上线的完整工程流程**：先把需求问清楚 → 写成规格 → 拆成工单 → 测试先行地实现 → 按标准和规格双向评审。
 
 ## 1.3 和我们已经装的东西是什么关系
 
@@ -55,14 +55,14 @@ Matt Pocock（Total TypeScript 作者）把自己日常用的技能开源了：<
 | 项目 | 要求 | 检查方法 |
 | --- | --- | --- |
 | Node.js | **≥ 22.19**（`01-prerequisites.md` 里已经装过） | `node -v` |
-| 至少一个智能体 | Codex / pi / Claude Code / OpenCode 任一已跑通 | `codex exec "只回复两个字：可用"` |
+| 至少一个智能体 | Codex / pi / Claude Code / OpenCode 任一已跑通 | 完成该工具教程第 5 节的三层验证 |
 | 网络 | 能访问 GitHub（安装器从 GitHub 拉技能仓库） | — |
 
 > 安装器本体是 npm 包 `skills`，用 `npx skills@latest` 调用，**不需要全局安装**。
 
 ---
 
-# 3 安装（30 秒）
+# 3 安装
 
 ## 3.1 交互式（第一次推荐）
 
@@ -145,9 +145,26 @@ claude plugins install mattpocock-skills
 
 三个坑先记住：
 
-1. **它不会自动创建 GitHub 标签。** `triage-labels.md` 只是"名字对应关系"，标签本身要你自己建（用标准名就没这问题）。用 `/wayfinder` 之前，`wayfinder:map` 这类标签也要手工先建好。
+1. **它不会自动创建 GitHub 标签。** `triage-labels.md` 只是"名字对应关系"，标签本身仍需在 GitHub 仓库中存在，使用标准名也不会自动创建。用 `/wayfinder` 之前，`wayfinder:map` 这类标签也要手工先建好。
 2. **它写 `CLAUDE.md` 还是 `AGENTS.md` 只看"哪个文件存在"，不看你在用哪个工具。** 仓库里如果有从 Claude Code 时代留下的 `CLAUDE.md`，你又在用 Codex，那段就写进了 Codex 不读的文件——手动把 `## Agent skills` 段挪到 `AGENTS.md` 即可。
 3. **配置写在仓库里，是给人看的 Markdown。** 想改就手改，不用再跑一次；换了 issue 管理方式，或技能升级后行为对不上，就再跑一次。
+
+
+使用 GitHub Issues 时，在目标仓库内先检查标签。以下命令需要已安装并登录 `gh`，**仅查看，不创建**：
+
+```PowerShell
+gh repo view --json nameWithOwner --jq .nameWithOwner
+gh label list --limit 1000 --json name --jq '.[].name'
+```
+
+确认仓库无误后，只为列表中确实缺失的标签运行创建命令。例如仅缺 `needs-triage` 时：
+
+```PowerShell
+gh label create needs-triage --color BFD4F2 --description '待分类的问题'
+```
+
+其余四个名称按表逐个处理；不要用 `--force` 覆盖已有标签。若技能要求额外标签，也先检查再创建。这里只给操作说明，不要求安装技能时自动修改远端仓库。
+
 
 ---
 
@@ -237,10 +254,12 @@ npx skills list -g                       # 看装了哪些（别名 npx skills l
 npx skills check                         # 检查有没有新版本
 npx skills update -g                     # 升级全局技能
 npx skills find code-review              # 在 skills.sh 上搜别的技能
-npx skills remove -g tdd code-review     # 删掉某几个
-npx skills remove -g --all -y            # 全局全删
+# 先用上面的 list 核对技能名、来源及安装范围；只移除确认不再需要的项
+npx skills remove -g tdd code-review     # 示例：仅这两个名字，保留交互确认
 npx skills use mattpocock/skills@tdd     # 不安装，直接用这一个（会打印提示词）
 ```
+
+卸载按技能名匹配，不按仓库来源自动隔离。同名技能若已换来源，要先确认；全局移除也可能影响多个客户端链接。保留交互确认，项目级安装应在项目内处理并省略 `-g`。命令范围见 [安装器官方说明](https://github.com/vercel-labs/skills)。
 
 新版本换掉了模板，`docs/agents/` 里的配置可能过时——某个下游技能的行为和文档对不上时，**重跑一次 `/setup-matt-pocock-skills`** 是便宜且有效的修法。
 
@@ -248,7 +267,7 @@ npx skills use mattpocock/skills@tdd     # 不安装，直接用这一个（会�
 
 # 8 常见问题
 
-| 现象 | 原因 / 解决 |
+| 现象 | 可能原因、检查顺序与下一步 |
 | --- | --- |
 | `npx` 找不到，或下载特别慢 | Node.js 没装好，或 npm 源太慢。见 [前置工具](01-prerequisites.md)（含镜像设置） |
 | 装完了，工具里看不到技能 | ① 没新开会话；② `-a` 里漏了你在用的工具；③ 工具版本太老不支持 skills；④ pi 里改过文件要 `/reload` |
@@ -256,21 +275,18 @@ npx skills use mattpocock/skills@tdd     # 不安装，直接用这一个（会�
 | Windows 报软链接权限错误 | 加 `--copy` 重装，改成复制文件 |
 | Codex 里 `/tdd` 报"Unrecognized command" | Codex 不支持 `/技能名` 写法：用 `$tdd` 或 `/skills` 挑选 |
 | 跑完 `/setup-matt-pocock-skills`，`/to-tickets` 还是乱猜 issue 位置 | ① 没**在这个仓库**里跑；② 配置被写进了 `CLAUDE.md` 而你在用 Codex → 手改到 `AGENTS.md` |
-| 提示找不到标签 / 建 issue 失败 | 标签要自己建（`gh label create`）或用标准名；`/wayfinder` 的标签也要先手工建 |
+| 提示找不到标签 / 建 issue 失败 | 先检查标签是否存在，再用 `gh label create` 创建缺失项；使用标准名也要检查；`/wayfinder` 的标签也要先手工建 |
 | 报 GitHub API 限流（403） | 设 `GITHUB_TOKEN`（有 `gh` 登录的话它会自动兜底） |
 | 不想要安装器的匿名统计 | 当前会话：`$env:DO_NOT_TRACK = "1"`；想永久就写进用户环境变量 |
-| 想彻底清干净 | `npx skills remove -g --all -y`，再删 `%USERPROFILE%\.agents\skills` 和 `%USERPROFILE%\.agents\.skill-lock.json` |
+| 想重装 Matt Skills | 先 `npx skills list -g`，核对来源后按技能名逐项移除并重装；不要删除共享 `.agents/skills` 目录或锁文件，那里可能还有其他来源 |
 
 ---
 
 # 9 版本与来源
 
-| 项目 | 本文档对应的版本 | 记录日期 | 位置 | 查看命令 |
-| --- | --- | --- | --- | --- |
-| skills 安装器（npm 包 `skills`） | `@latest`（每次 `npx` 取最新） | 2026-09-25 | `%USERPROFILE%\.agents\skills`、`%USERPROFILE%\.agents\.skill-lock.json` | `npx skills list -g` |
-| Matt Skills（技能集） | v1.2（2026-08-05 发布） | 2026-09-25 | 同上（正本），各工具目录为链接 | `npx skills check` |
+历史技能集版本和记录日期统一见 [README 第 4 节](README.md#4-版本基线与核验状态)。`npx skills@latest` 的 `latest` 是动态标签，不是固定验证版本；`npx skills` 的实际版本可能受本地安装和缓存影响。数量和技能名称以当前安装清单及作者仓库为准。
 
-> 技能集迭代很快（v1.0 → v1.2 之间新增了 `wayfinder`、`to-spec`、`to-tickets`、`wait-what`、`writing-for-agents` 等）。行为和你看到的不一致时，以官方页面为准，并回来更新这张表。
+更新后先检查技能描述、命令和仓库约定是否仍匹配，再进行实际任务；不要因为本文列出 25 个就删除额外的其他来源技能。
 
 ---
 

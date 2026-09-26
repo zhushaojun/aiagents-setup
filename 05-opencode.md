@@ -1,6 +1,6 @@
 # OpenCode
 
-**辅助工具。** 开源、通用的终端 AI 编程智能体：几乎什么模型都能接，终端 / IDE / 桌面端都有入口。它已经发展成为一个能真正干活的独立产品（v2），**虽然能力上限不如 Codex 和 pi（它不是由自家最强模型驱动的），但完全可用，值得动手试一试。**
+**辅助工具。** 开源、通用的终端 AI 编程智能体：几乎什么模型都能接，终端 / IDE / 桌面端都有入口。它已经发展成为一个能真正干活的独立产品（v2），我们在当前工作流中将它作为辅助客户端；这个顺序不是普遍能力排名。
 
 ![OpenCode v2 的终端界面：中央是 opencode 字样与 Ask anything... 输入框，状态行显示 Build · deepseek-v4.1-flash newapi，右下角版本 2.0.17](images/opencode-tui.png)
 
@@ -12,7 +12,7 @@
 - **适合**：想用完全开源的工具、想一套配置到处跑（终端 / IDE / 桌面）、想接各种国产模型对比效果的人。
 - **优势**：开源可审计；供应商配置灵活；界面现代化，默认信息密度高。
 - **需要知道的两件事**：
-  1. **它能力不强，主要原因是模型**：它不像 Codex/Claude Code 那样由自家最强模型驱动，所以同样的任务，出来的结果通常不如前两者稳定；
+  1. **结果取决于模型和客户端配合**：先固定模型、任务和参数，再比较工具调用与输出；不能根据是否生产自家模型判断能力；
   2. **它是 v2 了**，配置格式与网上大量 v1 教程**不兼容**（`provider` 变 `providers`、`npm` 变 `package`、`options` 变 `settings`）。本篇按 **v2** 写。
 
 ---
@@ -21,9 +21,9 @@
 
 | 项目 | 要求 | 检查方法 |
 | --- | --- | --- |
-| Node.js | ≥ 20（v2 通过 npm 安装） | `node -v` |
-| 环境变量 | `NEWAPI_KEY` 已设置 | `$env:NEWAPI_KEY.Length` → `51` |
-| Git for Windows | 建议装（模型要执行命令时会用到） | `bash --version` |
+| Node.js | ≥ 22.19.0（本教程 npm 路线统一基线） | `node -v` |
+| 环境变量 | `NEWAPI_KEY` 已设置 | `-not [string]::IsNullOrWhiteSpace($env:NEWAPI_KEY)` → `True` |
+| Git for Windows | Bash 命令执行路线需要 | 按 [前置工具](01-prerequisites.md#2-git-for-windows)检查 Git Bash 路径 |
 
 > 密钥设置见 **[统一接入](02-unified-access.md)** 第 2 节。若模型执行命令时报找不到 bash，装 Git for Windows，或用环境变量 `OPENCODE_GIT_BASH_PATH` 指向 `bash.exe`。
 
@@ -38,9 +38,9 @@ npm install -g @opencode/cli
 opencode --version
 ```
 
-预期输出：`2.0.16` 这类 v2 版本号。
+版本输出示例：`2.0.16`；应为 v2，记录基线见 [README 第 4 节](README.md#4-版本基线与核验状态)。
 
-> ⚠️ **别装错包**：v2 的 npm 包是 **`@opencode/cli`**；网上老教程里的 `opencode-ai` 是 **v1** 旧线（版本还是 1.18.x），两者配置格式完全不同。教程只会用 `@opencode/cli`。
+> ⚠️ **别装错包**：v2 的 npm 包是 **`@opencode/cli`**；网上老教程里的 `opencode-ai` 是 **v1** 旧线（版本还是 1.18.x），两者配置格式不同。教程使用 `@opencode/cli`；字段迁移依据见 [官方 v2 迁移文档](https://opencode.ai/v2/docs/migrate-v1)。
 
 ## 3.2 官方脚本（可选）
 
@@ -58,16 +58,20 @@ mkdir -p ~/.config/opencode
 # 配置文件写法见第 4 节，把 opencode.json 放到 ~/.config/opencode/
 ```
 
-再把 `export NEWAPI_KEY="sk-你的Key"` 写进 `~/.bashrc` 并 `source ~/.bashrc`。
+凭据设置与备份见 [统一接入第 2.3 节](02-unified-access.md#23-远程-linux-服务器)。
 
 ---
 
-# 4 配置（复制即用）
+# 4 配置（首次创建，已有文件先备份合并）
 
-配置文件位置：`%USERPROFILE%\.config\opencode\opencode.json`（Linux 上是 `~/.config/opencode/opencode.json`）。
+配置文件位置：`%USERPROFILE%\.config\opencode\opencode.json`（Linux 上是 `~/.config/opencode/opencode.json`）。首次创建遇到已有文件会停止；按 [统一接入第 9 节](02-unified-access.md#9-已有配置的备份与合并)备份后合并 `providers` 和默认模型，不删除其他供应商。
 
 ```PowerShell
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.config\opencode" | Out-Null
+$configPath = "$env:USERPROFILE\.config\opencode\opencode.json"
+if (Test-Path -LiteralPath $configPath) {
+  throw '文件已存在：请按统一接入第 9 节备份后手动合并，不要整份覆盖。'
+}
+New-Item -ItemType Directory -Force (Split-Path -Parent $configPath) -ErrorAction Stop | Out-Null
 @'
 {
   "$schema": "https://opencode.ai/config.json",
@@ -99,7 +103,7 @@ New-Item -ItemType Directory -Force "$env:USERPROFILE\.config\opencode" | Out-Nu
     }
   }
 }
-'@ | Set-Content -Encoding utf8 "$env:USERPROFILE\.config\opencode\opencode.json"
+'@ | Set-Content -LiteralPath $configPath -Encoding utf8 -ErrorAction Stop
 ```
 
 **v2 格式的四个要点**（对照老教程看容易踩坑）：
@@ -111,7 +115,7 @@ New-Item -ItemType Directory -Force "$env:USERPROFILE\.config\opencode" | Out-Nu
 | 连接与密钥 | `"settings": { "apiKey": "{env:NEWAPI_KEY}", "baseURL": "..." }` | `"options": { ... }` |
 | 密钥插值 | `{env:变量名}` | 同名，但写在 `options` 里 |
 
-`models` 里的 `limit.context` / `limit.output` 是给模型声明的上下文与输出上限，**写小了会让它无法处理长文件**，照抄上面的值即可（数值来自中转的模型信息）。
+`limit.context` / `limit.output` 是客户端声明的上下文与输出上限，不会改变服务端能力。这里保留旧配置值；本次未取得可复核的中转能力元数据，长请求仍待验证。写大可能请求失败，写小也可能影响上下文预算；请按 [统一接入第 4 节](02-unified-access.md#4-当前可用的模型清单)向维护者确认后调整。
 
 顶层的 `"model": "newapi/deepseek-v4.1-flash"` 是**默认模型**，格式为 `供应商/model_id`。**这一行别省**——不写的话 OpenCode 按下面的顺序自己挑，你每次启动看到的模型都可能不一样：
 
@@ -122,7 +126,7 @@ New-Item -ItemType Directory -Force "$env:USERPROFILE\.config\opencode" | Out-Nu
 
 > 换默认模型改这一行（例如 `"model": "newapi/gpt-6-sol"`）；只想临时换就用 `/models` 命令，或 `opencode run --model ...`。
 >
-> **不写这一行的实际后果**：OpenCode 会自己挑一个“可用”的模型，实测会落到内置免费模型 `space-bunny-free`，看起来像“OpenCode 很笨”，其实是根本没走你的中转。用 `opencode run --standalone` 跑一次，状态行里模型名不带 `newapi/` 就是没接上。
+> **不写这一行的实际后果**：OpenCode 会自己挑一个“可用”的模型，实测会落到内置免费模型 `space-bunny-free`，此时实际使用的是另一个供应商，不能据此比较客户端能力。用 `opencode run --standalone` 跑一次，状态行里模型名不带 `newapi/` 就是没接上。
 
 ## 4.1 可选：接入 OpenCode Console 的限时免费模型
 
@@ -132,28 +136,48 @@ New-Item -ItemType Directory -Force "$env:USERPROFILE\.config\opencode" | Out-Nu
 
 ---
 
-# 5 验证
+# 5 验证（第一次使用必须做）
 
-用非交互模式直接验证密钥链路：
-
-```PowerShell
-opencode run --standalone --model newapi/gpt-6-sol "只回复两个字：可用"
-```
-
-预期输出里出现 `可用`。
-
-如果报 `Invalid token`，说明 `{env:NEWAPI_KEY}` 没解析出来（环境变量没生效，或你把它写成了 `$NEWAPI_KEY`）。
-
-再进交互界面干活：
+## 5.1 本地环境与配置
 
 ```PowerShell
-cd D:\codes\some-project
-opencode
+opencode --version
+Test-Path -LiteralPath (Join-Path $env:USERPROFILE '.config/opencode/opencode.json') -PathType Leaf
 ```
 
-界面里可以用 `/models` 切换模型（应能看到 `newapi/deepseek-v4.1-flash` 等，即上面配的默认模型）。
+版本应正常返回，文件检查应为 `True`。凭据非空检查见 [统一接入第 2 节](02-unified-access.md#2-设置环境变量)，版本基线见 [README 第 4 节](README.md#4-版本基线与核验状态)。确认实际模型显示为 `newapi/deepseek-v4.1-flash`；`newapi/` 是客户端供应商前缀。
+
+## 5.2 请求链路
+
+复用 README 创建的练习仓库和样例文件；尚未准备时，按 [前置工具第 6.1 节](01-prerequisites.md#61-创建独立练习目录)创建，保持终端位于该目录，无需提交文件。
+
+```PowerShell
+opencode run --standalone --model newapi/deepseek-v4.1-flash "只回复两个字：可用"
+```
+
+预期收到正常回答。它只验证所选模型的基本请求链路；确认实际供应商和模型符合命令与配置，失败按 [统一接入第 6 节](02-unified-access.md#6-常见报错对照)排查。
+
+## 5.3 文件读取与只读命令
+
+仍在上述练习目录启动交互模式：
+
+```PowerShell
+opencode --model newapi/deepseek-v4.1-flash
+```
+
+输入以下提示（不要提前告诉模型文件里的随机文本）：
+
+```text
+读取当前目录的 agent-check.txt，原样报告其中的文本；实际执行 git status --short 并报告输出。不要创建、修改或删除任何文件。
+```
+
+成功标准：能在工具调用记录中看到读取文件及执行命令，读出的文本与自己准备的随机文本一致，Git 输出包含未跟踪的 `agent-check.txt`。需要权限时先核对命令和目标目录再确认。仅凭模型口头说“已执行”不算通过。
+
+这一步不验证图片、写文件、长上下文或最大输出。进入真实项目时，把示例路径 `D:\codes\some-project` 换成自己的路径；没有 D 盘可继续使用用户目录下的练习目录。
 
 ![OpenCode 的 Select model 列表：搜索框输入 newapi，列出 deepseek-v4.1-flash、glm-5.3-flash、gpt-6-sol、kimi-k2.7-code、mimo-v2.6-flash 等模型，右列供应商均为 newapi](images/opencode-model-list.png)
+
+截图来自历史本机配置，可能有额外模型、不同默认选择或版本；以本篇示例与当前实际配置为准，不要照截图补入旧模型名。
 
 ---
 
@@ -184,11 +208,11 @@ opencode
 
 # 8 常见问题
 
-| 现象 | 原因 / 解决 |
+| 现象 | 可能原因、检查顺序与下一步 |
 | --- | --- |
-| 装了但不认识配置 | 装成了 v1：`npm uninstall -g opencode-ai`，改 `npm install -g @opencode/cli` |
-| `Invalid token` | `{env:NEWAPI_KEY}` 没解析：检查环境变量是否新开终端生效；写法必须是 `{env:NEWAPI_KEY}` |
-| 模型不在列表里 | `providers`（复数）写成了 `provider`，或模型 `id` 不在中转清单里（见 [统一接入](02-unified-access.md) 第 4 节） |
+| 装了但不认识配置 | 先查 `opencode --version`、配置路径和报错字段；若确为 v1，备份后按第 3 节改装 v2 |
+| `Invalid token` | 可能是变量引用错误或服务端拒绝凭据；先检查 `{env:NEWAPI_KEY}` 与变量非空，再核对密钥状态，见统一接入第 6 节 |
+| 模型不在列表里 | 先确认配置位置、v2 的 `providers` 字段和模型注册/过滤；本地列表缺项与服务端模型不存在是不同问题 |
 | 模型执行命令报找不到 bash | 装 Git for Windows；或用 `OPENCODE_GIT_BASH_PATH` 指向 `bash.exe` |
 | 后台服务起不来 | 加 `--standalone` 用私有服务跑：`opencode run --standalone "..."` |
 | `model_not_found` | 模型名写错，或该模型当期已下架（看 [pricing 页](https://newapi.ttxs.site/pricing)）；注意别把 Claude Code 的 `[1M]` 后缀抄进来 |

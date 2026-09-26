@@ -39,7 +39,7 @@ CC Switch 是一个开源的**桌面应用**，把"AI 编程工具的供应商�
 
 # 3 基本用法（概念层面）
 
-1. **添加供应商**：点 `+`，可以选预设供应商，也可以手动填 OpenAI 兼容接口（我们的就是这种）：
+1. **添加供应商**：点 `+`，可以选预设供应商，也可以手动填 OpenAI 兼容接口（以下示例用于 OpenAI 协议；Claude Code 直连 Messages 的地址不带 `/v1`，本地路由则按界面要求配置）：
    - 名称：`newapi`
    - 接口地址：`https://newapi.ttxs.site/v1`
    - 密钥：`sk-你的Key`
@@ -58,16 +58,16 @@ CC Switch 是一个开源的**桌面应用**，把"AI 编程工具的供应商�
 
 CC Switch 的工作原理就是替你写 `~/.claude/settings.json`、`~/.codex/config.toml` 这类文件。所以：
 
-- **用之前先备份**：把 `%USERPROFILE%\.claude`、`%USERPROFILE%\.codex`、`%USERPROFILE%\.pi\agent`、`%USERPROFILE%\.config\opencode` 复制一份留底；
+- **用之前先备份**：按 [统一接入第 9 节](02-unified-access.md#9-已有配置的备份与合并)备份将被改写的文件；若备份整个配置目录，其中可能有凭据与会话，应私下保管；
 - 用完之后**回头检查**：我们教程里那些配置项（尤其 `ANTHROPIC_BASE_URL`、模型档位映射、`env_key`）是否还在。
 
 ## 4.2 开启"本地路由"可能会删掉 `ANTHROPIC_MODEL`
 
-已知问题（cc-switch issue #6889）：开启本地路由后，`~/.claude/settings.json` 里的 **`ANTHROPIC_MODEL` 会被删除**。后果是 Claude Code 不知道用哪个模型，回退到内部默认值 `default[1M]`，请求直接失败（表现为报错或一直转圈）。
+问题报告 [#6889](https://github.com/farion1231/cc-switch/issues/6889) 描述了开启路由后 `ANTHROPIC_MODEL` 被删除、请求使用 `default[1M]` 失败的情形。报告环境为 CC Switch v3.20.0、Claude Code 2.1.247、Windows 11；2026-09-26 查阅时页面仍为 Open。这不是所有版本的必然行为，本次没有本地复现；使用前仍需查看最新处理状态并记录自己的版本。
 
-**处理办法**：开完路由后打开 `%USERPROFILE%\.claude\settings.json`，确认 `env` 块里这几项还在：
+**处理办法**：开完路由后打开 `%USERPROFILE%\.claude\settings.json`，检查模型映射是否仍符合预期。下面是 `env` 内的 **JSON 片段，不能单独保存为完整配置文件**：
 
-```json
+```text
 "ANTHROPIC_MODEL": "deepseek-v4.1-flash[1M]",
 "ANTHROPIC_DEFAULT_FABLE_MODEL": "glm-5.3-flash[1M]",
 "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5-5[1M]",
@@ -75,7 +75,7 @@ CC Switch 的工作原理就是替你写 `~/.claude/settings.json`、`~/.codex/c
 "ANTHROPIC_DEFAULT_HAIKU_MODEL": "gpt-6-luna"
 ```
 
-少了的按 [Claude Code](06-claude-code.md) 第 4 节补回去。
+先查看路由界面的模型映射及实际请求模型；路由工具可能有意管理这些字段。确认当前版本确实需要补回时，再按 [Claude Code](06-claude-code.md) 第 4 节合并，不要与路由工具反复争写配置。改完重做该客户端第 5 节的三层验证。
 
 ---
 
@@ -88,7 +88,7 @@ CC Switch 的工作原理就是替你写 `~/.claude/settings.json`、`~/.codex/c
 | 依赖 | 无（只有四个 CLI） | 多一个常驻桌面应用 |
 | 适合谁 | 初学者、单一供应商 | 老手、多供应商、要看用量 |
 
-**建议**：先用主线方案把四个工具都用熟（至少两周），再决定要不要上 cc-switch。
+**建议**：先把实际需要的客户端跑顺，有多供应商需求后再使用 CC Switch。
 
 ---
 
@@ -96,5 +96,5 @@ CC Switch 的工作原理就是替你写 `~/.claude/settings.json`、`~/.codex/c
 
 1. CC Switch 官网：<https://ccswitch.io/zh/>
 2. 供应商切换教程：<https://cc-switch.cc/tutorials/provider-switching>
-3. 已知问题（本地路由删除 ANTHROPIC_MODEL）：<https://github.com/farion1231/cc-switch/issues/6889>
+3. 历史问题报告（本地路由删除 ANTHROPIC_MODEL）：<https://github.com/farion1231/cc-switch/issues/6889>
 4. 本仓库主线方案：[统一接入](02-unified-access.md)

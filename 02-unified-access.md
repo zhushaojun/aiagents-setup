@@ -1,8 +1,8 @@
 # 统一接入
 
-使用本教程默认的 **NewAPI 方案**时，本篇是**唯一需要填写密钥的地方**。后面 Claude Code / Codex / pi / OpenCode 四篇的默认配置都可以直接复制；另接其他供应商（如 OpenCode Console）时，需按对应文档单独配置密钥。
+使用本教程默认的 **NewAPI 方案**时，本篇是**唯一需要填写密钥的地方**。后面 Claude Code / Codex / pi / OpenCode 四篇的默认配置可用于首次创建，已有文件先备份合并；另接其他供应商（如 OpenCode Console）时，需按对应文档单独配置密钥。
 
-一句话原理：把密钥放进**系统环境变量**，各工具自己去读。这样配置文件里只出现变量名，不出现密钥，谁都能复制、也不怕误传到网上。
+一句话原理：把密钥放进**用户级环境变量**，各工具自己去读。这样配置文件里只出现变量名，不出现密钥，便于共享示例；自己的配置仍要检查其他凭据和本机路径。
 
 ---
 
@@ -13,9 +13,9 @@
 | 中转站地址 | `https://newapi.ttxs.site` | 我们统一的模型入口（NewAPI） |
 | 密钥 | `sk-你的Key` | **找朱老师要**，禁止分享给任何人 |
 | 环境变量名（通用） | `NEWAPI_KEY` | Codex / pi / OpenCode 读这个 |
-| 环境变量名（Claude Code 专用） | `ANTHROPIC_AUTH_TOKEN` | Claude Code 只认这个名字 |
+| 环境变量名（Claude Code 专用） | `ANTHROPIC_AUTH_TOKEN` | 本教程选用的 Bearer 鉴权变量 |
 
-> 为什么不让 Claude Code 也读 `NEWAPI_KEY`？因为 Claude Code 的 `settings.json` 不支持 `${变量}` 展开（官方 [issue #4276](https://github.com/anthropics/claude-code/issues/4276) 一直没做），它只认官方约定的 `ANTHROPIC_AUTH_TOKEN` 环境变量。所以 Claude Code 用第二个变量名，值是**同一个 Key**。
+> 本教程为 Claude Code 选用 `ANTHROPIC_AUTH_TOKEN`，由客户端生成 Bearer 请求头。它也支持 `ANTHROPIC_API_KEY`（`X-Api-Key` 请求头）等官方鉴权方式；选用哪种取决于服务端。本教程不依赖 `settings.json` 中的 `${变量}` 展开，避免把真实密钥写入配置。参见 [官方环境变量说明](https://code.claude.com/docs/en/env-vars)。
 
 ## 1.1 变量名的约定
 
@@ -43,14 +43,14 @@
 [Environment]::SetEnvironmentVariable("ANTHROPIC_AUTH_TOKEN", "sk-你的Key", "User")
 ```
 
-**执行后必须新开一个终端**（旧终端读不到新变量）。验证：
+用户级设置只影响之后继承到新环境的进程，**不会修改当前终端的 `$env:`**。新标签页也可能继承旧父进程的环境。请完整退出并重启 Windows Terminal、VS Code、桌面应用或 Orca，再验证；只想测试当前终端可以使用 2.2。
 
 ```PowerShell
-$env:NEWAPI_KEY.Length
-$env:ANTHROPIC_AUTH_TOKEN.Length
+-not [string]::IsNullOrWhiteSpace($env:NEWAPI_KEY)
+-not [string]::IsNullOrWhiteSpace($env:ANTHROPIC_AUTH_TOKEN)
 ```
 
-预期输出：两个数字（我们的 Key 是 51 位）。如果输出为空，说明没新开终端，或者 Key 填错了。
+预期为两个 `True`，仅表示变量非空，**不能证明密钥有效**。密钥长度不作为判定标准。若为 `False`，检查用户变量是否保存、变量名是否一致，以及启动程序的父进程是否已重启。
 
 也可以图形化设置：`Win + R` → `sysdm.cpl` → 高级 → 环境变量 → 用户变量 → 新建。
 
@@ -63,7 +63,7 @@ $env:ANTHROPIC_AUTH_TOKEN = "sk-你的Key"
 
 ## 2.3 远程 Linux 服务器
 
-把下面两行追加到 `~/.bashrc`（注意替换 Key），然后 `source ~/.bashrc`：
+先按第 9 节备份 `~/.bashrc`，用编辑器检查并设置下面两项（已有同名变量就更新，不重复追加；注意替换 Key），然后 `source ~/.bashrc`：
 
 ```Bash
 export NEWAPI_KEY="sk-你的Key"
@@ -73,18 +73,20 @@ export ANTHROPIC_AUTH_TOKEN="sk-你的Key"
 验证：
 
 ```Bash
-echo ${#NEWAPI_KEY} ${#ANTHROPIC_AUTH_TOKEN}
+for name in NEWAPI_KEY ANTHROPIC_AUTH_TOKEN; do
+  if [ -n "${!name}" ]; then printf '%s 已设置\n' "$name"; else printf '%s 未设置\n' "$name"; fi
+done
 ```
 
-预期输出：`51 51`。
+预期两项均为“已设置”；这里只检查非空，不验证凭据。上面的读取方式使用 Bash。编辑 `~/.bashrc` 前先备份，已有同名变量应替换旧设置而不是不断追加；该文件含真实密钥，不要分享。
 
 > 服务器上**不需要**装 Claude Code 的图形界面，四个工具都有命令行版本。
 
 ---
 
-# 3 地址与协议：同一个中转，两种接口
+# 3 地址与协议：同一个中转，不同接口
 
-NewAPI 同时提供两种协议接口，不同工具用不同的那个，**不要互相混用**：
+本教程使用该 NewAPI 服务的 Messages、Responses 和 Chat Completions 接口，不同工具按配置选择，**不要互相混用**：
 
 | 工具 | 用哪个协议 | 配置里填的地址 |
 | --- | --- | --- |
@@ -95,7 +97,7 @@ NewAPI 同时提供两种协议接口，不同工具用不同的那个，**不�
 
 常见的坑：
 
-- **Claude Code 不能接 OpenAI 协议端点**。它的 `ANTHROPIC_BASE_URL` 必须是说过 Anthropic Messages 协议的地址，填了 OpenAI 兼容地址会直接报 400/404。我们的中转两种都提供，所以按上表填即可。
+- **Claude Code 不能接 OpenAI 协议端点**。它的 `ANTHROPIC_BASE_URL` 必须是说过 Anthropic Messages 协议的地址，不能只因地址相同就假定兼容。按上表填写，并以响应确认协议；400/404 也可能来自其他路径或参数问题。
 - 地址**末尾不要多加斜杠**（`.../v1/` 有时会 404）。
 
 ---
@@ -105,7 +107,7 @@ NewAPI 同时提供两种协议接口，不同工具用不同的那个，**不�
 > ## 🔎 实时清单与价格看这里
 > **<https://newapi.ttxs.site/pricing>**
 >
-> 这是中转后台的计费页，**随时随地打开就是最新的**：当期有哪些模型可用、每个模型输入/输出每 1M tokens 多少钱，都在这一页。模型上架、下架、调价都在这里反映。
+> 这是中转的计费查询入口。价格、计费单位和模型展示以页面当前说明为准；页面展示不保证你的凭据有权限，也不保证对应渠道此刻可用。
 >
 > **清单与价格随时可能变，以这一页为准。** 本文下面那份清单只是快照，用来对照名字、离线看。
 > （这是网页应用，需要浏览器打开；看不到内容时先登录中转账号。）
@@ -135,18 +137,20 @@ qwen3.8-max                 space-bunny-free
 
 | 工具 | 主力 | 备选 | 理由 |
 | --- | --- | --- | --- |
-| Codex | `gpt-6-sol` | `gpt-6-luna`、`gpt-5.6-sol` | Codex 与 GPT 系列同源，工具调用最稳（贵一些，追求效果就用它） |
-| pi | `deepseek-v4.1-flash` | `glm-5.3-flash`、`gpt-6-sol` | 长上下文 + 工具调用稳；想更省更快就换 `glm-5.3-flash` |
-| Claude Code | `deepseek-v4.1-flash` | `glm-5.3-flash`、`qwen3.8-max` | 日常写代码够用，成本低 |
-| OpenCode | `deepseek-v4.1-flash` | `glm-5.3-flash`、`gpt-6-sol`、`deepseek-v4-pro` | 通用性好，插件生态用它最省心 |
+| Codex | `gpt-6-sol` | `gpt-6-luna`、`gpt-5.6-sol` | 本教程的默认搭配；效果与费用需结合任务验证 |
+| pi | `deepseek-v4.1-flash` | `glm-5.3-flash`、`gpt-6-sol` | 用于试用不同模型；长上下文和工具调用需分别验证 |
+| Claude Code | `deepseek-v4.1-flash` | `glm-5.3-flash`、`qwen3.8-max` | 我们的日常配置；价格以当前计费页为准 |
+| OpenCode | `deepseek-v4.1-flash` | `glm-5.3-flash`、`gpt-6-sol`、`deepseek-v4-pro` | 保持与 pi 相同的默认模型，便于对照客户端行为 |
 
-想省钱的时候：先到 [pricing 页](https://newapi.ttxs.site/pricing) 比一下单价，把"主力"换成便宜的 flash 档（`glm-5.3-flash`、`deepseek-v4-flash` 这类）即可，改一处配置就生效。
+想控制费用时，先在 [pricing 页](https://newapi.ttxs.site/pricing) 比较实际单价及计费单位；不要只根据 flash 名称判断价格。切换模型后核对客户端注册、模型选择及兼容性，再执行短文本验证。
+
+默认值以上表为准，各工具示例是它的可执行展开。模型列表只返回名称，不能证明上下文、图片、工具调用或输出上限。pi / OpenCode 示例中的上限来自旧配置记录，本次未取得可复核的中转能力元数据，均作为**待验证的配置值**；在长任务前向服务维护者确认该模型、协议和渠道实际限制。[1M] 后缀也不会让服务端自动获得更大窗口。
 
 ## 4.2 模型名不要乱写
 
 - **不要写空格、不要写显示名**。写 `gpt-6-sol`，不要写 `GPT-6 Sol`。
-- **`[1m]` 后缀只对 Claude Code 有意义**：它是 Claude Code 客户端自己的写法（表示开启 1M 上下文），Claude Code 会把后缀处理掉再发请求。直接把 `deepseek-v4.1-flash[1m]` 发给中转会返回 `model_not_found`，**所以别把这个后缀抄到 Codex / pi / OpenCode 里**。
-- 模型名写错的表现：`503 model_not_found` / `No available channel for model xxx`。
+- **`[1m]` 后缀只对 Claude Code 有意义**：它是 Claude Code 客户端自己的写法（用于声明 1M 上下文），原教程记录客户端会处理后缀后再请求，具体版本与中转组合仍需复测。该后缀不在本教程的中转模型快照中，直接作为服务端模型名可能返回 `model_not_found`，**所以别把这个后缀抄到 Codex / pi / OpenCode 里**。
+- 模型名错误可能出现 `model_not_found`；`No available channel for model` 也可能是渠道或权限问题，按第 6 节分开排查。
 
 ---
 
@@ -165,37 +169,39 @@ qwen3.8-max                 space-bunny-free
 
 # 6 常见报错对照
 
-## 6.1 密钥没生效：四家报错长得完全不一样
+先记录客户端版本、实际供应商、模型、HTTP 状态码和脱敏错误信息。本节整理原教程基线版本（见 [README 第 4 节](README.md#4-版本基线与核验状态)）的观察与排查建议；未保留逐条测试日志，因此报错字样和等待时长不是通用判据。
 
-四家都不会说“你的环境变量没设”这种人话，签名各不相同（**下表均为实测**）。看到其中任意一条，先按 2.1 重设变量、**新开一个终端**，再用 `$env:NEWAPI_KEY.Length` 确认输出 `51`。
+## 6.1 密钥与环境变量
 
-| 工具 | 报错原文 | 出现时机 | 别踩的坑 |
+| 现象 | 可能原因 | 检查顺序 | 下一步 |
 | --- | --- | --- | --- |
-| Claude Code | `Not logged in · Please run /login` | 立即 | 别真去 `/login`——那是 Anthropic 官方登录流程，和中转无关 |
-| Codex | `ERROR: Missing environment variable: NEWAPI_KEY.` | **约 1 秒** | 反复 `ERROR: Reconnecting... 1/5` 是另一回事：变量读到了，**令牌本身不对** |
-| pi | `No API key found for newapi.` | 约 4 秒 | 它会提示你 `/login`，**照做就把明文密钥写进 `auth.json`**，而 `auth.json` 优先级高于 `models.json` 的 `apiKey`，之后改环境变量都不再生效。清理命令见[附录](10-appendix-full-config.md) 3.2 |
-| OpenCode | `Error: Invalid token` | 立即 | 也可能是把 `{env:NEWAPI_KEY}` 误写成了 `$NEWAPI_KEY`（那是 pi 的语法） |
+| Codex：`Missing environment variable: NEWAPI_KEY` | 当前进程未读到变量，或 `env_key` 写错 | 核对变量名 → 非空检查 → 重启父应用 | 按第 2 节重新加载环境，不必先更换密钥 |
+| pi：`No API key found for newapi.` | 配置未加载、变量未解析或凭据缺失 | 核对目录和 JSON → 变量 → `auth.json` 是否有旧条目 | 按附录 3.2 仅检查条目存在性；不用 `/login` 覆盖教程方案 |
+| Claude Code：要求登录 | 当前鉴权未生效、配置冲突或入口认证要求 | 确认 `ANTHROPIC_AUTH_TOKEN` → 地址 → CLI 与扩展分别验证 | 查当前版本鉴权文档，不把所有登录提示都当成密钥错误 |
+| `401` / `Invalid token` / `Authentication failed` | 凭据错误、失效、被旧凭据覆盖，或引用未解析 | 核对变量与引用语法 → 凭据优先级 → 服务端响应 | 请服务维护者核对密钥状态；额度问题按响应及后台确认 |
+| pi 的模型列表没有 `newapi` | 配置目录不对、格式错误、过滤规则或凭据不可用 | 核对配置路径 → `providers` → `enabledModels` → 凭据 | `--list-models` 是本地检查，不证明服务端接受密钥 |
 
-> **关键是分清“变量没读到”和“令牌是错的”**：前者秒级失败、且明说缺什么；后者会反复重试或直接 401。两者修法完全不同。
-> pi 还有个好用探针：`pi --list-models`。**有密钥时列出 newapi 的模型，没密钥时一个都不列**，并对 `settings.json` 的 `enabledModels` 逐条报 `Warning: No models match pattern "newapi/..."`。
+不要打印密钥，也不要将完整凭据文件贴进聊天。分享错误信息时删掉请求头、令牌和私人路径。
 
-## 6.2 其他常见报错
+## 6.2 请求、模型与工具能力
 
-| 现象 | 原因 | 解决 |
-| --- | --- | --- |
-| `401 Invalid token` / `Authentication failed` | Key 错了、过期了，或额度用完（**不是**没生效，那种情况见 6.1） | 找朱老师核对 Key；`$env:NEWAPI_KEY.Length` 应为 `51`，注意有没有多余空格或引号 |
-| `503 model_not_found` / `No available channel for model` | 模型名写错，或该模型当期不在清单里 | 先在 [pricing 页](https://newapi.ttxs.site/pricing) 确认模型还在不在，再按第 4 节核对名字 |
-| 请求发出去但一直转圈 | 地址填错（多 `/v1`、少 `/v1`、多了斜杠） | 按第 3 节表格核对 |
-| Claude Code 里 `[claude-code:unrecognized_model]` 警告 | Claude Code 不认识第三方模型，**属于正常现象** | 忽略，能正常回答就行 |
-| `HTTP 400` 且提示协议相关 | 拿 OpenAI 协议地址喂给了 Claude Code | 见第 3 节 |
+| 现象 | 可能原因 | 检查顺序 | 下一步 |
+| --- | --- | --- | --- |
+| `Reconnecting`、超时、一直等待 | 网络、代理、中转异常、协议不兼容或服务端拒绝请求 | 看完整错误与状态码 → 地址/协议 → 服务状态 | 保存脱敏日志联系维护者；不能仅凭重连判定密钥错误 |
+| `model_not_found` | 模型名错误、下架或当前凭据无权限 | 对照第 4 节实时列表 → 检查实际请求模型 | 更正模型名或询问维护者 |
+| `No available channel for model` | 模型存在但当前渠道不可用、分组权限或服务端故障 | 模型列表 → 凭据权限 → 后台渠道状态 | 由服务维护者确认，不能只靠改模型拼写 |
+| 客户端选择器找不到模型 | 客户端未注册、配置未加载或被过滤 | 配置目录 → 模型条目 → 客户端过滤规则 | 修正客户端配置；与服务端缺模型分开处理 |
+| `400` / `404` | 路径、协议、参数或输入类型不被支持 | 第 3 节地址 → 错误响应 → 模型能力 | 用最短文本请求定位，再逐项恢复参数 |
+| Claude Code 未识别第三方模型警告 | 客户端对上下文等能力采用默认假设 | 确认模型能力 → 长会话是否异常 | 见 Claude Code 第 8.2 节，不一律忽略 |
+| 能聊天但不能执行命令 | Shell 路径、权限、工具调用兼容性或运行环境问题 | 检查 Shell → 工具权限 → 只读命令验证 | 见前置工具及对应客户端第 5 节 |
 
 ---
 
 # 7 安全
 
 - Key 等于你的额度，**不要**贴进聊天群、截图、GitHub、飞书公开文档。
-- 配置文件里只写变量名（本篇教程所有示例都如此），所以配置文件本身可以随便分享。
-- 万一 Key 泄露：找朱老师换一把，然后按 2.1 重新设置两个环境变量即可。
+- 本文的模型配置示例仅引用变量名；你自己的文件还可能含其他服务凭据、私有路径、插件配置和历史密钥，分享前必须检查。环境变量也不等于加密存储，能读取进程环境的程序仍可能取得它。
+- 万一 Key 泄露：找朱老师撤销泄露的密钥并换新，按 2.1 更新两个变量并重启相关程序。
 
 ---
 
@@ -206,3 +212,34 @@ qwen3.8-max                 space-bunny-free
 | **实时查看可用模型与价格** | <https://newapi.ttxs.site/pricing> |
 | 模型列表接口（只给名字，不给价格） | `https://newapi.ttxs.site/v1/models` |
 | 中转首页 | <https://newapi.ttxs.site> |
+
+
+# 9 已有配置的备份与合并
+
+后续四篇的首次配置命令遇到已有文件会停止，不会覆盖。此时先备份，再在编辑器里合并相应字段，保留其他供应商、插件、权限和提示词。**JSON 不能直接拼接两个对象，TOML 不应重复声明同一个表。**
+
+PowerShell 备份示例（将目标替换为要编辑的那个文件；提示词文件也适用）：
+
+```PowerShell
+$configPath = Join-Path $env:USERPROFILE '.codex/config.toml'
+if (-not (Test-Path -LiteralPath $configPath -PathType Leaf)) { throw '目标文件不存在，请使用首次配置步骤。' }
+$backupPath = $configPath + '.' + (Get-Date -Format 'yyyyMMdd-HHmmss-fffffff') + '.bak'
+Copy-Item -LiteralPath $configPath -Destination $backupPath -ErrorAction Stop
+Write-Output "已备份到 $backupPath；请手动合并后验证。"
+```
+
+Linux Bash 示例：
+
+```Bash
+config_path="$HOME/.codex/config.toml"  # 改为实际目标
+if [ -f "$config_path" ]; then
+  backup_path="$(mktemp "${config_path}.$(date +%Y%m%d-%H%M%S).XXXXXX.bak")" &&
+    cp -p -- "$config_path" "$backup_path" && printf '已备份到 %s\n' "$backup_path"
+else
+  printf '目标文件不存在，请使用首次配置步骤。\n'
+fi
+```
+
+备份可能含密钥，按原文件同样保管，不提交、不分享。先核对备份确实成功，再编辑；如需回退，关闭使用该配置的程序，确认回退会放弃本次修改后恢复备份。
+
+验证按三层进行：本地环境和配置 → 指定模型的短文本请求 → 练习目录的读文件与只读命令。短文本成功不代表图片、长上下文或全部工具已经兼容。

@@ -1,18 +1,20 @@
 # 附：完整配置（我们机器上的进阶配置）
 
-**这份文档是"抄作业参考"，不是必读内容。** 主文档给的是**精简版**；这里收录我们机器上实际在用的进阶配置，供你按需增补。
+**这份文档是"抄作业参考"，不是必读内容。** 主文档给的是**精简版**；这里收录原教程的本机进阶配置快照，供你按需增补，不代表当前机器状态或推荐默认值。版本基线统一见 [README 第 4 节](README.md#4-版本基线与核验状态)。
+
+**所有代码块均为配置片段或历史样例**，应按 [统一接入第 9 节](02-unified-access.md#9-已有配置的备份与合并)备份后合并；不要整份替换现有文件。缺少外层 JSON 对象或含省略号的块不能单独作为完整 JSON。
 
 ## ⚠️ 抄之前先看这三条
 
 1. **绝对路径不能抄**：文中的 `C:\Users\zsj\...`、插件市场路径、hook 校验哈希都是本机专属，换台机器必须自己重新生成。
-2. **有些配置会明显削弱或放开能力**，抄错了会很难排查（例如 `deny: ["Bash"]` 会让模型不能执行命令）。
+2. **有些配置会明显削弱或放开能力**，抄错了会很难排查（例如 `deny: ["Bash"]` 只会禁用 Bash 工具，不能覆盖 PowerShell 或其他执行工具）。
 3. **建议增量抄**：每次只加一项，加完立刻验证（`codex exec "只回复两个字：可用"` 这类命令），坏了能马上定位。
 
 ---
 
 # 1 Claude Code 完整配置要点
 
-完整文件：`%USERPROFILE%\.claude\settings.json`（**不含密钥**：`env` 里不放 `ANTHROPIC_AUTH_TOKEN`，它来自系统环境变量——所以这份文件可以直接分享）
+完整文件：`%USERPROFILE%\.claude\settings.json`（**不含密钥**：`env` 里不放 `ANTHROPIC_AUTH_TOKEN`，它来自用户级环境变量——本文仅展示无真实密钥的片段，自己的完整文件分享前仍需检查）
 
 ## 1.1 顶层开关（除 `env` 外）
 
@@ -32,7 +34,9 @@
 
 ## 1.2 `env` 块（可抄，但删掉密钥行）
 
-```json
+JSON 片段（合并到对应对象；不能单独保存为完整 JSON）：
+
+```text
 "env": {
   "ANTHROPIC_BASE_URL": "https://newapi.ttxs.site",
   "ANTHROPIC_MODEL": "deepseek-v4.1-flash[1M]",
@@ -50,13 +54,15 @@
 }
 ```
 
-> `ANTHROPIC_AUTH_TOKEN` 这一行我们**没有**放进来——它来自系统环境变量，这样配置文件可以安全分享。
+> `ANTHROPIC_AUTH_TOKEN` 这一行我们**没有**放进来——它来自用户级环境变量，这里只能说明该示例没有写入这个密钥。
 
 ## 1.3 权限（`permissions`）
 
 我们机器上的实际配置：
 
-```json
+JSON 片段（合并到对应对象；不能单独保存为完整 JSON）：
+
+```text
 "permissions": {
   "allow": ["WebFetch", "WebSearch"],
   "deny": ["EnterPlanMode", "ExitPlanMode", "DesignSync", "NotebookEdit", "SendMessage",
@@ -66,7 +72,7 @@
 }
 ```
 
-**代价说清楚**：`deny` 里的 `Bash` 意味着**模型不能执行任何命令**（只能读/改文件、搜网页），`AskUserQuestion` 也禁了（它不会反问你要澄清）。这是"把它当高级编辑器用"的配置，**不是新手配置**。
+**代价说清楚**：这份历史配置只禁用 Bash，没有禁用独立的 PowerShell 工具，不能宣称它只能读改文件。若主要用作编辑器，按 [Claude Code 第 7.1 节](06-claude-code.md#71-权限模式)同时处理两种命令工具，并检查插件/MCP 的执行能力。`AskUserQuestion` 禁用的是结构化提问工具，模型仍可能在普通回复中提出澄清问题。
 
 ## 1.4 hooks（进阶，慎抄）
 
@@ -77,14 +83,16 @@
 
 ⚠️ 注意两点：
 
-- 这些 hook 依赖 `jq` / `grep`（来自 **Git for Windows**），没装就静默失败；
+- 这些 hook 依赖 `jq` / `grep`；Git Bash 常带 `grep`，`jq` 需另行检查安装。缺依赖的表现由 hook 脚本和客户端决定，应查看日志；
 - 第二类是**本机专属**的外部脚本，换机器就要重新写。
 
 **建议**：只抄第 1 类（拦命令）里的思路，自己按需写；不要整段复制。
 
 ## 1.5 插件与状态栏
 
-```json
+JSON 片段（合并到对应对象；不能单独保存为完整 JSON）：
+
+```text
 "enabledPlugins": {
   "context-mode@context-mode": true,
   "pyright-lsp@claude-plugins-official": true
@@ -101,7 +109,7 @@
 
 | 文件 | 内容 |
 | --- | --- |
-| `%USERPROFILE%\.claude\config.json` | `{"primaryApiKey": "any"}`，用于跳过登录要求 |
+| `%USERPROFILE%\.claude\config.json` | 历史兼容配置，当前适用性待验证，不代替有效凭据，见 Claude Code 第 4.2 节 |
 | `%USERPROFILE%\.claude\CLAUDE.md` | 全局提示词（我们这里目前是空的，建议按 [Claude Code](06-claude-code.md) 4.3 写几条） |
 | `%USERPROFILE%\.claude\settings.local.json` | 本机私有覆盖（我们只放了 `skillOverrides`） |
 | `%USERPROFILE%\.claude\skills\`、`agents\`、`plugins\` | 技能、自定义 agent、插件缓存 |
@@ -132,10 +140,10 @@ requires_openai_auth = false
 env_key = "NEWAPI_KEY"
 ```
 
-> **为什么是 `env_key`**：只写变量名，密钥留在系统环境变量里（设置方法见 [统一接入](02-unified-access.md) 第 2 节），配置文件不含密钥。`experimental_bearer_token` 会把密钥字面写进文件，我们不用。
-> **代价要清楚**：`env_key` 读的是 **Codex 自己进程**的环境变量。桌面 App、VS Code / Zed 扩展这类长驻入口继承的是它们启动那一刻的环境——**设完或换完 Key 要重启它们一次**，否则 1 秒报 `Missing environment variable: NEWAPI_KEY`。令牌不对则是反复 `Reconnecting...`，两种失败别混淆。
-> **两者绝不要同时写**：实测同时存在时 `env_key` 静默胜出，“多加一行 env_key 更保险”是陷阱。
-> `auth.json` / `OPENAI_API_KEY`（`codex login` 的账号层凭据）对 `requires_openai_auth = false` 的 provider **完全无效**，别指望它兜底。
+> **为什么是 `env_key`**：只写变量名，密钥留在用户级环境变量里（设置方法见 [统一接入](02-unified-access.md) 第 2 节），配置文件不含密钥。`experimental_bearer_token` 会把密钥字面写进文件，我们不用。
+> **代价要清楚**：`env_key` 读的是 **Codex 自己进程**的环境变量。桌面 App、VS Code / Zed 扩展这类长驻入口继承的是它们启动那一刻的环境——**设完或换完 Key 要重启它们一次**，未读取到变量会报缺变量；`Reconnecting` 还可能来自网络、中转和服务端异常，不能仅凭它判定令牌错误。见统一接入第 6 节。
+> **两者绝不要同时写**：原教程记录同时存在时优先采用 `env_key`，但未保留精确版本测试日志，“多加一行 env_key 更保险”是陷阱。
+> `auth.json` / `OPENAI_API_KEY`（`codex login` 的账号层凭据）不应被当作本教程显式配置的 `env_key` 的替代来源；先确认实际 provider 和凭据引用。
 > `openai_base_url = "http://127.0.0.1:57321/v1"` 是**桌面版（现在的 ChatGPT 桌面应用）/computer-use 运行时自动写入的**，不要手动抄。
 
 ## 2.2 功能开关与界面
@@ -156,11 +164,13 @@ status_line = ["model-with-reasoning", "current-dir", "git-branch", "context-use
 status_line_use_colors = true
 
 [windows]
-sandbox = "elevated"        # ⚠️ 与 danger-full-access 配套，等于不限制
+sandbox = "elevated"        # Windows 沙盒实现；不等于关闭沙盒
 
 [sandbox_workspace_write]
 network_access = true
 ```
+
+本节 Windows 实现选项与沙盒访问级别是两回事：上节 `danger-full-access` 才关闭沙盒限制；`approval_policy` 控制审批，`approvals_reviewer` 控制谁审核。默认仍推荐正文的 `workspace-write` 与 `on-request`。
 
 ## 2.3 桌面应用段（ChatGPT 桌面应用）
 
@@ -221,10 +231,10 @@ args = ["-y", "@upstash/context7-mcp"]
 
 | 项 | 说明 | 建议 |
 | --- | --- | --- |
-| `defaultProjectTrust: "always"` | 不再询问是否信任项目 | ⚠️ 只在自己机器上用；别人的仓库不要这么设 |
+| `defaultProjectTrust: "always"` | 不再询问是否信任项目 | ⚠️ 全局跳过项目信任确认；在自己机器上也应逐个检查仓库来源，不作为推荐默认值 |
 | `enabledModels` | 限定 `/model` 与 `Ctrl+P` 循环里的模型 | 抄（按自己的清单改） |
 | `packages` | 已装的插件包 | 按需一个个加 |
-| `shellPath` | 指向 PowerShell 7 | 路径不同就改或删掉 |
+| `shellPath` | 0.87.x 历史本机配置指向 PowerShell 7 | 需路径真实存在且该版本兼容；本次未复测。新手按正文删去该项走默认 Git Bash，PowerShell 工具按正文 7.1 单独启用 |
 | `externalEditor` | `/editor` 用什么打开 | 随意 |
 
 > 我们的 `defaultProvider` 是 `bailian`（另一家供应商、**另一把密钥**），教程里不涉及；你按 [pi](04-pi.md) 配成 `newapi` 即可。
@@ -233,9 +243,11 @@ args = ["-y", "@upstash/context7-mcp"]
 
 我们文件里有三个供应商：`newapi`（教程用这个）、`deepseek`、`bailian`。后两个走各自官方的 Key，与本教程无关。进阶项包括 `compat` 兼容开关（如 `thinkingFormat`、`maxTokensField`）与 `thinkingLevelMap`（把 pi 的思考档位映射到厂商实际支持的档位）——**这些只在模型行为异常时才需要调**，官方文档：<https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md>
 
-`newapi` 块的密钥走环境变量插值、不落盘（和教程一致）：
+`newapi` 块仅引用环境变量，不在这个配置块中保存真实密钥（和教程一致）：
 
-```json
+JSON 片段（合并到对应对象；不能单独保存为完整 JSON）：
+
+```text
 "newapi": {
   "baseUrl": "https://newapi.ttxs.site/v1",
   "apiKey": "$NEWAPI_KEY",
@@ -244,18 +256,27 @@ args = ["-y", "@upstash/context7-mcp"]
 }
 ```
 
-> **⚠️ pi 的凭据优先级有个坑**：官方顺序是运行时 `--api-key` → **`auth.json` 里存过的凭据** → `models.json` 的 `apiKey` → provider 环境变量。
-> 只要曾经对 `newapi` 执行过 `/login`，密钥就会存进 `~/.pi/agent/auth.json` 并**盖过** `$NEWAPI_KEY`，而且不会有任何提示。我们已经删掉了这个条目（`deepseek` / `bailian` / `commandcode` 三家与本教程无关，保留原样）。删除命令：
->
-> ```PowerShell
-> $p = "$env:USERPROFILE\.pi\agent\auth.json"
-> $j = Get-Content $p -Raw | ConvertFrom-Json
-> $j.PSObject.Properties.Remove('newapi')
-> $j | ConvertTo-Json -Depth 6 | Set-Content $p -Encoding utf8
-> ```
->
-> **失败签名对照**：密钥解析不到 → 4 秒报 `No API key found for newapi.`；密钥错 → `401` / `Invalid token`。自查有无残留：`Get-Content ~\.pi\agent\auth.json -Raw` 里不应出现 `"newapi"`。
-> **好用的鉴权探针**：`pi --list-models`。有密钥时列出 6 个 `newapi` 模型；没密钥时一个都不列（注意输出是 `provider  model` 两列，不是 `provider/model`），并对 `settings.json` 的 `enabledModels` 逐条报 `Warning: No models match pattern "newapi/..."`。
+pi 会优先使用运行时凭据及 `auth.json` 中已存的凭据，再考虑 `models.json` 的 `apiKey` 等来源；具体规则见 [pi 模型配置文档](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md)。旧条目可能覆盖环境变量方案。
+
+仅检查 `newapi` 条目是否存在，不打印密钥或整个文件：
+
+```PowerShell
+$authPath = Join-Path $env:USERPROFILE '.pi/agent/auth.json'
+if (Test-Path -LiteralPath $authPath -PathType Leaf) {
+  try {
+    $authData = Get-Content -LiteralPath $authPath -Raw -ErrorAction Stop | ConvertFrom-Json -AsHashtable -ErrorAction Stop
+    Write-Output ('存在 newapi 条目：' + $authData.ContainsKey('newapi'))
+  } catch {
+    Write-Output '凭据文件无法解析；请在本机编辑器检查，不要贴出完整文件。'
+  }
+} else {
+  Write-Output '没有 auth.json 文件'
+}
+```
+
+若确认旧条目需要移除，先按统一接入第 9 节备份这个文件，再在本机编辑器中仅删除 `newapi` 条目，保留其他供应商。备份也含凭据，不上传。不要用低深度 JSON 重序列化覆盖整个凭据文件。
+
+`pi --list-models` 可检查本地模型注册和凭据解析，但不能验证密钥被服务端接受，也不应要求固定模型数量。错误诊断统一见 [统一接入第 6 节](02-unified-access.md#6-常见报错对照)。
 
 ---
 
@@ -270,23 +291,24 @@ args = ["-y", "@upstash/context7-mcp"]
 | `cli.json` | v2 的界面偏好（`session.thinking`、`diffs.wrap`、滚动条等） | 随意 |
 | `plugins/` | 本地插件（我们装了 `orca-opencode-status`） | 按需 |
 | `node_modules/`、`package-lock.json` | 插件依赖，OpenCode 自己维护 | 不要手动改 |
-| `oh-my-openagent.json` | 多智能体编排插件配置 | ⚠️ **我们已弃用**：里面引用的模型名（`kimi-k2.7-code`、`gpt-5.5`、`glm-5.1`、`qwen3.7-plus`、`minimax-m3`、`gpt-5.4-mini`）在中转上**已全部失效**（请求会返回 `model_not_found`）。要用的话必须先把模型名换成 [统一接入](02-unified-access.md) 第 4 节清单里的 |
+| `oh-my-openagent.json` | 多智能体编排插件配置 | ⚠️ **我们已弃用**：里面引用的模型名（`kimi-k2.7-code`、`gpt-5.5`、`glm-5.1`、`qwen3.7-plus`、`minimax-m3`、`gpt-5.4-mini`）在原教程中被记录为不可用；本次未重测，需查询当前凭据的实时列表。要用的话必须先把模型名换成 [统一接入](02-unified-access.md) 第 4 节清单里的 |
 | `service.json` | 后台服务凭据，自动生成 | 不要改 |
 
-## 4.2 关于"能力不强"
+## 4.2 确认实际模型再比较结果
 
-OpenCode 的结果不如 Codex / pi，**主要原因是模型**：它本身不产出模型，用我们中转的国产模型时，同样的任务质量天然差一档。想让它表现更好：
+默认模型、提示词、上下文管理与工具权限都会影响结果。pi 和 OpenCode 的正文默认使用相同模型，不能根据“是否生产自家模型”推导客户端能力排名。
 
-1. **先确认真的用上了我们的模型**：`opencode.json` 顶层要有 `model`，且 `opencode run --standalone` 状态行里的模型名要走 `newapi/`。不设 `model` 时它可能悄悄用内置免费模型 `space-bunny-free`——那不是“差一档”，是压根没接上中转；
-2. 优先用 `gpt-6-sol` / `claude-opus-5` 这类较强模型；
-3. 任务拆小，一次一件事；
-4. 让它先给计划再动手（和别的工具一样）。
+先确认实际模型使用 `newapi/` 前缀，必要时用 `--model newapi/deepseek-v4.1-flash` 明确选择。然后固定任务与参数比较客户端；若要比较模型，则固定客户端。未设置默认模型时，客户端可能选择历史模型或内置可用模型，具体选择以界面为准。
 
 ## 4.3 思考档位映射：`variants`
 
+以下为历史模型条目片段；参数透传、档位、图片输入及上下文/输出上限均需按实际中转协议复测。正文仍采用文本输入声明，不因附录声明 `image` 就认为该链路支持图片。
+
 OpenCode 的 `low / medium / high / max` 档位（命令行写作 `模型#档位`，见 [OpenCode](05-opencode.md) 第 6 节）**不是内置语义**，而是每个模型在 `opencode.json` 里自己声明的：在模型条目下加 `variants` 数组，把档位翻译成该厂商真正认的参数。
 
-```json
+JSON 片段（合并到对应对象；不能单独保存为完整 JSON）：
+
+```text
 "deepseek-v4.1-flash": {
   "name": "deepseek-v4.1-flash",
   "limit": { "context": 500000, "output": 384000 },
@@ -300,7 +322,7 @@ OpenCode 的 `low / medium / high / max` 档位（命令行写作 `模型#档位
 }
 ```
 
-我们 `newapi` 下 12 个模型，10 个声明了 `variants`，档位集合按厂商能力分三种：
+原教程本机快照的 `newapi` 下有 12 个模型，其中 10 个声明了 `variants`，档位集合按厂商能力分三种：
 
 | 档位集合 | 模型 | 特点 |
 | --- | --- | --- |
@@ -309,7 +331,7 @@ OpenCode 的 `low / medium / high / max` 档位（命令行写作 `模型#档位
 | `low / medium / high` | `glm-5.3`、`glm-5.3-flash`、`qwen3.8-plus`、`mimo-v2.6-flash`、`mimo-v2.6-pro` | 没有更高档 |
 
 > 这和 pi 的 `thinkingLevelMap` 是同一件事的两种写法（见 3.2）：**客户端的档位是抽象的，必须映射到厂商真实参数才生效**。没声明 `variants` 的模型就没有档位可选。
-> ⚠️ 剩下两个没声明 `variants` 的模型 `kimi-k2.7-code`、`minimax-m3`，名字也在 4.1 那份「中转上已失效」的名单里（[统一接入](02-unified-access.md) 第 4 节的清单里同样没有它们）。它们仍会出现在 OpenCode 的模型选择器里，选中就 `model_not_found`——建议直接从 `opencode.json` 删掉。
+> ⚠️ 剩下两个没声明 `variants` 的模型 `kimi-k2.7-code`、`minimax-m3`，名字也在 4.1 的历史不可用名单里（[统一接入](02-unified-access.md) 第 4 节的清单里同样没有它们）。旧条目仍可能出现在模型选择器里，但本地可选不代表服务端可用；先核对实时列表再清理。表中的 `qwen3.8-plus` 也不在本教程快照里，不要照表新增。
 
 ---
 
@@ -339,7 +361,7 @@ OpenCode 的 `low / medium / high / max` 档位（命令行写作 `模型#档位
 ## 5.3 用中转时的两条纪律
 
 1. **不要用 `Add account`**。Orca 的 Claude / Codex 账号热切换是给**官方订阅**用的；它管理的额外账号使用独立 home（`~/.local/share/orca/codex-accounts/<id>/home`），**读不到 `~/.codex/config.toml` 里的 NewAPI 配置**。用中转就保持 **system default**。
-2. **注意权限预填**。Orca 默认给 Claude / Codex 预填权限绕过参数（`--dangerously-skip-permissions`、`--dangerously-bypass-approvals-and-sandbox`）。我们的 Codex 段本身已经是 `danger-full-access` + `[windows] sandbox = "elevated"`，再叠一层就彻底没有边界了。想收着点：`Settings → Agents → Agent Permissions` 改成 **Manual**。
+2. **注意权限预填**。Orca 默认给 Claude / Codex 预填权限绕过参数（`--dangerously-skip-permissions`、`--dangerously-bypass-approvals-and-sandbox`）。历史 Codex 段的 `danger-full-access` 已关闭沙盒；`elevated` 不是另一层权限绕过。要回到教程默认保护，先把 CLI 恢复为 `workspace-write` 与 `on-request`，再在 `Settings → Agents → Agent Permissions` 改成 **Manual**。
 
 ## 5.4 OpenCode 插件 `orca-opencode-status`
 
@@ -351,9 +373,9 @@ OpenCode 的 `low / medium / high / max` 档位（命令行写作 `模型#档位
 
 抄完任何一项，请逐条确认：
 
-- [ ] 密钥还留在环境变量里（配置文件里没有 `sk-` 开头的字符串）
+- [ ] 配置没有真实凭据；不要只搜索 `sk-` 前缀，还需检查其他令牌、URL 参数和插件设置
 - [ ] 绝对路径（`C:\Users\zsj\...`）都换成了自己的，或删掉了
 - [ ] 模型名都在 [统一接入](02-unified-access.md) 第 4 节清单里
 - [ ] 权限相关配置（`deny` / `sandbox_mode`）是你**有意**要的，不是顺手抄的
 - [ ] 用 Orca 时确认它启动的是 **system default** 的 Codex / Claude（没用 `Add account` 加额外账号，否则读不到上面的中转配置）
-- [ ] 抄完跑一次验证命令，确认没坏：`codex exec "只回复两个字：可用"` / `pi -p "只回复两个字：可用"` / `claude -p "只回复两个字：可用"` / `opencode run --standalone "只回复两个字：可用"`
+- [ ] 按相应客户端第 5 节完成三层验证；短文本成功只证明基本请求链路，不证明新加的 hook、插件或权限规则生效
