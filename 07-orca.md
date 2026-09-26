@@ -2,19 +2,19 @@
 
 **进阶工具（编排层）。** 开源的 AI 智能体开发环境（ADE, Agentic Development Environment）：在同一个窗口里，给每个任务开一个独立的 git worktree，每个 worktree 里跑一个 CLI 智能体（Codex / pi / Claude Code / OpenCode 都行），进度、diff、提交都集中在一处看。
 
-<!-- 截图：Orca 主界面（左侧 worktree 卡片 + 中间多窗格终端 + 右侧 diff） -->
+<!-- TODO 截图：Orca 主界面（左侧 worktree 卡片 + 中间多窗格终端 + 右侧 diff） -->
 
 ---
 
 # 1 它是什么、适合谁
 
 - **定位**：它**不是又一个"接模型的客户端"**，而是管理智能体的**工作台**。真正干活的仍是前面四篇里的 CLI 智能体，Orca 负责给它们各自准备一个互不干扰的目录（git worktree）、一套终端窗格、一个浏览器页签和一套审查流程。
-- **一句话原理**：**Orca 自己不接模型、不含密钥。** 它启动的是你本机**已经装好、已经配好**的 CLI 智能体，所以模型和密钥完全沿用 [统一接入](统一接入.md) 那一套，**本篇不需要你再填任何 Key**。
+- **一句话原理**：**Orca 自己不接模型、不含密钥。** 它启动的是你本机**已经装好、已经配好**的 CLI 智能体，所以模型和密钥完全沿用 [统一接入](02-unified-access.md) 那一套，**本篇不需要你再填任何 Key**。
 - **适合**：手上已经有 Codex / pi / Claude Code / OpenCode 在跑，并且经常遇到"想同时试两种方案""一个任务想丢给两个模型比一比""改到一半不敢切分支"这类问题的人。
 - **优势**：一个任务一个 worktree，并行互不踩文件；不用 stash、不用来回切分支；同一个提示词可以发给三个智能体赛马，挑最好的那份 diff 合并；窗口分屏看进度，比开一堆终端窗口清楚。
 - **代价**：它是图形应用（Electron），比纯终端工具吃内存；**每个 worktree 都常驻文件监听**，开太多会明显变慢（见第 8 节）。
 
-> **先决条件提醒**：Orca 是"放大器"，不是"入门工具"。**请先把 [Codex](Codex.md) 或 [pi](pi.md) 单独用顺**，再来上 Orca；否则出问题时你分不清是智能体的问题还是工作台的问题。
+> **先决条件提醒**：Orca 是"放大器"，不是"入门工具"。**请先把 [Codex](03-codex.md) 或 [pi](04-pi.md) 单独用顺**，再来上 Orca；否则出问题时你分不清是智能体的问题还是工作台的问题。
 
 ---
 
@@ -32,12 +32,12 @@
 
 | 智能体 | 单独验证命令 | 教程 |
 | --- | --- | --- |
-| Codex | `codex exec "只回复两个字：可用"` | [Codex](Codex.md) |
-| pi | `pi -p "只回复两个字：可用"` | [pi](pi.md) |
-| Claude Code | `claude -p "只回复两个字：可用"` | [Claude Code](Claude%20Code.md) |
-| OpenCode | `opencode run --standalone "只回复两个字：可用"` | [OpenCode](OpenCode.md) |
+| Codex | `codex exec "只回复两个字：可用"` | [Codex](03-codex.md) |
+| pi | `pi -p "只回复两个字：可用"` | [pi](04-pi.md) |
+| Claude Code | `claude -p "只回复两个字：可用"` | [Claude Code](05-claude-code.md) |
+| OpenCode | `opencode run --standalone "只回复两个字：可用"` | [OpenCode](06-opencode.md) |
 
-> 密钥设置见 **[统一接入](统一接入.md)** 第 2 节。Git 见 [前置工具](前置工具.md) 第 2 节。
+> 密钥设置见 **[统一接入](02-unified-access.md)** 第 2 节。Git 见 [前置工具](01-prerequisites.md) 第 2 节。
 
 ---
 
@@ -120,7 +120,7 @@ orca status --json
 | --- | --- |
 | Orca 的配置文件里要填中转地址和密钥吗？ | **不用**。Orca 没有"供应商"配置，它直接启动你本机的 CLI |
 | 模型走哪个中转？ | 走**你那个 CLI 自己的配置**：Codex 看 `~/.codex/config.toml`，pi 看 `~/.pi/agent/models.json`，以此类推 |
-| 密钥放在哪？ | **还是系统环境变量** `NEWAPI_KEY` / `ANTHROPIC_AUTH_TOKEN`，见 [统一接入](统一接入.md) 第 2 节 |
+| 密钥放在哪？ | **还是系统环境变量** `NEWAPI_KEY` / `ANTHROPIC_AUTH_TOKEN`，见 [统一接入](02-unified-access.md) 第 2 节 |
 | 要重新配置一遍吗？ | 不用，**前面四篇配好什么，Orca 里跑出来的就是什么** |
 
 所以本篇的"配置"只有一句话：**保证你至少有一个智能体在终端里能跑通，然后让 Orca 去启动它。**
@@ -143,7 +143,7 @@ orca status --json
 Settings → Agents → Agent Permissions → 选 Manual
 ```
 
-改了之后，各智能体恢复用**它自己的**权限流程（也就是你在 [Codex](Codex.md) / [Claude Code](Claude%20Code.md) 里配的那套）。另外，如果你在 Orca 里手动改过某个智能体的启动参数，Orca 就会**不再动这个智能体**。
+改了之后，各智能体恢复用**它自己的**权限流程（也就是你在 [Codex](03-codex.md) / [Claude Code](05-claude-code.md) 里配的那套）。另外，如果你在 Orca 里手动改过某个智能体的启动参数，Orca 就会**不再动这个智能体**。
 
 ## 4.2 Orca 会往你的配置里写东西吗
 
@@ -162,7 +162,7 @@ orca agent hooks status --json
 orca agent hooks off --json
 ```
 
-> **重要的是**：你仓库里已有的 `.claude/`、`.codex/` 配置（包括我们在 [附-完整配置](附-完整配置.md) 里挂的那批 hooks）**照常生效**——Orca 会读取并沿用它们。智能体的记忆文件（`CLAUDE.md`、`AGENTS.md`）Orca 也**不动**，只在文件树里显示，方便你直接编辑。
+> **重要的是**：你仓库里已有的 `.claude/`、`.codex/` 配置（包括我们在 [附-完整配置](10-appendix-full-config.md) 里挂的那批 hooks）**照常生效**——Orca 会读取并沿用它们。智能体的记忆文件（`CLAUDE.md`、`AGENTS.md`）Orca 也**不动**，只在文件树里显示，方便你直接编辑。
 
 ---
 
@@ -201,7 +201,7 @@ Orca 会用**正确的工作目录（cwd = 该 worktree）**启动那个 CLI。
 
 看到"可用"就说明：**worktree 隔离 + 你的 CLI 配置 + 中转密钥**这条链路全通了。
 
-<!-- 截图：Orca 里新建 worktree 后，终端中 Codex/pi 正常回答 -->
+<!-- TODO 截图：Orca 里新建 worktree 后，终端中 Codex/pi 正常回答 -->
 
 ## 5.5 试一次"三个智能体赛马"（官方推荐的第一课）
 
@@ -236,7 +236,7 @@ Orca 会用**正确的工作目录（cwd = 该 worktree）**启动那个 CLI。
 2. **每个 worktree 有自己的分支、自己的磁盘目录、自己的终端**；删 worktree 会连分支一起删。
 3. **状态栏能看到用量**：如果你的智能体是官方订阅（Claude / Codex），Orca 会读本地用量状态，把"离限流还有多远"显示出来；点它能看到各供应商的用量面板。走中转的用量请看中转后台。
 
-<!-- 截图：Orca 状态栏用量面板 / worktree 卡片上的状态 -->
+<!-- TODO 截图：Orca 状态栏用量面板 / worktree 卡片上的状态 -->
 
 ---
 
@@ -337,7 +337,7 @@ orca skills update --all
 
 Orca 也支持 MCP：`Settings → Integrations → MCP` 注册后，工具会出现在支持 MCP 的智能体里。
 
-> 上面这些是 Orca 自带的“操作 Orca”技能。技能本身的机制、以及 Matt Pocock 那套 25 个工程流程技能（与本仓库其它工具通用），见 [Matt Skills](Matt%20Skills.md)。
+> 上面这些是 Orca 自带的“操作 Orca”技能。技能本身的机制、以及 Matt Pocock 那套 25 个工程流程技能（与本仓库其它工具通用），见 [Matt Skills](09-matt-skills.md)。
 
 ## 7.5 远程与手机（按需）
 
@@ -355,7 +355,7 @@ Orca 也支持 MCP：`Settings → Integrations → MCP` 注册后，工具会�
 | --- | --- |
 | 终端里 `orca: command not found` | 没注册 CLI：`Settings → General → Orca CLI`。macOS 上注册后要把 `~/.local/bin` 加进 `PATH` |
 | `orca status` 连不上 | Orca 应用没在运行：先 `orca open --json`，再 `orca status --json` |
-| **智能体起不来** | 先**在普通终端里手动跑那个 CLI**。手动都失败 = CLI 本身的安装/密钥问题（回 [统一接入](统一接入.md) 第 6 节），不是 Orca 的问题；手动能跑 = 检查 `Settings → Agents` 里这个 CLI 是否被识别/启用，或点标签页上的 **Restart** |
+| **智能体起不来** | 先**在普通终端里手动跑那个 CLI**。手动都失败 = CLI 本身的安装/密钥问题（回 [统一接入](02-unified-access.md) 第 6 节），不是 Orca 的问题；手动能跑 = 检查 `Settings → Agents` 里这个 CLI 是否被识别/启用，或点标签页上的 **Restart** |
 | Orca 里看不到某个智能体 | 该 CLI 不在它启动时用的 PATH 里，或没在 `Settings → Agents` 里启用 |
 | **新建 worktree 失败** | ① start-from ref 没拉到：在仓库终端跑 `git fetch origin`；② 目标分支已经有 worktree 占着：删掉旧的或换个分支名 |
 | 新 worktree 里没有 `node_modules` / `.env` | 正常，worktree 是干净检出：按 7.1 配共享目录与 `.worktreeinclude` |
@@ -411,5 +411,5 @@ scoop uninstall orca-ide        # Scoop 安装的
 5. Orca CLI 参考：<https://www.onorca.dev/docs/cli/reference>
 6. 下载 / 全部发行版：<https://www.onorca.dev/download> ｜ <https://github.com/stablyai/orca/releases>
 7. 源码与中文说明：<https://github.com/stablyai/orca>
-8. 统一接入与模型清单：见本仓库 [统一接入](统一接入.md)
+8. 统一接入与模型清单：见本仓库 [统一接入](02-unified-access.md)
 9. **实时查看可用模型与价格**：<https://newapi.ttxs.site/pricing>

@@ -2,7 +2,7 @@
 
 **辅助工具。** Anthropic 官方的命令行编程智能体，推理细致、生态成熟，是命令行 AI 编程的事实标准；但成本高、对第三方模型的兼容性会随版本变化（尤其图片相关功能，见第 8 节）。
 
-<!-- 截图：Claude Code 在 VS Code 里的扩展界面（已可用状态） -->
+<!-- TODO 截图：Claude Code 在 VS Code 里的扩展界面（已可用状态） -->
 
 ---
 
@@ -24,7 +24,7 @@
 | 环境变量 | `ANTHROPIC_AUTH_TOKEN` 已设置（**注意不是** `NEWAPI_KEY`） | `$env:ANTHROPIC_AUTH_TOKEN.Length` → `51` |
 | VS Code（可选） | 最新版 | `code --version` |
 
-> 两个环境变量怎么设置见 **[统一接入](统一接入.md)** 第 2 节。Claude Code 只认 `ANTHROPIC_AUTH_TOKEN` 这个名字。
+> 两个环境变量怎么设置见 **[统一接入](02-unified-access.md)** 第 2 节。Claude Code 只认 `ANTHROPIC_AUTH_TOKEN` 这个名字。
 
 ---
 
@@ -51,7 +51,7 @@ irm https://claude.ai/install.ps1 | iex
 
 在扩展商店搜索 **Claude Code**，安装 Anthropic 官方那个（扩展 ID `anthropic.claude-code`）：
 
-<!-- 截图：VS Code 扩展商店里的 Claude Code 扩展页面（anthropic.claude-code + 安装按钮） -->
+![VS Code 扩展商店里的 Claude Code 扩展页面，发布者 Anthropic、标识符 anthropic.claude-code](images/claude-code-vscode-extension.png)
 
 装完后 VS Code 侧边栏会出现 Claude 图标。扩展与命令行**共用** `%USERPROFILE%\.claude\settings.json`，所以先按第 4 节配好命令行，扩展里直接可用。
 
@@ -93,6 +93,10 @@ EOF
 再把 `export ANTHROPIC_AUTH_TOKEN="sk-你的Key"` 追加到 `~/.bashrc` 并 `source ~/.bashrc`。
 
 > 服务器上把 `CLAUDE_CODE_USE_POWERSHELL_TOOL` 设成 `0`（或者干脆删掉这一行）——那是 Windows 专用开关。
+
+如果你是在**本地 VS Code 里用 Remote-SSH 连服务器**，还得把扩展装到**远端**才生效：扩展商店里会出现“在 SSH: <主机名> 中安装”，点它就对了。
+
+![扩展商店里的 Claude Code 页面，按钮显示“在 SSH: tc6000r 中安装”，并提示该扩展在此工作区被禁用、需在远程扩展主机中运行](images/claude-code-vscode-extension-ssh.png)
 
 ---
 
@@ -178,7 +182,7 @@ New-Item -ItemType Directory -Force "$env:USERPROFILE\.claude" | Out-Null
 claude -p "只回复两个字：可用"
 ```
 
-预期输出：`可用`。如果报 401，回到 [统一接入](统一接入.md) 检查 `ANTHROPIC_AUTH_TOKEN`。
+预期输出：`可用`。如果报 401，回到 [统一接入](02-unified-access.md) 检查 `ANTHROPIC_AUTH_TOKEN`。
 
 然后进交互界面确认模型列表：
 
@@ -189,7 +193,7 @@ claude
 
 输入 `/model`，应该能看到 sonnet / opus / haiku（以及 fable）档位，并且**模型名显示为 `Deepseek V4.1 Flash`、`glm-5.3-flash`、`gpt-6-luna` 这类我们映射的名字**——说明配置生效。
 
-<!-- 截图：Claude Code 里 /model 的模型列表（能看到映射后的中文/友好名） -->
+![Claude Code 里 `/model` 的选择列表：Default 为 claude-opus-4-8[1M]，另有 kimi-k2.6、deepseek-v4-pro、deepseek-v4-flash（当前选中）三档自定义模型](images/claude-code-model-list.png)
 
 ---
 
@@ -211,7 +215,7 @@ claude
 
 # 7 进阶
 
-我们自己的机器上给 Claude Code 加了不少工程化配置（禁用一批工具、用 hooks 强制 `pnpm`/`uv`、自定义状态栏、安装插件市场等），**完整内容见 [附-完整配置](附-完整配置.md)**。这里只说两条最值得了解的：
+我们自己的机器上给 Claude Code 加了不少工程化配置（禁用一批工具、用 hooks 强制 `pnpm`/`uv`、自定义状态栏、安装插件市场等），**完整内容见 [附-完整配置](10-appendix-full-config.md)**。这里只说两条最值得了解的：
 
 ## 7.1 权限模式
 
@@ -311,5 +315,5 @@ npm uninstall -g @anthropic-ai/claude-code        # 卸载（~/.claude 不会删
 2. 设置文件与优先级：<https://code.claude.com/docs/zh-CN/settings>
 3. 环境变量：<https://code.claude.com/docs/zh-CN/env-vars>
 4. VS Code 扩展：<https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code>
-5. 统一接入与模型清单：见本仓库 [统一接入](统一接入.md)
+5. 统一接入与模型清单：见本仓库 [统一接入](02-unified-access.md)
 6. **实时查看可用模型与价格**：<https://newapi.ttxs.site/pricing>

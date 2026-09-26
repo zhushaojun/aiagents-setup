@@ -102,7 +102,7 @@
 | 文件 | 内容 |
 | --- | --- |
 | `%USERPROFILE%\.claude\config.json` | `{"primaryApiKey": "any"}`，用于跳过登录要求 |
-| `%USERPROFILE%\.claude\CLAUDE.md` | 全局提示词（我们这里目前是空的，建议按 [Claude Code](Claude%20Code.md) 4.3 写几条） |
+| `%USERPROFILE%\.claude\CLAUDE.md` | 全局提示词（我们这里目前是空的，建议按 [Claude Code](05-claude-code.md) 4.3 写几条） |
 | `%USERPROFILE%\.claude\settings.local.json` | 本机私有覆盖（我们只放了 `skillOverrides`） |
 | `%USERPROFILE%\.claude\skills\`、`agents\`、`plugins\` | 技能、自定义 agent、插件缓存 |
 
@@ -224,7 +224,7 @@ args = ["-y", "@upstash/context7-mcp"]
 | `shellPath` | 指向 PowerShell 7 | 路径不同就改或删掉 |
 | `externalEditor` | `/editor` 用什么打开 | 随意 |
 
-> 我们的 `defaultProvider` 是 `bailian`（另一家供应商、**另一把密钥**），教程里不涉及；你按 [pi](pi.md) 配成 `newapi` 即可。
+> 我们的 `defaultProvider` 是 `bailian`（另一家供应商、**另一把密钥**），教程里不涉及；你按 [pi](04-pi.md) 配成 `newapi` 即可。
 
 ## 3.2 pi 的 `models.json`
 
@@ -242,7 +242,7 @@ args = ["-y", "@upstash/context7-mcp"]
 | `cli.json` | v2 的界面偏好（`session.thinking`、`diffs.wrap`、滚动条等） | 随意 |
 | `plugins/` | 本地插件（我们装了 `orca-opencode-status`） | 按需 |
 | `node_modules/`、`package-lock.json` | 插件依赖，OpenCode 自己维护 | 不要手动改 |
-| `oh-my-openagent.json` | 多智能体编排插件配置 | ⚠️ **我们已弃用**：里面引用的模型名（`kimi-k2.7-code`、`gpt-5.5`、`glm-5.1`、`qwen3.7-plus`、`minimax-m3`、`gpt-5.4-mini`）在中转上**已全部失效**（请求会返回 `model_not_found`）。要用的话必须先把模型名换成 [统一接入](统一接入.md) 第 4 节清单里的 |
+| `oh-my-openagent.json` | 多智能体编排插件配置 | ⚠️ **我们已弃用**：里面引用的模型名（`kimi-k2.7-code`、`gpt-5.5`、`glm-5.1`、`qwen3.7-plus`、`minimax-m3`、`gpt-5.4-mini`）在中转上**已全部失效**（请求会返回 `model_not_found`）。要用的话必须先把模型名换成 [统一接入](02-unified-access.md) 第 4 节清单里的 |
 | `service.json` | 后台服务凭据，自动生成 | 不要改 |
 
 ## 4.2 关于"能力不强"
@@ -257,7 +257,7 @@ OpenCode 的结果不如 Codex / pi，**主要原因是模型**：它本身不�
 
 # 5 Orca（ADE）配置要点
 
-完整教程见 [Orca](Orca.md)。这里只记我们机器上的实际形态，以及一个容易踩的坑。
+完整教程见 [Orca](07-orca.md)。这里只记我们机器上的实际形态，以及一个容易踩的坑。
 
 ## 5.1 安装与路径（本机）
 
@@ -295,7 +295,7 @@ OpenCode 的结果不如 Codex / pi，**主要原因是模型**：它本身不�
 
 - [ ] 密钥还留在环境变量里（配置文件里没有 `sk-` 开头的字符串）
 - [ ] 绝对路径（`C:\Users\zsj\...`）都换成了自己的，或删掉了
-- [ ] 模型名都在 [统一接入](统一接入.md) 第 4 节清单里
+- [ ] 模型名都在 [统一接入](02-unified-access.md) 第 4 节清单里
 - [ ] 权限相关配置（`deny` / `sandbox_mode`）是你**有意**要的，不是顺手抄的
 - [ ] 用 Orca 时确认它启动的是 **system default** 的 Codex / Claude（没用 `Add account` 加额外账号，否则读不到上面的中转配置）
 - [ ] 抄完跑一次验证命令，确认没坏：`codex exec "只回复两个字：可用"` / `pi -p "只回复两个字：可用"` / `claude -p "只回复两个字：可用"` / `opencode run --standalone "只回复两个字：可用"`

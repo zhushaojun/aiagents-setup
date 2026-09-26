@@ -2,7 +2,7 @@
 
 四个工具（Codex / pi / Claude Code / OpenCode）都跑在同一套基础环境上。**这份文档只要做一次**，做完之后再去看具体的工具文档。
 
-<!-- 截图：Windows Terminal 里 PowerShell 7 的欢迎界面 -->
+<!-- TODO 截图：Windows Terminal 里 PowerShell 7 的欢迎界面 -->
 
 ---
 
@@ -14,7 +14,7 @@
 | **Git for Windows** | pi / OpenCode 用它执行命令；Claude Code 的 hooks 也依赖它 | [第 2 节](#2-git-for-windows) |
 | **Windows Terminal + PowerShell 7** | 中文不乱码、按键正常、界面清爽 | [第 3 节](#3-windows-terminal--powershell-7) |
 | **VS Code** | Claude Code / Codex 有 VS Code 扩展 | [第 4 节](#4-vs-code) |
-| **环境变量 `NEWAPI_KEY` 等** | 所有工具的密钥来源 | 见 [统一接入](统一接入.md) |
+| **环境变量 `NEWAPI_KEY` 等** | 所有工具的密钥来源 | 见 [统一接入](02-unified-access.md) |
 
 装完直接跳到 [第 5 节](#5-一键自检) 跑一次自检。
 
@@ -87,7 +87,7 @@ bash --version
 
 预期输出：`GNU bash, version 5.x.x` 这类信息。
 
-再验证一次它在 pi 里能不能用（**pi 装好之后**做，见 [pi](pi.md)）：
+再验证一次它在 pi 里能不能用（**pi 装好之后**做，见 [pi](04-pi.md)）：
 
 ```
 !printf 'Bash is working\n'
@@ -147,7 +147,7 @@ code --version
 
 预期输出：三行，第一行是版本号。
 
-扩展的安装方法写在 [Claude Code](Claude%20Code.md) 和 [Codex](Codex.md) 文档里。
+扩展的安装方法写在 [Claude Code](05-claude-code.md) 和 [Codex](03-codex.md) 文档里。
 
 ---
 
@@ -163,8 +163,8 @@ $checks = [ordered]@{
   "Git Bash"          = { $v = & bash --version 2>$null | Select-Object -First 1; if ($v) { "$v OK" } else { "未安装（pi/OpenCode 执行命令需要它）" } }
   "PowerShell 7"      = { $v = $PSVersionTable.PSVersion; if ($v.Major -ge 7) { "$v OK" } else { "$v （建议用 pwsh 7）" } }
   "VS Code"           = { $v = & code --version 2>$null | Select-Object -First 1; if ($v) { "$v OK" } else { "未安装（Claude Code / Codex 扩展需要）" } }
-  "NEWAPI_KEY"        = { if ($env:NEWAPI_KEY) { "已设置（长度 $($env:NEWAPI_KEY.Length)）" } else { "未设置，见 统一接入.md" } }
-  "ANTHROPIC_AUTH_TOKEN" = { if ($env:ANTHROPIC_AUTH_TOKEN) { "已设置（长度 $($env:ANTHROPIC_AUTH_TOKEN.Length)）" } else { "未设置，见 统一接入.md" } }
+  "NEWAPI_KEY"        = { if ($env:NEWAPI_KEY) { "已设置（长度 $($env:NEWAPI_KEY.Length)）" } else { "未设置，见 02-unified-access.md" } }
+  "ANTHROPIC_AUTH_TOKEN" = { if ($env:ANTHROPIC_AUTH_TOKEN) { "已设置（长度 $($env:ANTHROPIC_AUTH_TOKEN.Length)）" } else { "未设置，见 02-unified-access.md" } }
 }
 foreach ($k in $checks.Keys) {
   $r = & $checks[$k]
@@ -202,7 +202,7 @@ ANTHROPIC_AUTH_TOKEN   已设置（长度 51）
 
 # 7 下一步
 
-1. 配好密钥与环境变量：[统一接入](统一接入.md)
-2. 装主力工具：[Codex](Codex.md) → [pi](pi.md)
-3. 按需再装辅助工具：[Claude Code](Claude%20Code.md) → [OpenCode](OpenCode.md)
-4. 想统一管理供应商/看用量：[cc-switch](cc-switch.md)
+1. 配好密钥与环境变量：[统一接入](02-unified-access.md)
+2. 装主力工具：[Codex](03-codex.md) → [pi](04-pi.md)
+3. 按需再装辅助工具：[Claude Code](05-claude-code.md) → [OpenCode](06-opencode.md)
+4. 想统一管理供应商/看用量：[cc-switch](08-cc-switch.md)

@@ -1,6 +1,6 @@
 # cc-switch（进阶：供应商统一管理）
 
-**什么时候看这篇**：当你已经把 [Codex](Codex.md) / [pi](pi.md) / [Claude Code](Claude%20Code.md) / [OpenCode](OpenCode.md) 用起来了，开始遇到下面这些需求时——
+**什么时候看这篇**：当你已经把 [Codex](03-codex.md) / [pi](04-pi.md) / [Claude Code](05-claude-code.md) / [OpenCode](06-opencode.md) 用起来了，开始遇到下面这些需求时——
 
 - 手上有**多个**模型供应商（我们的 NewAPI + 别的中转 + 官方订阅），要频繁切换；
 - 想知道**每个工具到底花了多少额度**；
@@ -25,6 +25,8 @@ CC Switch 是一个开源的**桌面应用**，把"AI 编程工具的供应商�
 
 支持的工具有 Claude Code、Codex、OpenCode、Gemini CLI 等（具体清单以官网当前版本为准）。
 
+![CC Switch 主界面：顶部是各工具的图标分组与本地路由开关，下方是供应商卡片（newapi，标注“需要路由”）](images/cc-switch-main.png)
+
 ---
 
 # 2 安装
@@ -43,6 +45,10 @@ CC Switch 是一个开源的**桌面应用**，把"AI 编程工具的供应商�
    - 密钥：`sk-你的Key`
 2. **启用**：在供应商卡片上点"启用"，CC Switch 会去改写对应工具的配置文件。
 3. **托盘切换**：v3.13 之后托盘菜单按应用分组，右键托盘图标就能切到某个工具的某个供应商。
+
+**添加/编辑供应商的界面长这样**（Claude Code 得把 Sonnet / Opus / Haiku 三档映射到实际模型，这也是下面第 4.2 节那个坑的根源）：
+
+![CC Switch 编辑供应商界面：API Key、请求地址、“需要模型映射”开关，以及 Sonnet / Opus / Haiku 三档的菜单显示名与实际请求模型](images/cc-switch-model-mapping.png)
 
 ---
 
@@ -68,7 +74,7 @@ CC Switch 的工作原理就是替你写 `~/.claude/settings.json`、`~/.codex/c
 "ANTHROPIC_DEFAULT_HAIKU_MODEL": "gpt-6-luna"
 ```
 
-少了的按 [Claude Code](Claude%20Code.md) 第 4 节补回去。
+少了的按 [Claude Code](05-claude-code.md) 第 4 节补回去。
 
 ---
 
@@ -90,4 +96,4 @@ CC Switch 的工作原理就是替你写 `~/.claude/settings.json`、`~/.codex/c
 1. CC Switch 官网：<https://ccswitch.io/zh/>
 2. 供应商切换教程：<https://cc-switch.cc/tutorials/provider-switching>
 3. 已知问题（本地路由删除 ANTHROPIC_MODEL）：<https://github.com/farion1231/cc-switch/issues/6889>
-4. 本仓库主线方案：[统一接入](统一接入.md)
+4. 本仓库主线方案：[统一接入](02-unified-access.md)

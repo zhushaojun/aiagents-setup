@@ -1,6 +1,6 @@
 # Matt Skills（第三方技能包入门）
 
-**进阶篇。** 装完 [Codex](Codex.md) / [pi](pi.md) 之后再来看。它不装工具，只装"工作流程"。
+**进阶篇。** 装完 [Codex](03-codex.md) / [pi](04-pi.md) 之后再来看。它不装工具，只装"工作流程"。
 
 一句话：**把资深工程师的做事步骤写成 Markdown 文件，让智能体每次都照着做。** 官方页面：<https://www.aihero.dev/skills>
 
@@ -44,7 +44,7 @@ Matt Pocock（Total TypeScript 作者）把自己日常用的技能开源了：<
 | **技能（skill）** | 一段 Markdown 流程说明，教模型"按什么步骤做" | `tdd`、`code-review`、`to-spec` |
 | **扩展 / 插件** | 会执行代码的能力，能加工具、加命令 | pi 的 extensions、Codex 的 plugins |
 | **MCP** | 把外部服务接进来当工具用 | context7 查文档、浏览器自动化 |
-| **`AGENTS.md` / `CLAUDE.md`** | 每个仓库的长期约定（说什么语言、哪些目录不许动） | 见 [pi](pi.md) 第 4.3 节 |
+| **`AGENTS.md` / `CLAUDE.md`** | 每个仓库的长期约定（说什么语言、哪些目录不许动） | 见 [pi](04-pi.md) 第 4.3 节 |
 
 **技能最省事的一点**：它是纯文件，格式是跨工具通用的。一条命令就能把它同时装给 Codex / pi / Claude Code / OpenCode / Cursor / Copilot 等 40 多个工具，不需要为每个工具改一份配置。
 
@@ -54,7 +54,7 @@ Matt Pocock（Total TypeScript 作者）把自己日常用的技能开源了：<
 
 | 项目 | 要求 | 检查方法 |
 | --- | --- | --- |
-| Node.js | **≥ 22.19**（`前置工具.md` 里已经装过） | `node -v` |
+| Node.js | **≥ 22.19**（`01-prerequisites.md` 里已经装过） | `node -v` |
 | 至少一个智能体 | Codex / pi / Claude Code / OpenCode 任一已跑通 | `codex exec "只回复两个字：可用"` |
 | 网络 | 能访问 GitHub（安装器从 GitHub 拉技能仓库） | — |
 
@@ -250,7 +250,7 @@ npx skills use mattpocock/skills@tdd     # 不安装，直接用这一个（会�
 
 | 现象 | 原因 / 解决 |
 | --- | --- |
-| `npx` 找不到，或下载特别慢 | Node.js 没装好，或 npm 源太慢。见 [前置工具](前置工具.md)（含镜像设置） |
+| `npx` 找不到，或下载特别慢 | Node.js 没装好，或 npm 源太慢。见 [前置工具](01-prerequisites.md)（含镜像设置） |
 | 装完了，工具里看不到技能 | ① 没新开会话；② `-a` 里漏了你在用的工具；③ 工具版本太老不支持 skills；④ pi 里改过文件要 `/reload` |
 | 每个技能出现两份 | 插件路线（`claude plugins install`）和 skills.sh 路线都装了。留一种，另一种删掉 |
 | Windows 报软链接权限错误 | 加 `--copy` 重装，改成复制文件 |
@@ -285,4 +285,4 @@ npx skills use mattpocock/skills@tdd     # 不安装，直接用这一个（会�
 - 技能格式规范：<https://agentskills.io>
 - 中文翻译版（想直接看中文说明可先用它，命令与目录名不变）：<https://github.com/vinvcn/mattpocock-skills-zh-CN>
 - Codex 侧的技能用法：<https://developers.openai.com/codex/skills>
-- pi 侧的技能说明：见 [pi](pi.md) 第 7.3 节
+- pi 侧的技能说明：见 [pi](04-pi.md) 第 7.3 节

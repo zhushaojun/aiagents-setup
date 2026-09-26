@@ -2,7 +2,7 @@
 
 **这是我们当前的主力工具。** 由 OpenAI 出品，命令行、VS Code 扩展、桌面应用三种形态齐全，接 GPT 系列模型时工具调用最稳，是"日常干活首选"。
 
-<!-- 截图：Codex 在 VS Code 里的对话框（扩展已登录可用状态） -->
+<!-- TODO 截图：Codex 在 VS Code 里的对话框（扩展已登录可用状态） -->
 
 ---
 
@@ -24,7 +24,7 @@
 | 环境变量 | `NEWAPI_KEY` 已设置 | `$env:NEWAPI_KEY.Length` → 输出 `51` |
 | VS Code（可选） | 最新版 | `code --version` |
 
-> `NEWAPI_KEY` 怎么设置见 **[统一接入](统一接入.md)** 第 2 节。没设置好后面一定报 401。
+> `NEWAPI_KEY` 怎么设置见 **[统一接入](02-unified-access.md)** 第 2 节。没设置好后面一定报 401。
 
 ---
 
@@ -43,7 +43,7 @@ codex --version
 
 在 VS Code 扩展商店搜索 **Codex**，安装 OpenAI 官方那个（扩展 ID `openai.chatgpt`）：
 
-<!-- 截图：VS Code 扩展商店里的 Codex 扩展页面（显示 openai.chatgpt + 安装按钮） -->
+![VS Code 扩展商店里的 Codex 扩展页面，发布者 OpenAI、标识符 openai.chatgpt](images/codex-vscode-extension.png)
 
 装完后左侧会出现 Codex 图标，点开即可对话。**扩展和命令行共用 `~/.codex/config.toml`**，所以命令行配置好之后，扩展里直接就能用。
 
@@ -51,7 +51,7 @@ codex --version
 
 从微软商店安装：<https://apps.microsoft.com/detail/9plm9xgg6vks>
 
-<!-- 截图：Codex 桌面应用主界面 -->
+<!-- TODO 截图：Codex 桌面应用主界面 -->
 
 桌面应用适合"不想开终端"的场景，配置同样读 `~/.codex/config.toml`。我们的电脑里它还会提供"computer use"（让模型操作浏览器/桌面）能力，属于进阶玩法。
 
@@ -122,7 +122,7 @@ network_access = true
 
 | 配置项 | 作用 | 可改成 |
 | --- | --- | --- |
-| `model` | 用哪个模型 | `gpt-6-luna`、`gpt-5.6-sol`；清单见 [统一接入](统一接入.md) 第 4 节 |
+| `model` | 用哪个模型 | `gpt-6-luna`、`gpt-5.6-sol`；清单见 [统一接入](02-unified-access.md) 第 4 节 |
 | `model_provider = "newapi"` | 用下面定义的 `[model_providers.newapi]` | 不要删 |
 | `model_reasoning_effort` | 思考强度 | `low`（快）/ `medium`（默认）/ `high`、`xhigh`、`max`（慢而强） |
 | `approval_policy = "on-request"` | 模型需要额外权限时问你 | `never`=从不问、`untrusted`=更严格 |
@@ -168,7 +168,7 @@ codex
 codex exec "只回复两个字：可用"
 ```
 
-预期输出末尾出现 `可用`。如果报 `401 Invalid token`，回到 [统一接入](统一接入.md) 检查 `NEWAPI_KEY`。
+预期输出末尾出现 `可用`。如果报 `401 Invalid token`，回到 [统一接入](02-unified-access.md) 检查 `NEWAPI_KEY`。
 
 ---
 
@@ -209,7 +209,7 @@ sandbox = "elevated"
 
 也就是**不限制目录、基本不问**。写得快，但代价是：模型可以改任何文件、跑任何命令，一次误操作可能删掉不该删的东西。
 
-<!-- 截图：Codex 请求权限确认的弹窗（展示 on-request 的效果） -->
+<!-- TODO 截图：Codex 请求权限确认的弹窗（展示 on-request 的效果） -->
 
 **建议**：先用默认值跑一两周，熟悉它的行为模式；确实被权限拦住影响效率时，再按上面放开，并且**只在重要的仓库上开**（重要仓库记得用 git，别裸奔）。
 
@@ -226,7 +226,7 @@ status_line = ["model-with-reasoning", "current-dir", "git-branch", "context-use
 
 ## 7.3 接入 MCP / 技能 / 插件
 
-Codex 支持 MCP 服务器、`skills`、`plugins`。技能用 `/skills` 挑选或 `$技能名` 显式调用（**不支持 `/技能名` 这种斜杠写法**）；现成的第三方技能包与装法见 [Matt Skills](Matt%20Skills.md)。
+Codex 支持 MCP 服务器、`skills`、`plugins`。技能用 `/skills` 挑选或 `$技能名` 显式调用（**不支持 `/技能名` 这种斜杠写法**）；现成的第三方技能包与装法见 [Matt Skills](09-matt-skills.md)。
 
 ```toml
 [mcp_servers.context7]
@@ -234,7 +234,7 @@ command = "npx"
 args = ["-y", "@upstash/context7-mcp"]
 ```
 
-配置项较多，建议在**确认过基础用法**之后再折腾。我们自己的完整配置（含桌面段、插件市场、MCP）见 [附-完整配置](附-完整配置.md)。
+配置项较多，建议在**确认过基础用法**之后再折腾。我们自己的完整配置（含桌面段、插件市场、MCP）见 [附-完整配置](10-appendix-full-config.md)。
 
 ---
 
@@ -244,7 +244,7 @@ args = ["-y", "@upstash/context7-mcp"]
 | --- | --- |
 | `401 Invalid token` | `NEWAPI_KEY` 没生效。新开终端，`$env:NEWAPI_KEY.Length` 应为 51 |
 | 一直提示登录 OpenAI | `requires_openai_auth = false` 漏了，或 `model_provider` 写错 |
-| `model_not_found` / `No available channel for model` | 模型名不在清单里：先在 [pricing 页](https://newapi.ttxs.site/pricing) 确认它在不在，再对照 [统一接入](统一接入.md) 第 4 节 |
+| `model_not_found` / `No available channel for model` | 模型名不在清单里：先在 [pricing 页](https://newapi.ttxs.site/pricing) 确认它在不在，再对照 [统一接入](02-unified-access.md) 第 4 节 |
 | 想让它在别的盘干活 | 先 `cd` 到那个目录再运行 `codex`；`workspace-write` 只允许改当前目录 |
 | VS Code 扩展里报错 | 扩展与命令行共用配置；先在命令行确认 `codex exec "只回复两个字：可用"` 能正常回答 |
 | 中文乱码（Windows） | 用 **Windows Terminal + PowerShell 7**，不要用老的 cmd 窗口 |
@@ -270,5 +270,5 @@ VS Code 扩展和桌面应用各自在应用内升级。配置、会话、`AGENT
 2. VS Code 扩展（扩展 ID `openai.chatgpt`）：<https://marketplace.visualstudio.com/items?itemName=openai.chatgpt>
 3. 桌面应用（微软商店）：<https://apps.microsoft.com/detail/9plm9xgg6vks>
 4. 配置项完整参考：<https://developers.openai.com/codex/config>
-5. 统一接入与模型清单：见本仓库 [统一接入](统一接入.md)
+5. 统一接入与模型清单：见本仓库 [统一接入](02-unified-access.md)
 6. **实时查看可用模型与价格**：<https://newapi.ttxs.site/pricing>

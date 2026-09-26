@@ -63,21 +63,15 @@ OpenCode 是一个受 Claude Code 启发而创建的开源 AI 编程智能体，
 
 # 4 文档索引
 
+完整索引（含“什么时候看”）只在 [README](README.md) 第 3 节维护一份，这里不再重复。按编号速查：
 
-| 文档                                 | 内容                                                              |
-| ---------------------------------- | --------------------------------------------------------------- |
-| [README.md](README.md)             | 五分钟最快路径、环境变量总表、版本校验表                                            |
-| [前置工具.md](前置工具.md)                 | Node.js、Git for Windows、Windows Terminal + PowerShell 7、VS Code |
-| [统一接入.md](统一接入.md)                 | 密钥与环境变量、地址与协议、**可用模型清单**、四家写法对照                                 |
-| [Codex.md](Codex.md)               | 主力工具完整教程（终端 / VS Code / 桌面 / 服务器）                               |
-| [pi.md](pi.md)                     | 次主力工具完整教程                                                       |
-| [Claude Code.md](Claude%20Code.md) | 辅助工具完整教程（含图片问题说明）                                               |
-| [OpenCode.md](OpenCode.md)         | 辅助工具完整教程（v2 格式）                                                 |
-| [Orca.md](Orca.md)                 | 进阶工具完整教程：智能体工作台（工作树并行、赛马、Orca CLI）                                |
-| [cc-switch.md](cc-switch.md)       | 进阶：供应商统一管理与本地路由                                                 |
-| [Matt Skills.md](Matt%20Skills.md) | 进阶：第三方技能包（把工程流程固化成技能）                                           |
-| [附-完整配置.md](附-完整配置.md)             | 进阶：我们机器上的完整配置要点                                                 |
-| `images/`                              | 教程用到的截图                                                         |
+| 编号 | 文档 | 主题 |
+| --- | --- | --- |
+| 01 | [01-prerequisites.md](01-prerequisites.md) | 前置工具（Node.js / Git for Windows / Windows Terminal + PowerShell 7 / VS Code） |
+| 02 | [02-unified-access.md](02-unified-access.md) | 统一接入：密钥、地址与协议、可用模型清单 |
+| 03–06 | [03-codex.md](03-codex.md)｜[04-pi.md](04-pi.md)｜[05-claude-code.md](05-claude-code.md)｜[06-opencode.md](06-opencode.md) | 四个 CLI 工具完整教程 |
+| 07–09 | [07-orca.md](07-orca.md)｜[08-cc-switch.md](08-cc-switch.md)｜[09-matt-skills.md](09-matt-skills.md) | 进阶：编排层、多供应商、技能包 |
+| 10 | [10-appendix-full-config.md](10-appendix-full-config.md) | 附录：我们机器上的完整配置要点 |
 
 
 ## 4.1 外部参考（飞书 wiki）

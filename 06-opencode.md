@@ -2,7 +2,7 @@
 
 **辅助工具。** 开源、通用的终端 AI 编程智能体：几乎什么模型都能接，终端 / IDE / 桌面端都有入口。它已经发展成为一个能真正干活的独立产品（v2），**虽然能力上限不如 Codex 和 pi（它不是由自家最强模型驱动的），但完全可用，值得动手试一试。**
 
-<!-- 截图：OpenCode v2 的终端界面（TUI） -->
+<!-- TODO 截图：OpenCode v2 的终端界面（TUI） -->
 
 ---
 
@@ -25,7 +25,7 @@
 | 环境变量 | `NEWAPI_KEY` 已设置 | `$env:NEWAPI_KEY.Length` → `51` |
 | Git for Windows | 建议装（模型要执行命令时会用到） | `bash --version` |
 
-> 密钥设置见 **[统一接入](统一接入.md)** 第 2 节。若模型执行命令时报找不到 bash，装 Git for Windows，或用环境变量 `OPENCODE_GIT_BASH_PATH` 指向 `bash.exe`。
+> 密钥设置见 **[统一接入](02-unified-access.md)** 第 2 节。若模型执行命令时报找不到 bash，装 Git for Windows，或用环境变量 `OPENCODE_GIT_BASH_PATH` 指向 `bash.exe`。
 
 ---
 
@@ -135,7 +135,7 @@ opencode
 
 界面里可以用 `/models` 切换模型（应能看到 `newapi/glm-5.3-flash` 等）。
 
-<!-- 截图：OpenCode 里模型选择列表（能看到 newapi 下的模型） -->
+<!-- TODO 截图：OpenCode 里模型选择列表（能看到 newapi 下的模型） -->
 
 ---
 
@@ -169,7 +169,7 @@ opencode
 | --- | --- |
 | 装了但不认识配置 | 装成了 v1：`npm uninstall -g opencode-ai`，改 `npm install -g @opencode/cli` |
 | `Invalid token` | `{env:NEWAPI_KEY}` 没解析：检查环境变量是否新开终端生效；写法必须是 `{env:NEWAPI_KEY}` |
-| 模型不在列表里 | `providers`（复数）写成了 `provider`，或模型 `id` 不在中转清单里（见 [统一接入](统一接入.md) 第 4 节） |
+| 模型不在列表里 | `providers`（复数）写成了 `provider`，或模型 `id` 不在中转清单里（见 [统一接入](02-unified-access.md) 第 4 节） |
 | 模型执行命令报找不到 bash | 装 Git for Windows；或用 `OPENCODE_GIT_BASH_PATH` 指向 `bash.exe` |
 | 后台服务起不来 | 加 `--standalone` 用私有服务跑：`opencode run --standalone "..."` |
 | `model_not_found` | 模型名写错，或该模型当期已下架（看 [pricing 页](https://newapi.ttxs.site/pricing)）；注意别把 Claude Code 的 `[1M]` 后缀抄进来 |
@@ -194,5 +194,5 @@ opencode uninstall                        # 官方卸载命令（会清理相关
 1. 官方文档：<https://opencode.ai/docs/zh-cn/>
 2. 下载页（终端 / 桌面 / IDE 扩展）：<https://opencode.ai/zh/download>
 3. 官网：<https://opencode.ai/zh>
-4. 统一接入与模型清单：见本仓库 [统一接入](统一接入.md)
+4. 统一接入与模型清单：见本仓库 [统一接入](02-unified-access.md)
 5. **实时查看可用模型与价格**：<https://newapi.ttxs.site/pricing>
