@@ -233,6 +233,30 @@ args = ["-y", "@upstash/context7-mcp"]
 
 我们文件里有三个供应商：`newapi`（教程用这个）、`deepseek`、`bailian`。后两个走各自官方的 Key，与本教程无关。进阶项包括 `compat` 兼容开关（如 `thinkingFormat`、`maxTokensField`）与 `thinkingLevelMap`（把 pi 的思考档位映射到厂商实际支持的档位）——**这些只在模型行为异常时才需要调**，官方文档：<https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md>
 
+`newapi` 块的密钥走环境变量插值、不落盘（和教程一致）：
+
+```json
+"newapi": {
+  "baseUrl": "https://newapi.ttxs.site/v1",
+  "apiKey": "$NEWAPI_KEY",
+  "api": "openai-responses",
+  "models": [ … ]
+}
+```
+
+> **⚠️ pi 的凭据优先级有个坑**：官方顺序是运行时 `--api-key` → **`auth.json` 里存过的凭据** → `models.json` 的 `apiKey` → provider 环境变量。
+> 只要曾经对 `newapi` 执行过 `/login`，密钥就会存进 `~/.pi/agent/auth.json` 并**盖过** `$NEWAPI_KEY`，而且不会有任何提示。我们已经删掉了这个条目（`deepseek` / `bailian` / `commandcode` 三家与本教程无关，保留原样）。删除命令：
+>
+> ```PowerShell
+> $p = "$env:USERPROFILE\.pi\agent\auth.json"
+> $j = Get-Content $p -Raw | ConvertFrom-Json
+> $j.PSObject.Properties.Remove('newapi')
+> $j | ConvertTo-Json -Depth 6 | Set-Content $p -Encoding utf8
+> ```
+>
+> **失败签名对照**：密钥解析不到 → 4 秒报 `No API key found for newapi.`；密钥错 → `401` / `Invalid token`。自查有无残留：`Get-Content ~\.pi\agent\auth.json -Raw` 里不应出现 `"newapi"`。
+> **好用的鉴权探针**：`pi --list-models`。有密钥时列出 6 个 `newapi` 模型；没密钥时一个都不列（注意输出是 `provider  model` 两列，不是 `provider/model`），并对 `settings.json` 的 `enabledModels` 逐条报 `Warning: No models match pattern "newapi/..."`。
+
 ---
 
 # 4 OpenCode 完整配置要点
