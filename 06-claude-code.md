@@ -140,6 +140,7 @@ New-Item -ItemType Directory -Force "$env:USERPROFILE\.claude" | Out-Null
 
 | 配置项 | 作用 |
 | --- | --- |
+| `model`（顶层，不在 `env` 里） | 默认档位。填 `sonnet` 就用 `ANTHROPIC_DEFAULT_SONNET_MODEL` 映射到的 `deepseek-v4.1-flash[1M]`（主力模型），所以拿它当默认最省事；运行中随时用 `/model` 换档 |
 | `ANTHROPIC_BASE_URL` | 走我们的中转。**不要带 `/v1`**（Claude Code 用 Anthropic 协议） |
 | `ANTHROPIC_MODEL` | 默认模型 |
 | `ANTHROPIC_DEFAULT_OPUS/SONNET/HAIKU_MODEL` | 把 Claude 的三个模型档位（opus/sonnet/haiku）映射到我们的模型；`_NAME` 那一行是界面上显示的中文/友好名 |

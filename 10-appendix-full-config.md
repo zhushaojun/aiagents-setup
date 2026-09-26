@@ -19,7 +19,7 @@
 | 配置项 | 我们的值 | 作用 | 建议 |
 | --- | --- | --- | --- |
 | `language` | `简体中文` | 界面与回复语言 | 抄 |
-| `model` | `haiku` | 默认档位；`haiku` 这一档在我们映射里是 `gpt-6-luna`。注意截图里 `/model` 选中的是 `Custom model`（值就是 `ANTHROPIC_MODEL`），实际生效的是它 | 抄 |
+| `model` | `haiku` | 默认档位；`haiku` 这一档在我们映射里是 `gpt-6-luna`。注意截图里 `/model` 选中的是 `Custom model`（值就是 `ANTHROPIC_MODEL`），实际生效的是它 | **别照抄我们这个值**：[教程](06-claude-code.md)给的 `sonnet` 更适合当默认（映射到主力模型 `deepseek-v4.1-flash[1M]`）。`haiku` 是我们的历史选择，而且会被 `/model` 里的选择覆盖 |
 | `alwaysThinkingEnabled` | `true` | 总是思考 | 抄 |
 | `effortLevel` | `high` | 出力档位 | 抄 |
 | `autoUpdatesChannel` | `stable` | 跟稳定版 | 抄 |
@@ -281,6 +281,35 @@ OpenCode 的结果不如 Codex / pi，**主要原因是模型**：它本身不�
 2. 优先用 `gpt-6-sol` / `claude-opus-5` 这类较强模型；
 3. 任务拆小，一次一件事；
 4. 让它先给计划再动手（和别的工具一样）。
+
+## 4.3 思考档位映射：`variants`
+
+OpenCode 的 `low / medium / high / max` 档位（命令行写作 `模型#档位`，见 [OpenCode](05-opencode.md) 第 6 节）**不是内置语义**，而是每个模型在 `opencode.json` 里自己声明的：在模型条目下加 `variants` 数组，把档位翻译成该厂商真正认的参数。
+
+```json
+"deepseek-v4.1-flash": {
+  "name": "deepseek-v4.1-flash",
+  "limit": { "context": 500000, "output": 384000 },
+  "capabilities": { "tools": true, "input": ["text", "image"], "output": ["text"] },
+  "variants": [
+    { "id": "low",    "settings": { "thinking": { "type": "disabled" } } },
+    { "id": "medium", "settings": { "thinking": { "type": "enabled" } } },
+    { "id": "high",   "settings": { "reasoningEffort": "high" } },
+    { "id": "max",    "settings": { "reasoningEffort": "max" } }
+  ]
+}
+```
+
+我们 `newapi` 下 12 个模型，10 个声明了 `variants`，档位集合按厂商能力分三种：
+
+| 档位集合 | 模型 | 特点 |
+| --- | --- | --- |
+| `low / medium / high / max` | `deepseek-v4.1-flash`、`deepseek-v4-pro` | 低档直接关思考（`thinking.type: disabled`），`high` / `max` 走 `reasoningEffort` |
+| `low / medium / high / xhigh` | `gpt-6-sol`、`gpt-6-luna`、`gpt-6-astra` | 最高档叫 `xhigh`，**不是** `max` |
+| `low / medium / high` | `glm-5.3`、`glm-5.3-flash`、`qwen3.8-plus`、`mimo-v2.6-flash`、`mimo-v2.6-pro` | 没有更高档 |
+
+> 这和 pi 的 `thinkingLevelMap` 是同一件事的两种写法（见 3.2）：**客户端的档位是抽象的，必须映射到厂商真实参数才生效**。没声明 `variants` 的模型就没有档位可选。
+> ⚠️ 剩下两个没声明 `variants` 的模型 `kimi-k2.7-code`、`minimax-m3`，名字也在 4.1 那份「中转上已失效」的名单里（[统一接入](02-unified-access.md) 第 4 节的清单里同样没有它们）。它们仍会出现在 OpenCode 的模型选择器里，选中就 `model_not_found`——建议直接从 `opencode.json` 删掉。
 
 ---
 

@@ -174,6 +174,7 @@ opencode
 
 # 7 进阶
 
+- **思考档位（`variants`）**：界面与 `模型#档位` 里的 `low / medium / high / max` 并不是内置语义，而是每个模型在 `opencode.json` 里声明的 `variants`，作用是把档位翻译成厂商真正认的参数（如 `reasoningEffort`）。第 4 节的精简配置没有声明它；想按模型精细控制思考强度，照[附录](10-appendix-full-config.md) 4.3 补。
 - **插件**：`opencode plugin` 管理插件；配置里也可以直接列插件包名。
 - **多智能体编排**：社区有 `oh-my-openagent` 这类插件，把不同任务分给不同模型。**本篇不展开、也不推荐初学者上**——它需要先熟悉基础用法，而且插件里的模型名要自己跟中转清单对齐，很容易写出失效配置。
 - **Web / 服务模式**：`opencode serve` 起一个本地服务，`opencode serve` + 浏览器可当轻量 Web 版用；`opencode acp` 供 IDE 接入 Agent Client Protocol。
