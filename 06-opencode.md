@@ -121,6 +121,8 @@ New-Item -ItemType Directory -Force "$env:USERPROFILE\.config\opencode" | Out-Nu
 4. 内置优先级里的第一个可用模型
 
 > 换默认模型改这一行（例如 `"model": "newapi/gpt-6-sol"`）；只想临时换就用 `/models` 命令，或 `opencode run --model ...`。
+>
+> **不写这一行的实际后果**：OpenCode 会自己挑一个“可用”的模型，实测会落到内置免费模型 `space-bunny-free`，看起来像“OpenCode 很笨”，其实是根本没走你的中转。用 `opencode run --standalone` 跑一次，状态行里模型名不带 `newapi/` 就是没接上。
 
 ---
 

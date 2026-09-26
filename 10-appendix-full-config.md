@@ -12,7 +12,7 @@
 
 # 1 Claude Code 完整配置要点
 
-完整文件：`%USERPROFILE%\.claude\settings.json`（含密钥，**不要直接分享**；分享前务必清空 `env.ANTHROPIC_AUTH_TOKEN`）
+完整文件：`%USERPROFILE%\.claude\settings.json`（**不含密钥**：`env` 里不放 `ANTHROPIC_AUTH_TOKEN`，它来自系统环境变量——所以这份文件可以直接分享）
 
 ## 1.1 顶层开关（除 `env` 外）
 
@@ -238,7 +238,8 @@ args = ["-y", "@upstash/context7-mcp"]
 
 | 文件/目录 | 内容 | 建议 |
 | --- | --- | --- |
-| `opencode.json` | 主配置（v2 格式：`providers` / `package` / `settings`） | 抄教程精简版 |
+| `opencode.json` | 主配置（v2 格式：`providers` / `package` / `settings`，顶层 `model` 是默认模型） | 抄教程精简版 |
+| ↳ 顶层 `model` 键 | 我们设的是 `newapi/deepseek-v4.1-flash` | **必须抄**：不设时 OpenCode 会自己挑，实测会落到内置免费模型 `space-bunny-free`（见 4.2） |
 | `cli.json` | v2 的界面偏好（`session.thinking`、`diffs.wrap`、滚动条等） | 随意 |
 | `plugins/` | 本地插件（我们装了 `orca-opencode-status`） | 按需 |
 | `node_modules/`、`package-lock.json` | 插件依赖，OpenCode 自己维护 | 不要手动改 |
@@ -249,9 +250,10 @@ args = ["-y", "@upstash/context7-mcp"]
 
 OpenCode 的结果不如 Codex / pi，**主要原因是模型**：它本身不产出模型，用我们中转的国产模型时，同样的任务质量天然差一档。想让它表现更好：
 
-1. 优先用 `gpt-6-sol` / `claude-opus-5` 这类较强模型；
-2. 任务拆小，一次一件事；
-3. 让它先给计划再动手（和别的工具一样）。
+1. **先确认真的用上了我们的模型**：`opencode.json` 顶层要有 `model`，且 `opencode run --standalone` 状态行里的模型名要走 `newapi/`。不设 `model` 时它可能悄悄用内置免费模型 `space-bunny-free`——那不是“差一档”，是压根没接上中转；
+2. 优先用 `gpt-6-sol` / `claude-opus-5` 这类较强模型；
+3. 任务拆小，一次一件事；
+4. 让它先给计划再动手（和别的工具一样）。
 
 ---
 
