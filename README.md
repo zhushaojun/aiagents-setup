@@ -113,7 +113,7 @@
 | 配置位置 | `~/.codex/config.toml` | `~/.pi/agent/models.json` | `~/.claude/settings.json` | `~/.config/opencode/opencode.json` |
 | 密钥写法 | `env_key = "NEWAPI_KEY"` | `"apiKey": "$NEWAPI_KEY"` | 不写（读 `ANTHROPIC_AUTH_TOKEN`） | `"apiKey": "{env:NEWAPI_KEY}"` |
 | 接口地址 | `https://newapi.ttxs.site/v1` | 同左 | `https://newapi.ttxs.site`（**不带 `/v1`**） | `https://newapi.ttxs.site/v1` |
-| 默认模型 | `gpt-6-sol` | `glm-5.3-flash` | `deepseek-v4.1-flash[1M]` | `glm-5.3-flash` |
+| 默认模型 | `gpt-6-sol` | `deepseek-v4.1-flash` | `deepseek-v4.1-flash[1M]` | `deepseek-v4.1-flash` |
 | 说中文 | `~/.codex/AGENTS.md` | `~/.pi/agent/AGENTS.md` | `~/.claude/CLAUDE.md` | 会话里直接说 |
 | 非交互验证 | `codex exec "只回复两个字：可用"` | `pi -p "只回复两个字：可用"` | `claude -p "只回复两个字：可用"` | `opencode run --standalone "只回复两个字：可用"` |
 | 升级 | `npm i -g @openai/codex` | `pi update` | `npm i -g @anthropic-ai/claude-code@latest` | `opencode upgrade` |

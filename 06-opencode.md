@@ -71,6 +71,7 @@ New-Item -ItemType Directory -Force "$env:USERPROFILE\.config\opencode" | Out-Nu
 @'
 {
   "$schema": "https://opencode.ai/config.json",
+  "model": "newapi/deepseek-v4.1-flash",
   "providers": {
     "newapi": {
       "package": "aisdk:@ai-sdk/openai-compatible",
@@ -112,6 +113,15 @@ New-Item -ItemType Directory -Force "$env:USERPROFILE\.config\opencode" | Out-Nu
 
 `models` 里的 `limit.context` / `limit.output` 是给模型声明的上下文与输出上限，**写小了会让它无法处理长文件**，照抄上面的值即可（数值来自中转的模型信息）。
 
+顶层的 `"model": "newapi/deepseek-v4.1-flash"` 是**默认模型**，格式为 `供应商/model_id`。**这一行别省**——不写的话 OpenCode 按下面的顺序自己挑，你每次启动看到的模型都可能不一样：
+
+1. 命令行 `--model` / `-m`
+2. 配置里的 `model` 字段 ← 就是我们写的这一行
+3. **上次用过的模型**
+4. 内置优先级里的第一个可用模型
+
+> 换默认模型改这一行（例如 `"model": "newapi/gpt-6-sol"`）；只想临时换就用 `/models` 命令，或 `opencode run --model ...`。
+
 ---
 
 # 5 验证
@@ -133,7 +143,7 @@ cd D:\codes\some-project
 opencode
 ```
 
-界面里可以用 `/models` 切换模型（应能看到 `newapi/glm-5.3-flash` 等）。
+界面里可以用 `/models` 切换模型（应能看到 `newapi/deepseek-v4.1-flash` 等，即上面配的默认模型）。
 
 ![OpenCode 的 Select model 列表：搜索框输入 newapi，列出 deepseek-v4.1-flash、glm-5.3-flash、gpt-6-sol、kimi-k2.7-code、mimo-v2.6-flash 等模型，右列供应商均为 newapi](images/opencode-model-list.png)
 
@@ -145,7 +155,7 @@ opencode
 | --- | --- |
 | 进入交互界面 | 在项目目录运行 `opencode` |
 | 一次性执行一条指令 | `opencode run "把 xxx 改成 yyy"` |
-| 指定模型 | `opencode run --model newapi/glm-5.3-flash "..."`（`provider/model`，可用 `#` 加档位） |
+| 指定模型 | `opencode run --model newapi/deepseek-v4.1-flash "..."`（`provider/model`，可用 `#` 加档位） |
 | 继续上次会话 | `opencode run -c "..."` 或界面里继续 |
 | 让它读某个文件 | `opencode run --file 路径 "解释这个文件"` |
 | 自动批准权限 | 加 `--auto`（放心再开） |

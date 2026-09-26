@@ -136,9 +136,9 @@ qwen3.8-max                 space-bunny-free
 | 工具 | 主力 | 备选 | 理由 |
 | --- | --- | --- | --- |
 | Codex | `gpt-6-sol` | `gpt-6-luna`、`gpt-5.6-sol` | Codex 与 GPT 系列同源，工具调用最稳（贵一些，追求效果就用它） |
-| pi | `glm-5.3-flash` | `deepseek-v4.1-flash`、`gpt-6-sol` | 中文好、便宜、跑得快；需要长上下文再换 |
+| pi | `deepseek-v4.1-flash` | `glm-5.3-flash`、`gpt-6-sol` | 长上下文 + 工具调用稳；想更省更快就换 `glm-5.3-flash` |
 | Claude Code | `deepseek-v4.1-flash` | `glm-5.3-flash`、`qwen3.8-max` | 日常写代码够用，成本低 |
-| OpenCode | `glm-5.3-flash` | `gpt-6-sol`、`deepseek-v4-pro` | 通用性好，插件生态用它最省心 |
+| OpenCode | `deepseek-v4.1-flash` | `glm-5.3-flash`、`gpt-6-sol`、`deepseek-v4-pro` | 通用性好，插件生态用它最省心 |
 
 想省钱的时候：先到 [pricing 页](https://newapi.ttxs.site/pricing) 比一下单价，把"主力"换成便宜的 flash 档（`glm-5.3-flash`、`deepseek-v4-flash` 这类）即可，改一处配置就生效。
 
