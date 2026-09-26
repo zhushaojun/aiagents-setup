@@ -129,10 +129,13 @@ name = "OpenAI"
 base_url = "https://newapi.ttxs.site/v1"
 wire_api = "responses"
 requires_openai_auth = false
-experimental_bearer_token = "sk-你的Key"  # ⚠️ 字面密钥！换成 env_key 更安全
+env_key = "NEWAPI_KEY"
 ```
 
-> **改动建议**：把 `experimental_bearer_token` 换成 `env_key = "NEWAPI_KEY"`（教程就是这样写的），这样配置文件里就不含密钥了。
+> **为什么是 `env_key`**：只写变量名，密钥留在系统环境变量里（设置方法见 [统一接入](02-unified-access.md) 第 2 节），配置文件不含密钥。`experimental_bearer_token` 会把密钥字面写进文件，我们不用。
+> **代价要清楚**：`env_key` 读的是 **Codex 自己进程**的环境变量。桌面 App、VS Code / Zed 扩展这类长驻入口继承的是它们启动那一刻的环境——**设完或换完 Key 要重启它们一次**，否则 1 秒报 `Missing environment variable: NEWAPI_KEY`。令牌不对则是反复 `Reconnecting...`，两种失败别混淆。
+> **两者绝不要同时写**：实测同时存在时 `env_key` 静默胜出，“多加一行 env_key 更保险”是陷阱。
+> `auth.json` / `OPENAI_API_KEY`（`codex login` 的账号层凭据）对 `requires_openai_auth = false` 的 provider **完全无效**，别指望它兜底。
 > `openai_base_url = "http://127.0.0.1:57321/v1"` 是**桌面版（现在的 ChatGPT 桌面应用）/computer-use 运行时自动写入的**，不要手动抄。
 
 ## 2.2 功能开关与界面
