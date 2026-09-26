@@ -124,6 +124,12 @@ New-Item -ItemType Directory -Force "$env:USERPROFILE\.config\opencode" | Out-Nu
 >
 > **不写这一行的实际后果**：OpenCode 会自己挑一个“可用”的模型，实测会落到内置免费模型 `space-bunny-free`，看起来像“OpenCode 很笨”，其实是根本没走你的中转。用 `opencode run --standalone` 跑一次，状态行里模型名不带 `newapi/` 就是没接上。
 
+## 4.1 可选：接入 OpenCode Console 的限时免费模型
+
+上面的配置默认使用 **NewAPI**；`/models` 中仍可能显示内置免费模型，它们并不走 NewAPI 中转。若想使用 OpenCode Console 的限时免费模型，按 [OpenCode 官方流程](https://opencode.ai/v2/docs/console/models) 登录 Console，完成其要求的账单与额度设置并取得 API key，然后在 OpenCode 交互界面执行 `/connect`，选择 **OpenCode pay-as-you-go**（Console）并填入该 key。再执行 `/models`，从列表中选择标有 **Free** 的模型。原有 NewAPI 配置不用删除。
+
+免费模型是**限时提供**的，名单和使用条件会变化；选择前查看官方页面的 [Free models 列表](https://opencode.ai/v2/docs/console/models#free-models) 与当前价格。Console 的 key 与本教程的 `NEWAPI_KEY` 不是同一个密钥。
+
 ---
 
 # 5 验证

@@ -1,6 +1,6 @@
 # cc-switch（进阶：供应商统一管理）
 
-**什么时候看这篇**：当你已经把 [Codex](03-codex.md) / [pi](04-pi.md) / [Claude Code](05-claude-code.md) / [OpenCode](06-opencode.md) 用起来了，开始遇到下面这些需求时——
+**什么时候看这篇**：当你已经把 [Codex](03-codex.md) / [pi](04-pi.md) / [OpenCode](05-opencode.md) / [Claude Code](06-claude-code.md) 用起来了，开始遇到下面这些需求时——
 
 - 手上有**多个**模型供应商（我们的 NewAPI + 别的中转 + 官方订阅），要频繁切换；
 - 想知道**每个工具到底花了多少额度**；
@@ -75,7 +75,7 @@ CC Switch 的工作原理就是替你写 `~/.claude/settings.json`、`~/.codex/c
 "ANTHROPIC_DEFAULT_HAIKU_MODEL": "gpt-6-luna"
 ```
 
-少了的按 [Claude Code](05-claude-code.md) 第 4 节补回去。
+少了的按 [Claude Code](06-claude-code.md) 第 4 节补回去。
 
 ---
 

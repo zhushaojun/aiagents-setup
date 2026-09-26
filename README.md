@@ -10,13 +10,13 @@
 
 | 优先级 | 工具 | 一句话定位 | 文档 |
 | --- | --- | --- | --- |
-| ★★★ **主力** | **Codex** | OpenAI 官方，终端 + VS Code 扩展 + 桌面应用三形态，接 GPT 系列工具调用最稳 | [Codex](03-codex.md) |
+| ★★★ **主力** | **Codex** | OpenAI 官方，命令行客户端开源；终端 / VS Code 扩展 / ChatGPT 桌面应用三形态，接 GPT 系列工具调用最稳 | [Codex](03-codex.md) |
 | ★★ **次主力** | **pi** | 开源轻量、可扩展，接国产模型 + 长上下文最合适 | [pi](04-pi.md) |
-| ★ **辅助** | **Claude Code** | Anthropic 官方，推理细致；注意图片相关功能在第三方模型下不稳 | [Claude Code](05-claude-code.md) |
-| ★ **辅助** | **OpenCode** | 开源通用框架，什么模型都能接；能力上限不如前两者，但已经能真正干活 | [OpenCode](06-opencode.md) |
+| ★ **辅助** | **OpenCode** | 开源通用框架，模型接入灵活；可选用 Console 的限时免费模型 | [OpenCode](05-opencode.md) |
+| ★ **辅助** | **Claude Code** | Anthropic 官方，推理细致；接第三方模型时需额外验证兼容性 | [Claude Code](06-claude-code.md) |
 | ★★ **进阶（编排层）** | **Orca** | 开源"智能体工作台"（ADE）：一个任务一个 git worktree，多个 CLI 智能体并行赛马，diff 与提交集中处理。**它不接模型、不存密钥**，只是启动上面四个 | [Orca](07-orca.md) |
 
-**建议路径**：先把 **Codex** 用起来（够用 80% 的场景），再加 **pi**（国产模型、长上下文、插件生态），最后按兴趣看 Claude Code 与 OpenCode。等这四个都能单独跑顺、并且开始嫌"一个任务只能串行做"时，再上 **Orca**——它不替代上面四个，而是把它们放进同一个窗口里并行调度。
+**建议路径**：先把 **Codex** 用起来（终端与桌面版共用配置，桌面版需单独完成首次认证），再加 **pi**（国产模型、长上下文、插件生态），第三顺位是 **OpenCode**（接入灵活，可按 [OpenCode](05-opencode.md) 第 4.1 节选用 Console 的限时免费模型），最后按需要了解 Claude Code。等所需 CLI 都能单独跑顺、并且开始嫌"一个任务只能串行做"时，再上 **Orca**——它不替代上面四个，而是把它们放进同一个窗口里并行调度。
 
 工具跑顺之后，建议再装一套通用的**技能包**（把资深工程师的做事流程固化成文件，四个工具都能用）：[Matt Skills](09-matt-skills.md)。
 
@@ -51,13 +51,13 @@
 
 | 文件 | 内容 | 什么时候看 |
 | --- | --- | --- |
-| [00-ai-coding.md](00-ai-coding.md) | 总览与选型：为什么重点关注命令行工具，四个工具的关系 | **可选**，想先了解背景时看；想直接动手就从 01 开始 |
+| [00-ai-coding.md](00-ai-coding.md) | 总览与选型：命令行主线、桌面入口与四个工具的顺位 | **可选**，想先了解背景时看；想直接动手就从 01 开始 |
 | [01-prerequisites.md](01-prerequisites.md) | Node.js、Git for Windows、Windows Terminal + PowerShell 7、VS Code、npm 镜像源、一键自检 | **最先看**，只做一次 |
-| [02-unified-access.md](02-unified-access.md) | 唯一要填密钥的地方：环境变量怎么设、地址与协议、**可用模型清单与实时价格页链接**、四家写法对照、报错对照 | 装任何工具前先看 |
-| [03-codex.md](03-codex.md) | 主力工具：终端 / VS Code 扩展 / 桌面应用 / 远程服务器，完整配置与权限取舍 | 必看 |
+| [02-unified-access.md](02-unified-access.md) | 默认 NewAPI 方案填写密钥的地方：环境变量怎么设、地址与协议、**可用模型清单与实时价格页链接**、四家写法对照、报错对照 | 装任何工具前先看 |
+| [03-codex.md](03-codex.md) | 主力工具：终端 / VS Code 扩展 / ChatGPT 桌面应用 / 远程服务器，完整配置与权限取舍 | 必看 |
 | [04-pi.md](04-pi.md) | 次主力：安装（含 Git Bash 依赖）、`models.json` 接 NewAPI、默认模型与插件包 | 必看 |
-| [05-claude-code.md](05-claude-code.md) | 辅助：客户端配置、模型档位映射、**"为什么它现在处理图片有问题"整节** | 按需 |
-| [06-opencode.md](06-opencode.md) | 辅助：**v2 配置格式**（与网上老教程不兼容）、验证与升级 | 按需 |
+| [05-opencode.md](05-opencode.md) | 第三顺位：**v2 配置格式**（与网上老教程不兼容）、Console 限时免费模型的可选接入、验证与升级 | 按需 |
+| [06-claude-code.md](06-claude-code.md) | 末位：客户端配置、模型档位映射、事实性回答与第三方模型兼容性排查 | 按需 |
 | [07-orca.md](07-orca.md) | 进阶：**智能体工作台（ADE）**——worktree 并行、多智能体赛马、共享依赖与 `.env`、Orca CLI | 前四个用顺了再看 |
 | [08-cc-switch.md](08-cc-switch.md) | 供应商统一管理/本地路由工具，进阶用 | 用熟了再看 |
 | [09-matt-skills.md](09-matt-skills.md) | 进阶：第三方技能包（25 个工程流程技能），装完主力工具后再看 | 想固化"做事流程"时看 |
@@ -66,7 +66,7 @@
 
 ---
 
-# 4 环境变量总表（全文唯一要填密钥的地方）
+# 4 环境变量总表（默认 NewAPI 方案）
 
 设置方法见 [统一接入](02-unified-access.md) 第 2 节。设置完**必须新开一个终端**才生效。
 
@@ -128,10 +128,11 @@
 2. **报 `503 model_not_found`** → 模型名不在中转清单里。先去 [pricing 页](https://newapi.ttxs.site/pricing) 看这个模型还在不在，再对照 [统一接入](02-unified-access.md) 第 4 节。注意别把 Claude Code 的 `[1M]` 后缀抄到别的工具里。
 3. **工具能聊天但不能跑命令（pi / OpenCode）** → 没装 Git for Windows。见 [前置工具](01-prerequisites.md) 第 2 节。
 4. **中文乱码** → 用 Windows Terminal + PowerShell 7，不要用老的 cmd 窗口。
-5. **Claude Code 处理图片异常** → 这是客户端在第三方模型上的已知问题，不是你的配置错。见 [Claude Code](05-claude-code.md) 第 8 节。
-6. **OpenCode 配置不生效** → 你装成了 v1（`opencode-ai`）。v2 的包是 `@opencode/cli`，配置格式也不同。见 [OpenCode](06-opencode.md) 第 3 节。
-7. **Orca 里智能体起不来** → 先在**普通终端**里手动跑那个 CLI：手动都不行就是 CLI 自己的问题（按第 1～6 条查），手动能跑就检查 `Settings → Agents` 有没有识别到它。见 [Orca](07-orca.md) 第 8 节。
-8. **Orca 新建 worktree 后没有 `node_modules` / `.env`** → 这是正常的（worktree 是干净检出）。按 [Orca](07-orca.md) 7.1 配共享目录与 `.worktreeinclude`。
+5. **Claude Code 在第三方模型上功能异常（图片、工具调用等）** → 记录客户端版本和模型，用同一模型在其他客户端复现，再检查配置与中转链路。见 [Claude Code](06-claude-code.md) 第 8.2、8.3 节。
+6. **事实性回答不可靠** → 确认当前模型，核对资料来源，必要时换模型比较。见 [Claude Code](06-claude-code.md) 第 8.1 节。
+7. **OpenCode 配置不生效** → 你装成了 v1（`opencode-ai`）。v2 的包是 `@opencode/cli`，配置格式也不同。见 [OpenCode](05-opencode.md) 第 3 节。
+8. **Orca 里智能体起不来** → 先在**普通终端**里手动跑那个 CLI：手动都不行就是 CLI 自己的问题（按第 1～7 条查），手动能跑就检查 `Settings → Agents` 有没有识别到它。见 [Orca](07-orca.md) 第 8 节。
+9. **Orca 新建 worktree 后没有 `node_modules` / `.env`** → 这是正常的（worktree 是干净检出）。按 [Orca](07-orca.md) 7.1 配共享目录与 `.worktreeinclude`。
 
 ---
 

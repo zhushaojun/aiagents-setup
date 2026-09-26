@@ -147,7 +147,7 @@ code --version
 
 预期输出：三行，第一行是版本号。
 
-扩展的安装方法写在 [Claude Code](05-claude-code.md) 和 [Codex](03-codex.md) 文档里。
+扩展的安装方法写在 [Claude Code](06-claude-code.md) 和 [Codex](03-codex.md) 文档里。
 
 ---
 
@@ -204,5 +204,5 @@ ANTHROPIC_AUTH_TOKEN   已设置（长度 51）
 
 1. 配好密钥与环境变量：[统一接入](02-unified-access.md)
 2. 装主力工具：[Codex](03-codex.md) → [pi](04-pi.md)
-3. 按需再装辅助工具：[Claude Code](05-claude-code.md) → [OpenCode](06-opencode.md)
+3. 按需再装辅助工具：[OpenCode](05-opencode.md) → [Claude Code](06-claude-code.md)
 4. 想统一管理供应商/看用量：[cc-switch](08-cc-switch.md)

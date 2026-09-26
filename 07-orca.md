@@ -34,8 +34,8 @@
 | --- | --- | --- |
 | Codex | `codex exec "只回复两个字：可用"` | [Codex](03-codex.md) |
 | pi | `pi -p "只回复两个字：可用"` | [pi](04-pi.md) |
-| Claude Code | `claude -p "只回复两个字：可用"` | [Claude Code](05-claude-code.md) |
-| OpenCode | `opencode run --standalone "只回复两个字：可用"` | [OpenCode](06-opencode.md) |
+| OpenCode | `opencode run --standalone "只回复两个字：可用"` | [OpenCode](05-opencode.md) |
+| Claude Code | `claude -p "只回复两个字：可用"` | [Claude Code](06-claude-code.md) |
 
 > 密钥设置见 **[统一接入](02-unified-access.md)** 第 2 节。Git 见 [前置工具](01-prerequisites.md) 第 2 节。
 
@@ -143,7 +143,7 @@ orca status --json
 Settings → Agents → Agent Permissions → 选 Manual
 ```
 
-改了之后，各智能体恢复用**它自己的**权限流程（也就是你在 [Codex](03-codex.md) / [Claude Code](05-claude-code.md) 里配的那套）。另外，如果你在 Orca 里手动改过某个智能体的启动参数，Orca 就会**不再动这个智能体**。
+改了之后，各智能体恢复用**它自己的**权限流程（也就是你在 [Codex](03-codex.md) / [Claude Code](06-claude-code.md) 里配的那套）。另外，如果你在 Orca 里手动改过某个智能体的启动参数，Orca 就会**不再动这个智能体**。
 
 ## 4.2 Orca 会往你的配置里写东西吗
 

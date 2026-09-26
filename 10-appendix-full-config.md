@@ -102,7 +102,7 @@
 | 文件 | 内容 |
 | --- | --- |
 | `%USERPROFILE%\.claude\config.json` | `{"primaryApiKey": "any"}`，用于跳过登录要求 |
-| `%USERPROFILE%\.claude\CLAUDE.md` | 全局提示词（我们这里目前是空的，建议按 [Claude Code](05-claude-code.md) 4.3 写几条） |
+| `%USERPROFILE%\.claude\CLAUDE.md` | 全局提示词（我们这里目前是空的，建议按 [Claude Code](06-claude-code.md) 4.3 写几条） |
 | `%USERPROFILE%\.claude\settings.local.json` | 本机私有覆盖（我们只放了 `skillOverrides`） |
 | `%USERPROFILE%\.claude\skills\`、`agents\`、`plugins\` | 技能、自定义 agent、插件缓存 |
 
@@ -133,7 +133,7 @@ experimental_bearer_token = "sk-你的Key"  # ⚠️ 字面密钥！换成 env_k
 ```
 
 > **改动建议**：把 `experimental_bearer_token` 换成 `env_key = "NEWAPI_KEY"`（教程就是这样写的），这样配置文件里就不含密钥了。
-> `openai_base_url = "http://127.0.0.1:57321/v1"` 是**桌面版/computer-use 运行时自动写入的**，不要手动抄。
+> `openai_base_url = "http://127.0.0.1:57321/v1"` 是**桌面版（现在的 ChatGPT 桌面应用）/computer-use 运行时自动写入的**，不要手动抄。
 
 ## 2.2 功能开关与界面
 
@@ -159,7 +159,7 @@ sandbox = "elevated"        # ⚠️ 与 danger-full-access 配套，等于不�
 network_access = true
 ```
 
-## 2.3 桌面应用段
+## 2.3 桌面应用段（ChatGPT 桌面应用）
 
 ```toml
 [desktop]
