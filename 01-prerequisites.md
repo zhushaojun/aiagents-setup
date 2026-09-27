@@ -1,6 +1,6 @@
 # 前置工具
 
-本教程的 npm 安装路线使用同一套基础环境。其他原生安装方式不一定需要 Node.js。**这份文档只要做一次**，做完之后再去看具体的工具文档。
+本教程的四个命令行工具统一使用 npm 安装：先安装 Node.js、配置 npm 国内镜像源，再安装具体工具。**这份文档只要做一次**，做完之后再去看具体的工具文档。
 
 ![Windows Terminal 里打开的 PowerShell 标签页：窗口内显示 PowerShell 7.6.6 和 PS 提示符](images/powershell7-terminal.png)
 
@@ -51,9 +51,9 @@ npm -v
 
 预期输出：`v24.21.0` 与 `12.0.2` 这类版本号（数字会随时间变化，Node 完整版本须 ≥22.19.0）。
 
-## 1.4 配置 npm 国内镜像（按网络情况选择）
+## 1.4 配置 npm 国内镜像
 
-若访问默认源较慢，可以使用以下镜像。镜像可能存在同步延迟；遇到版本或包缺失时可切回官方源 `https://registry.npmjs.org/`：
+安装工具前，先将 npm 源设为国内镜像。Windows 本机和远程 Linux 服务器需要分别配置；同一用户配置一次后，后续 npm 安装和升级会沿用该设置：
 
 ```PowerShell
 npm config set registry https://registry.npmmirror.com
@@ -61,6 +61,8 @@ npm config get registry
 ```
 
 预期输出：`https://registry.npmmirror.com/`。
+
+镜像可能存在同步延迟；遇到版本或包缺失时，可以执行 `npm config set registry https://registry.npmjs.org/` 临时切回官方源，安装完成后再执行上面的命令恢复镜像源。
 
 > 以后看到教程里写 `npm install -g xxx`，就是"全局安装 xxx 这个工具"。
 

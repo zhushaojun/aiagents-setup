@@ -34,17 +34,12 @@
 ## 3.1 命令行版（Windows）
 
 ```PowerShell
+npm config set registry https://registry.npmmirror.com
 npm install -g @anthropic-ai/claude-code@stable
 claude --version
 ```
 
 版本输出示例：`2.1.282 (Claude Code)`；记录基线见 [README 第 4 节](README.md#4-版本基线与核验状态)。
-
-官方还提供了免 Node 的原生安装方式（可选）：
-
-```PowerShell
-& ([scriptblock]::Create((irm https://claude.ai/install.ps1))) stable
-```
 
 > 建议安装并跟随 **`stable` 通道的最新版**，不要长期锁在某个旧版本。上面的命令显式选择 `stable`，下文的 `autoUpdatesChannel` 也保持为 `stable`。通道说明见 [官方安装文档](https://code.claude.com/docs/en/setup)。
 
@@ -59,6 +54,7 @@ claude --version
 ## 3.3 远程 Linux 服务器
 
 ```Bash
+npm config set registry https://registry.npmmirror.com
 npm install -g @anthropic-ai/claude-code@stable
 mkdir -p ~/.claude
 

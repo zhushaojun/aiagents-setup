@@ -31,9 +31,10 @@
 
 # 3 安装
 
-## 3.1 Windows（npm 安装 v2，推荐）
+## 3.1 Windows（npm 安装 v2）
 
 ```PowerShell
+npm config set registry https://registry.npmmirror.com
 npm install -g @opencode/cli
 opencode --version
 ```
@@ -42,17 +43,10 @@ opencode --version
 
 > ⚠️ **别装错包**：v2 的 npm 包是 **`@opencode/cli`**；网上老教程里的 `opencode-ai` 是 **v1** 旧线（版本还是 1.18.x），两者配置格式不同。教程使用 `@opencode/cli`；字段迁移依据见 [官方 v2 迁移文档](https://opencode.ai/v2/docs/migrate-v1)。
 
-## 3.2 官方脚本（可选）
-
-官方一键脚本会自动装最新版：
+## 3.2 远程 Linux 服务器
 
 ```Bash
-curl -fsSL https://opencode.ai/install | bash
-```
-
-## 3.3 远程 Linux 服务器
-
-```Bash
+npm config set registry https://registry.npmmirror.com
 npm install -g @opencode/cli
 mkdir -p ~/.config/opencode
 # 配置文件写法见第 4 节，把 opencode.json 放到 ~/.config/opencode/
@@ -277,8 +271,7 @@ opencode --model newapi/deepseek-v4.1-flash
 # 9 升级与卸载
 
 ```PowerShell
-opencode upgrade                          # 就地升级（官方推荐）
-npm install -g @opencode/cli@latest       # 或用 npm 升级
+npm install -g @opencode/cli@latest       # 升级到最新版
 npm uninstall -g @opencode/cli            # 卸载
 opencode uninstall                        # 官方卸载命令（会清理相关文件）
 ```

@@ -20,7 +20,7 @@
 | 项目 | 要求 | 检查方法 |
 | --- | --- | --- |
 | Node.js | 最新 LTS 版（本教程最低 ≥ 22.19.0） | `node -v` |
-| npm | 随 Node 自带，按网络情况选择镜像 | `npm -v` |
+| npm | 随 Node 自带，安装前配置国内镜像 | `npm -v` |
 | 环境变量 | `NEWAPI_KEY` 已设置 | `-not [string]::IsNullOrWhiteSpace($env:NEWAPI_KEY)` → `True` |
 | VS Code（可选） | 最新版 | `code --version` |
 
@@ -33,6 +33,7 @@
 ## 3.1 命令行版（Windows，必装）
 
 ```PowerShell
+npm config set registry https://registry.npmmirror.com
 npm install -g @openai/codex
 codex --version
 ```
@@ -58,6 +59,7 @@ codex --version
 ## 3.4 远程 Linux 服务器
 
 ```Bash
+npm config set registry https://registry.npmmirror.com
 npm install -g @openai/codex
 mkdir -p ~/.codex
 
