@@ -69,7 +69,7 @@ https://github.com/stablyai/orca/releases/latest/download/orca-windows-setup.exe
 
 ## 3.2 Windows：Scoop（可选）
 
-如果你的 Scoop 里已经有 `orca-ide` 这个包（我们机器上就是这么装的，包名是 `orca-ide`，当前版本 `1.4.209`）：
+如果你的 Scoop 里已经有 `orca-ide` 这个包（我们机器上就是这么装的，包名是 `orca-ide`，历史记录版本 `1.4.209`，安装时选择最新版）：
 
 ```PowerShell
 scoop install orca-ide

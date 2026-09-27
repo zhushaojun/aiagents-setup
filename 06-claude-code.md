@@ -21,7 +21,7 @@
 
 | 项目 | 要求 | 检查方法 |
 | --- | --- | --- |
-| Node.js | ≥ 22.19.0（本教程 npm 路线统一基线） | `node -v` |
+| Node.js | 最新 LTS 版（本教程 npm 路线最低 ≥ 22.19.0） | `node -v` |
 | 环境变量 | `ANTHROPIC_AUTH_TOKEN` 已设置（**注意不是** `NEWAPI_KEY`） | `-not [string]::IsNullOrWhiteSpace($env:ANTHROPIC_AUTH_TOKEN)` → `True` |
 | VS Code（可选） | 最新版 | `code --version` |
 
@@ -34,7 +34,7 @@
 ## 3.1 命令行版（Windows）
 
 ```PowerShell
-npm install -g @anthropic-ai/claude-code
+npm install -g @anthropic-ai/claude-code@stable
 claude --version
 ```
 
@@ -43,10 +43,10 @@ claude --version
 官方还提供了免 Node 的原生安装方式（可选）：
 
 ```PowerShell
-irm https://claude.ai/install.ps1 | iex
+& ([scriptblock]::Create((irm https://claude.ai/install.ps1))) stable
 ```
 
-> 建议**跟随官方稳定版**，不要长期锁在某个旧版本：Claude Code 的第三方模型兼容性修复都在新版本里。
+> 建议安装并跟随 **`stable` 通道的最新版**，不要长期锁在某个旧版本。上面的命令显式选择 `stable`，下文的 `autoUpdatesChannel` 也保持为 `stable`。通道说明见 [官方安装文档](https://code.claude.com/docs/en/setup)。
 
 ## 3.2 VS Code 扩展
 
@@ -59,7 +59,7 @@ irm https://claude.ai/install.ps1 | iex
 ## 3.3 远程 Linux 服务器
 
 ```Bash
-npm install -g @anthropic-ai/claude-code
+npm install -g @anthropic-ai/claude-code@stable
 mkdir -p ~/.claude
 
 (
@@ -374,14 +374,14 @@ claude --model 'deepseek-v4.1-flash[1M]'
 | VS Code 扩展里模型不对 | 扩展与命令行共用配置；先在命令行确认 `claude -p "只回复两个字：可用"` 能正常回答 |
 | 读图报错 / token 暴涨 | 见 8.3（图片链路） |
 | 事实性回答不可靠 | 见 8.1：确认当前模型、核对来源，必要时换模型比较 |
-| 更新后行为变了 | 第三方模型兼容性跟版本强相关；先升级到最新稳定版再看 |
+| 更新后行为变了 | 第三方模型兼容性跟版本强相关；先升级到最新 stable 版再看 |
 
 ---
 
 # 10 升级与卸载
 
 ```PowerShell
-npm install -g @anthropic-ai/claude-code@latest   # 升级
+npm install -g @anthropic-ai/claude-code@stable   # 升级到最新 stable 版
 npm uninstall -g @anthropic-ai/claude-code        # 卸载（~/.claude 不会删）
 ```
 

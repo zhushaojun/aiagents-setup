@@ -54,7 +54,7 @@ Matt Pocock（Total TypeScript 作者）把自己日常用的技能开源了：<
 
 | 项目 | 要求 | 检查方法 |
 | --- | --- | --- |
-| Node.js | **≥ 22.19**（`01-prerequisites.md` 里已经装过） | `node -v` |
+| Node.js | **最新 LTS 版**（最低 ≥ 22.19.0，前置工具篇已安装） | `node -v` |
 | 至少一个智能体 | Codex / pi / Claude Code / OpenCode 任一已跑通 | 完成该工具教程第 5 节的三层验证 |
 | 网络 | 能访问 GitHub（安装器从 GitHub 拉技能仓库） | — |
 

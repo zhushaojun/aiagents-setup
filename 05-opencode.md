@@ -21,7 +21,7 @@
 
 | 项目 | 要求 | 检查方法 |
 | --- | --- | --- |
-| Node.js | ≥ 22.19.0（本教程 npm 路线统一基线） | `node -v` |
+| Node.js | 最新 LTS 版（本教程 npm 路线最低 ≥ 22.19.0） | `node -v` |
 | 环境变量 | `NEWAPI_KEY` 已设置 | `-not [string]::IsNullOrWhiteSpace($env:NEWAPI_KEY)` → `True` |
 | Git for Windows | Bash 命令执行路线需要 | 按 [前置工具](01-prerequisites.md#2-git-for-windows)检查 Git Bash 路径 |
 

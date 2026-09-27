@@ -8,9 +8,11 @@
 
 # 0 一页清单
 
+软件一般建议安装最新版；Node.js 选择最新 LTS 版，Claude Code 选择最新 stable 版。
+
 | 要装的东西 | 用途 / 是否必需 | 怎么装 |
 | --- | --- | --- |
-| **Node.js ≥ 22.19** | 四个工具都用 npm 安装 | [第 1 节](#1-nodejs) |
+| **Node.js 最新 LTS 版**（最低 ≥ 22.19.0） | 四个工具都用 npm 安装 | [第 1 节](#1-nodejs) |
 | **Git for Windows** | pi / OpenCode 用它执行命令；Claude Code 的 hooks 也依赖它 | [第 2 节](#2-git-for-windows) |
 | **Windows Terminal + PowerShell 7** | 中文不乱码、按键正常、界面清爽 | [第 3 节](#3-windows-terminal--powershell-7) |
 | **VS Code（可选）** | Claude Code / Codex 有 VS Code 扩展 | [第 4 节](#4-vs-code) |
@@ -30,7 +32,7 @@ Node.js 是 JavaScript 运行时，我们要用它的包管理器 **npm** 安装
 
 ## 1.2 安装
 
-从官网下载 LTS 版安装包：<https://nodejs.org/zh-cn/download>
+从官网下载最新 LTS 版安装包：<https://nodejs.org/zh-cn/download>
 
 安装时保持默认选项（会顺带把 `node`、`npm` 加进 PATH）。如果你用 Scoop 之类的包管理器，也可以：
 
@@ -236,7 +238,7 @@ foreach ($k in $checks.Keys) {
 }
 ```
 
-Node.js 应显示满足最低版本，npm、Git、Git Bash 应返回版本，PowerShell 主版本应为 7 或以上。VS Code 是可选项。尚未执行统一接入步骤时，变量显示“未设置”是正常的。
+Node.js 建议安装最新 LTS 版；自检仅检查是否满足最低版本，npm、Git、Git Bash 应返回版本，PowerShell 主版本应为 7 或以上。VS Code 是可选项。尚未执行统一接入步骤时，变量显示“未设置”是正常的。
 
 工具缺失、执行失败和变量未设置分别处理；本自检不调用模型、不验证服务端凭据，也不安装或修改任何工具。
 

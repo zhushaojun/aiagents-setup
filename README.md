@@ -20,7 +20,7 @@
 
 # 2 最短成功步骤
 
-1. 按 [前置工具](01-prerequisites.md) 安装 Node.js ≥22.19.0、Git for Windows 和 PowerShell 7，运行第 5 节自检；VS Code 可选。
+1. 按 [前置工具](01-prerequisites.md) 安装 Node.js 最新 LTS 版、最新版 Git for Windows 和 PowerShell 7，运行第 5 节自检；VS Code 可选。
 2. 按 [统一接入](02-unified-access.md) 第 2 节设置用户级环境变量，确认当前进程能读取到非空值。必要时完整重启终端或桌面应用。
 3. 按 [Codex](03-codex.md) 第 3、4 节安装 CLI 并配置 NewAPI。已有配置先备份再合并。
 4. 在 PowerShell 7 中创建独立练习仓库并验证请求：
@@ -59,6 +59,8 @@ codex exec -c 'model_provider="newapi"' --model gpt-6-sol "只回复两个字：
 
 # 4 版本基线与核验状态
 
+**安装版本建议：软件一般安装最新版；Claude Code 安装 `stable` 通道的最新版；Node.js 安装最新 LTS 版。** 文中的最低版本是兼容性下限，版本输出和历史记录仅供参考，不需要照着安装旧版本。
+
 以下是原教程的**本机记录基线**，不是最新版承诺。2026-09-26 修订核对了文档和示例语法，未重新调用真实模型；正文版本输出与截图可能来自不同安装时点。
 
 | 工具 | 原记录版本 | 记录日期 | 查看本机版本 |
@@ -70,7 +72,7 @@ codex exec -c 'model_provider="newapi"' --model gpt-6-sol "只回复两个字：
 | Orca | 1.4.x（附录另记 1.4.209，但未关联验证日志） | 2026-09-25 | `orca status --json` 的 `appVersion` |
 | Matt Skills | v1.2、25 个技能（历史快照） | 2026-09-25 | `npx skills list -g` 查看已安装项，`npx skills check` 检查更新 |
 
-`@latest` 是动态安装标签，不是验证版本。升级后应记录实际版本，并重做各工具的三层验证。模型默认值、清单快照和实时查询入口统一见 [统一接入第 4 节](02-unified-access.md#4-当前可用的模型清单)。
+`@latest` 和 `@stable` 都是动态安装标签，不是固定的验证版本。升级后应记录实际版本，并重做各工具的三层验证。模型默认值、清单快照和实时查询入口统一见 [统一接入第 4 节](02-unified-access.md#4-当前可用的模型清单)。
 
 **验证记录模板**（每个客户端、模型、协议组合及检查类型单独记录一行）：
 

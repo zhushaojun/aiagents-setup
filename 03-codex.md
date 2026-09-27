@@ -19,7 +19,7 @@
 
 | 项目 | 要求 | 检查方法 |
 | --- | --- | --- |
-| Node.js | ≥ 22.19.0（本教程统一基线） | `node -v` |
+| Node.js | 最新 LTS 版（本教程最低 ≥ 22.19.0） | `node -v` |
 | npm | 随 Node 自带，按网络情况选择镜像 | `npm -v` |
 | 环境变量 | `NEWAPI_KEY` 已设置 | `-not [string]::IsNullOrWhiteSpace($env:NEWAPI_KEY)` → `True` |
 | VS Code（可选） | 最新版 | `code --version` |
